@@ -1,3 +1,5 @@
+const contextMenu = document.getElementById("context-menu");
+const scope = document.querySelector("body");
 const canvas = document.querySelector('.drawCanvas');
 const width = canvas.width = 950;
 const height = canvas.height = 475;
@@ -19,6 +21,24 @@ let prevY;
 let picture = new Image();
 picture.src = 'https://www.niu.edu/locations/images/dekalb.jpg';
 
+
+scope.addEventListener("contextmenu", (event) => {
+
+    event.preventDefault();
+
+    const {clientX: mouseX, clientY: mouseY} = event;
+
+    contextMenu.style.top = `${mouseY}px`;
+    contextMenu.style.left = `${mouseX}px`;
+
+    contextMenu.classList.add("visible");
+});
+
+scope.addEventListener("click", (e) => {
+    if(e.target.offsetParent != contextMenu) {
+        contextMenu.classList.remove("visible");
+    }
+});
 
 picture.onload = function() {
     ctx.drawImage(picture, 0, 0);
