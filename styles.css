@@ -27,3 +27,33 @@ body {
 #context-menu.visible {
     display: block;
 }
+
+#sample-text {
+    font-size: 32px;
+
+}
+
+#sample-text {
+    float: left;
+    
+    margin-top: 160px;
+    margin-left: 4%;
+    width: 40%;
+    height: inherit;
+    
+    background-color: rgb(197, 197, 206);
+
+    border: 2px solid rgb(53, 53, 60);   
+    border-style: inset;
+    border-radius: 12px;
+}
+
+#drawing-panel {
+    width: 50%;
+    float: left;
+
+}
+
+.special-text {
+    padding-left: 24px;
+}
