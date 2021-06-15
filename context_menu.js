@@ -26,7 +26,7 @@ function highlight() {
     var newNode = document.createElement("div");
     newNode.setAttribute(
         "style",
-        "background-color: yellow; display: inline;"
+        "background-color: var(--highlight); display: inline;"
     );
     user_selection.surroundContents(newNode);
 }

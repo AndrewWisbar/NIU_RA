@@ -9,22 +9,22 @@
 </head>
 <body>
 
-    <div id="float-container">
-        <div id="drawing-panel" class="float-child">
-            <div onmousedown="begin_draw()" onmouseup="end_draw()" onmousemove="mouse_move(event)">
-                <canvas width="600" height="600" class="drawCanvas">
+    <div class="flex-container">
+        <div id="drawing-panel">
+            <div >
+                <canvas class="draw-canvas" onmousedown="begin_draw()" onmouseup="end_draw()" onmousemove="mouse_move(event)">
                     <p>browser failed to load canvas</p>
                 </canvas>
             </div>
         
-            <div>
+            <div id="controls">
                 <input type="color">
                 <input type="range" min="2" max="16" value="5">
                 <button onclick="reset_image()">Reset Drawing</button>
             </div>
         </div>
         
-        <div id="sample-text" class="float-child">
+        <div id="sample-text">
             <p class="special-text">This is Sample Text for Highlighting.</p>
         </div>
     </div>

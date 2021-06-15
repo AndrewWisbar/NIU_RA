@@ -1,14 +1,86 @@
+:root {
+    /*define colors*/
+    --main-dark: #313638;
+    --mid-dark: #898B87;
+    --mid-tone: #E0DFD5;
+    --light: #E8E9EB;
+    --dark-acc: #04151F;
+    --mid-acc: #183A37;
+    --light-acc: #ABC69C;
+    --light-text: #FFFFFF;
+    --dark-text: #000000;
+    --highlight: #fca5b5;
+}
+
 body {
+    user-select: none;
     margin: 0;
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: var(--main-dark);
+}
+
+
+#sample-text {
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 40%;
+    font-size: 32px;
+
+    background-color: var(--mid-tone);
+
+    border: 2px solid var(--dark-text);   
+    border-style: inset;
+    border-radius: 5px;
+
+    user-select: text;
+}
+
+#drawing-panel {
+    width: 40%;
+    margin-left: 5%;
+    margin-right: 5%;
+    background-color: var(--mid-tone);
+    border: 2px solid var(--dark-text);   
+    border-style: inset;
+    border-radius: 5px;
+}
+
+.draw-canvas {
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 2.5%;
+}
+
+#controls {
+    margin-bottom: 2.5%;
+    margin-left: 5%;
+}
+
+.special-text {
+    padding-left: 5%;
+}
+
+.flex-container {
+    margin-top: 2.5%;
+    margin-bottom: 2.5%;
+    display: flex;
+    flex-direction: row;
+}
+
+/****************/
+/* Context Menu */
+/****************/
+
+#context-menu.visible {
+    display: block;
 }
 
 #context-menu {
     position: fixed;
     z-index: 10000;
     width: 170px;
-    background: rgb(50, 50, 50);
+    background: var(--mid-dark);
+    border: 2px solid var(--dark-text);
     border-radius: 5px;
     display: none;
 }
@@ -18,53 +90,21 @@ body {
     padding-top: 4px;
     padding-bottom: 4px;
     font-size: 15px;
-    color: #F3E8EE;
+    color: var(--light-text);
     cursor: pointer;
     border-radius: inherit;
-}
-
-#context-menu.visible {
-    display: block;
-}
-
-#sample-text {
-    font-size: 32px;
-}
-
-#sample-text {
-    float: left;
-    
-    margin-top: 160px;
-    margin-left: 7%;
-    width: 40%;
-
-    background-color: lightgray;
-
-    border: 2px solid grey;   
-    border-style: inset;
-    border-radius: 12px;
-}
-
-#drawing-panel {
-    width: 50%;
-    float: left;
-
-}
-
-.special-text {
-    padding-left: 24px;
 }
 
 .menu-button {
     font-size: 18px;
     width: inherit;
     padding: 8px;
-    background-color: rgb(50, 50, 50);
+    background-color: var(--mid-dark);
     border: none;
-    color: white;
+    color: var(--light-text);
     transition-duration: 0.4s;
 }
 
 .menu-button:hover {
-    background-color: #6c6c6c;
+    background-color: var(--mid-tone);
 }
