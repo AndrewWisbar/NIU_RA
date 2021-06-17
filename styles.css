@@ -15,35 +15,45 @@
 body {
     user-select: none;
     margin: 0;
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: var(--main-dark);
 }
 
+.flex-container {
+    margin-top: 2.5%;
+    margin-bottom: 2.5%;
+    display: flex;
+    flex-direction: row;
+}
 
-#sample-text {
+/********************/
+/* User Interaction */
+/********************/
+
+.user-panel {
+    width: 40%;
     margin-left: 5%;
     margin-right: 5%;
-    width: 40%;
-    font-size: 32px;
-
     background-color: var(--mid-tone);
-
     border: 2px solid var(--dark-text);   
     border-style: inset;
     border-radius: 5px;
+    margin-top: 4%;
+}
 
+/* Text - Caption Box */
+
+#sample-text {
     user-select: text;
 }
 
-#drawing-panel {
-    width: 40%;
-    margin-left: 5%;
-    margin-right: 5%;
-    background-color: var(--mid-tone);
-    border: 2px solid var(--dark-text);   
-    border-style: inset;
-    border-radius: 5px;
+
+.special-text {
+    padding-left: 5%;
+    font-size: 32px;
 }
+
+/* Drawing Box */
 
 .draw-canvas {
     width: 90%;
@@ -56,16 +66,7 @@ body {
     margin-left: 5%;
 }
 
-.special-text {
-    padding-left: 5%;
-}
 
-.flex-container {
-    margin-top: 2.5%;
-    margin-bottom: 2.5%;
-    display: flex;
-    flex-direction: row;
-}
 
 /****************/
 /* Context Menu */

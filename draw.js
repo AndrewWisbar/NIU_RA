@@ -1,9 +1,12 @@
 
+// Setting up page elements that we need
 const canvas = document.querySelector('.draw-canvas');
 const ctx = canvas.getContext('2d');
 
 const colorPicker = document.querySelector('input[type="color"]');
 const sizePicker = document.querySelector('input[type="range"]');
+
+//Global Variables
 let draw_flag = false;
 let prev_point = false;
 let curX;
