@@ -23,7 +23,7 @@ scope.addEventListener("click", (e) => {
 function highlight() {
     var user_selection = window.getSelection().getRangeAt(0);
 
-    var newNode = document.createElement("div");
+    var newNode = document.createElement("range");
     newNode.setAttribute(
         "style",
         "background-color: var(--highlight); display: inline;"

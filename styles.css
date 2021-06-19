@@ -31,9 +31,9 @@ body {
 /********************/
 
 .user-panel {
-    width: 40%;
-    margin-left: 5%;
-    margin-right: 5%;
+    width: 45%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
     background-color: var(--mid-tone);
     border: 2px solid var(--dark-text);   
     border-style: inset;
@@ -59,6 +59,22 @@ body {
     width: 90%;
     margin-left: 5%;
     margin-top: 2.5%;
+}
+
+.preview-canvas {
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 2.5%;
+}
+
+.preview-panel {
+    width: 15%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    background-color: var(--mid-tone);
+    border: 2px solid var(--dark-text);   
+    border-style: inset;
+    border-radius: 5px;
 }
 
 #controls {

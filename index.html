@@ -12,14 +12,14 @@
     <div class="flex-container">
         <div id="drawing-panel" class="user-panel">
             <div >
-                <canvas class="draw-canvas" onmousedown="begin_draw()" onmouseup="end_draw()" onmousemove="mouse_move(event)">
+                <canvas class="draw-canvas" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
                     <p>browser failed to load canvas</p>
                 </canvas>
             </div>
         
             <div id="controls">
                 <input type="color">
-                <input type="range" min="2" max="16" value="5">
+                <input type="range" min="1" max="10" value="2">
                 <button onclick="reset_image()">Reset Drawing</button>
             </div>
         </div>
@@ -27,6 +27,12 @@
         <div id="sample-text" class="user-panel">
             <p class="special-text">This is Sample Text for Highlighting.</p>
         </div>
+    </div>
+    <div id="preview-panel" class="user-panel">
+        <p>Selection Preview:</p>
+        <canvas class="preview-canvas">
+            <p>Selection Preview Failed to Load</p>
+        </canvas>
     </div>
 
 
