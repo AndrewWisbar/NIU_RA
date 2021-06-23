@@ -62,7 +62,14 @@ body {
     margin-top: 2.5%;
 }
 
-.rect_svg {
+.base-img {
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 2.5%;
+}
+
+
+.svg_cont {
     position: absolute;
     top: 0px;
     left: 0px;

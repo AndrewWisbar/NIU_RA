@@ -1,9 +1,12 @@
 
 // Setting up page elements that we need
-const canvas = document.querySelector('.draw-canvas');
+const base_img = document.querySelector('.base-img');
+const svg_cont = document.querySelector('.svg_cont');
 const pre_canvas = document.querySelector('.preview-canvas');
-const ctx = canvas.getContext('2d');
 const pre_ctx = pre_canvas.getContext('2d');
+
+
+const svgns = "http://www.w3.org/2000/svg";
 
 //User interface controls 
 const colorPicker = document.querySelector('input[type="color"]');
@@ -19,18 +22,7 @@ let anchor_point = [0, 0];
 let top_left_point = [0, 0];
 let bottom_right_point = [0, 0];
 
-//Setting image
-let picture = new Image();
-picture.src = 'https://www.niu.edu/locations/images/dekalb.jpg';
-
-//Width and height of the canvas (not the actual display size)
-const width = canvas.width = 1000;
-const height = canvas.height = 1000;
-
-//Setup canvas with blank background
-ctx.fillStyle = 'rgb(50, 50, 50)';
-ctx.fillRect(0, 0, width, height);
-
+let rectangles = [];
 
 /******************************************************************************
  ******************************Class Definitions*******************************
@@ -39,9 +31,7 @@ ctx.fillRect(0, 0, width, height);
 class selected_region {
 
     constructor(left, up, right, low) {
-        //convert between image pixels and canvas pos
-        let adj = picture.width / canvas.width; 
-
+        let adj = base_img.naturalWidth / base_img.width
         this.bounds = [left * adj, up * adj, right * adj, low * adj];
     }
 
@@ -69,17 +59,19 @@ class selected_region {
         }
 
         //draw the image
-        pre_ctx.drawImage(picture, this.bounds[0], this.bounds[1], 
+        pre_ctx.drawImage(base_img, this.bounds[0], this.bounds[1], 
             this.bounds[2] - this.bounds[0],
             this.bounds[3] - this.bounds[1], 0, 0,
-            (this.bounds[2] - this.bounds[0]) * ratio,
-            (this.bounds[3] - this.bounds[1]) * ratio);
+            pre_canvas.width,
+            pre_canvas.height);
 
         //log the bounds of the selection
         console.log("(", Math.floor(this.bounds[0]), ", ",
             Math.floor(this.bounds[1]), ")  (", 
             Math.floor(this.bounds[2]), ", ", 
             Math.floor(this.bounds[3]), ")");
+
+        console.log(base_img.width, base_img.height);
     }
 } 
 
@@ -87,21 +79,16 @@ class selected_region {
  ****************************Function Definitions******************************
  *****************************************************************************/
 
-picture.onload = function() {
-
-    // set height of canvas based on aspect ratio
-    canvas.height = canvas.width * (picture.height / picture.width);
-    ctx.drawImage(picture, 0, 0, picture.width, picture.height, 0, 0, canvas.width, canvas.height);
+base_img.onload = function() {
+    svg_cont.setAttribute("height", base_img.height);
 }
 
-function  getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect(), // abs. size of element
-        scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
-        scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
+function  getMousePos(area, evt) {
+    var rect = area.getBoundingClientRect(); // abs. size of element
   
     return {
-      x: (evt.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
-      y: (evt.clientY - rect.top) * scaleY     // been adjusted to be relative to element
+      x: (evt.clientX - rect.left),   // scale mouse coordinates after they have
+      y: (evt.clientY - rect.top)     // been adjusted to be relative to element
     }
 }
 
@@ -109,7 +96,7 @@ function begin_draw(event) {
     //protect against user moving mouse off canvas while drawing
     if(!draw_flag) {
         //get the mouse position when the user clicks
-        let pos = getMousePos(canvas, event);
+        let pos = getMousePos(svg_cont, event);
 
         //the anchor point will stay constant
         anchor_point = [pos.x, pos.y];
@@ -120,6 +107,8 @@ function begin_draw(event) {
         
         //allow drawing to begin
         draw_flag = true;
+
+        rectangles[0] = document.createElementNS(svgns, "rect");
     }
 }
 
@@ -128,7 +117,7 @@ function mouse_move(event) {
     if(draw_flag) { //if we've begun drawing
 
         //get the mouse position
-        let pos = getMousePos(canvas, event);
+        let pos = getMousePos(svg_cont, event);
         prev_point = true; // we now have two points to draw the rectangle
 
         //determine the coordinates of the top left and bottom right points
@@ -174,23 +163,26 @@ function end_draw() {
 
 }
 
+/*
 function reset_image() {
     ctx.drawImage(picture, 0, 0, picture.width, picture.height, 0, 0, canvas.width, canvas.height);
     pre_ctx.clearRect(0, 0, pre_canvas.width, pre_canvas.height);
 }
+*/
+
 
 function draw() {
     if(draw_flag && prev_point) {
 
-        ctx.drawImage(picture, 0, 0, picture.width, picture.height, 0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = colorPicker.value;
-        ctx.lineWidth = sizePicker.value;
-        ctx.beginPath();
-        ctx.rect(top_left_point[0], top_left_point[1], 
-            bottom_right_point[0] - top_left_point[0], 
-            bottom_right_point[1] - top_left_point[1]);
-        ctx.stroke();
-
+        rectangles[0].setAttribute("x", top_left_point[0]);
+        rectangles[0].setAttribute("y", top_left_point[1]);
+        rectangles[0].setAttribute("width", bottom_right_point[0] - top_left_point[0]);
+        rectangles[0].setAttribute("height", bottom_right_point[1] - top_left_point[1]);
+        rectangles[0].setAttribute("fill", colorPicker.value);
+        rectangles[0].setAttribute("stroke", colorPicker.value);
+        rectangles[0].setAttribute("fill-opacity", "0.1");
+        
+        svg_cont.appendChild(rectangles[0]);
         prev_point = false;
     }
 
