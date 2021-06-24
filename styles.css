@@ -48,6 +48,10 @@ body {
     user-select: text;
 }
 
+.highlighted-text {
+    background-color: var(--highlight);
+}
+
 
 .special-text {
     padding-left: 5%;
@@ -81,11 +85,13 @@ body {
 
 .finished_rect:hover {
     transition-duration: 0.1s;
-    stroke-width: 8px;
+    stroke-width: 4px;
+    stroke-opacity: 0.5;
 }
 
 .selected {
-    stroke-width: 8px;
+    stroke-width: 6px;
+    transition-duration: 0.1s;
 }
 
 .preview-canvas {
@@ -151,4 +157,5 @@ body {
 
 .menu-button:hover {
     background-color: var(--mid-tone);
+    color: var(--dark-text);
 }

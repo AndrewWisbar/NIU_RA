@@ -74,8 +74,6 @@ class selected_region {
             Math.floor(this.bounds[1]), ")  (", 
             Math.floor(this.bounds[2]), ", ", 
             Math.floor(this.bounds[3]), ")");
-
-        console.log(base_img.width, base_img.height);
     }
 } 
 
