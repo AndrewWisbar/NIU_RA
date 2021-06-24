@@ -79,6 +79,15 @@ body {
     z-index: 2;
 }
 
+.finished_rect:hover {
+    transition-duration: 0.1s;
+    stroke-width: 8px;
+}
+
+.selected {
+    stroke-width: 8px;
+}
+
 .preview-canvas {
     width: 90%;
     margin-left: 5%;

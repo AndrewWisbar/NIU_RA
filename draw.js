@@ -16,6 +16,7 @@ const sizePicker = document.querySelector('input[type="range"]');
 let draw_flag = false;
 let prev_point = false;
 let valid_selection = false;
+let rectangle_created = false;
 
 //Points used to draw selection rectangle
 let anchor_point = [0, 0];
@@ -23,6 +24,9 @@ let top_left_point = [0, 0];
 let bottom_right_point = [0, 0];
 
 let rectangles = [];
+let rect_ind = 0;
+
+let regions = [];
 
 /******************************************************************************
  ******************************Class Definitions*******************************
@@ -108,7 +112,7 @@ function begin_draw(event) {
         //allow drawing to begin
         draw_flag = true;
 
-        rectangles[0] = document.createElementNS(svgns, "rect");
+        rectangles.push(document.createElementNS(svgns, "rect"));
     }
 }
 
@@ -145,17 +149,19 @@ function mouse_move(event) {
 function end_draw() {
 
     if(valid_selection) {
-        let region = new selected_region(top_left_point[0], top_left_point[1], 
-                            bottom_right_point[0], bottom_right_point[1]);
-        region.check();
-    }
-    else {
-        reset_image();
+        regions.push(new selected_region(top_left_point[0], top_left_point[1], 
+                            bottom_right_point[0], bottom_right_point[1]));
+        //regions[rect_ind].check();
+        rectangles[rect_ind].classList.add("finished_rect");
+        select_rect(rectangles[rect_ind].getAttribute("id"));
+
+        rect_ind++;
     }
 
     draw_flag = false;
     prev_point = false;
     valid_selection = false;
+    rectangle_created = false;
 
     anchor_point = [0, 0];
     top_left_point = [0, 0];
@@ -163,31 +169,66 @@ function end_draw() {
 
 }
 
-/*
+
 function reset_image() {
-    ctx.drawImage(picture, 0, 0, picture.width, picture.height, 0, 0, canvas.width, canvas.height);
+    removeAllChildren(svg_cont);
+
+    rectangles.splice(0, rectangles.length);
+    rect_ind = 0;
+    regions.splice(0, regions.length);
+
     pre_ctx.clearRect(0, 0, pre_canvas.width, pre_canvas.height);
+
 }
-*/
+
+function removeAllChildren(parent) {
+    while(parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
+
 
 
 function draw() {
     if(draw_flag && prev_point) {
-
-        rectangles[0].setAttribute("x", top_left_point[0]);
-        rectangles[0].setAttribute("y", top_left_point[1]);
-        rectangles[0].setAttribute("width", bottom_right_point[0] - top_left_point[0]);
-        rectangles[0].setAttribute("height", bottom_right_point[1] - top_left_point[1]);
-        rectangles[0].setAttribute("fill", colorPicker.value);
-        rectangles[0].setAttribute("stroke", colorPicker.value);
-        rectangles[0].setAttribute("fill-opacity", "0.1");
+        if(!rectangle_created) {
+            let rect_id = "rect_" + rect_ind;
+            rectangles[rect_ind].setAttribute("fill", colorPicker.value);
+            rectangles[rect_ind].setAttribute("stroke-width", sizePicker.value);
+            rectangles[rect_ind].setAttribute("stroke", colorPicker.value);
+            rectangles[rect_ind].setAttribute("fill-opacity", 0);
+            rectangles[rect_ind].setAttribute("id", rect_id);
+            rectangles[rect_ind].setAttribute("onclick", "select_rect(this.id)");
+            rectangle_created = true;
+        }
         
-        svg_cont.appendChild(rectangles[0]);
+        rectangles[rect_ind].setAttribute("x", top_left_point[0]);
+        rectangles[rect_ind].setAttribute("y", top_left_point[1]);
+        rectangles[rect_ind].setAttribute("width", bottom_right_point[0] - top_left_point[0]);
+        rectangles[rect_ind].setAttribute("height", bottom_right_point[1] - top_left_point[1]);
+
+        
+        svg_cont.appendChild(rectangles[rect_ind]);
         prev_point = false;
     }
 
     requestAnimationFrame(draw);
 }
 
+function select_rect(clicked_id) {
+    console.log(clicked_id);
+    var index = parseInt(clicked_id.match(/\d+/),10);
+
+    for(var i = 0; i < rectangles.length; i++) {
+        if(rectangles[i].classList.contains("selected"))
+            rectangles[i].classList.remove("selected");
+    }
+
+    rectangles[index].classList.add("selected");
+
+    regions[index].check();
+
+}
 //call draw to start recursion
 draw();
