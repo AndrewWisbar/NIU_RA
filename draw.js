@@ -198,6 +198,15 @@ function draw() {
             rectangles[rect_ind].setAttribute("fill-opacity", 0);
             rectangles[rect_ind].setAttribute("id", rect_id);
             rectangles[rect_ind].setAttribute("onclick", "select_rect(this.id)");
+            rectangles[rect_ind].addEventListener('dragenter', function(e) {
+                e.preventDefault();
+                e.target.classList.add('dragging');
+            });
+            
+            rectangles[rect_ind].addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.target.classList.remove('dragging');
+            });
             rectangle_created = true;
         }
         

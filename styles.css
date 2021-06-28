@@ -115,6 +115,12 @@ body {
     margin-left: 5%;
 }
 
+.dragging {
+    transition-duration: 0.1s;
+    stroke-width: 4px;
+    stroke-opacity: 0.5;
+}
+
 
 
 /****************/

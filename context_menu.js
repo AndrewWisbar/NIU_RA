@@ -3,6 +3,8 @@ const contextMenu = document.getElementById("context-menu");
 const scope = document.querySelector("body");
 const highlight_text = document.querySelector(".special-text");
 
+let unhighlight_selection;
+
 let highlights = [];
 let is_highlighted = [];
 
@@ -27,6 +29,11 @@ highlight_text.innerHTML = inner_string; // replace the original string
 scope.addEventListener("contextmenu", (event) => {
 
     event.preventDefault();
+    if(RegExp('char_\d*').test(event.target.id))
+        if(RegExp('char_\d*').test(event.target.parentNode.id))
+            unhighlight_selection = event.target.parentNode;
+        else
+            unhighlight_selection = event.target;
 
     const {clientX: mouseX, clientY: mouseY} = event;
 
@@ -44,61 +51,65 @@ scope.addEventListener("click", (e) => {
 
 function highlight() {
     var userSelection = window.getSelection();
+    is_highlighted.length = 0;
     for (var i = 0; i < characters.length; i++) {
         let node = document.getElementById("char_" + i);
-        if(userSelection.containsNode(node, true)) {
-            node.classList.add("highlighted-text");
-            is_highlighted[i] = true;
+        if(node) {
+            if(userSelection.containsNode(node, true)) {
+                node.classList.add("highlighted-text");
+                is_highlighted[i] = true;
+            }
         }
     }
-    console.log(is_highlighted);
     contextMenu.classList.remove("visible");
+
+    group_highlights();
 }
 
 
 function unhighlight() {
-    var userSelection = window.getSelection();
-    for (var i = 0; i < characters.length; i++) {
-        let node = document.getElementById("char_" + i);
-        if(userSelection.containsNode(node, true)) {
-            node.classList.remove("highlighted-text");
-            is_highlighted[i] = false;
+    var unhighlight_id = unhighlight_selection.id;
+    for(var i = 0; i < highlights.length; i++) {
+        if(highlights[i][0].id === unhighlight_id) {
+            for(var j = highlights[i].length - 1; j >= 1; j--) {
+                highlights[i][j].classList.remove("highlighted-text");
+                insertAfter(highlights[i][j], highlights[i][0]);
+            }
+
+            highlights[i].length = 0;
+            highlights.splice(i, 1);
+
         }
     }
-    console.log(is_highlighted);
-    contextMenu.classList.remove("visible");
+    
+    unhighlight_selection.setAttribute("draggable", "false");
+    unhighlight_selection.classList.remove("highlighted-text");
 }
 
 function group_highlights() {
     let highlight_chunk = [];
-    highlights = [];
 
     for(var i = 0; i < characters.length; i++) {
         if(is_highlighted[i]) {
-            if(highlights[0])
-                highlight_chunk.splice(0, highlight_chunk.length);
-            else
-                highlight_chunk = [];
-            
+            highlight_chunk.length = 0;
+
             while(is_highlighted[i] && i < characters.length) {
                 let node = document.getElementById("char_" + i);
                 highlight_chunk.push(node);
                 i++;
             }
-
             highlights.push(highlight_chunk);
         }
     }
 
     for(var i = 0; i < highlights.length; i++) {
-        let new_parent = document.createElement("span");
-        new_parent.setAttribute("draggable", true);
-        new_parent.setAttribute("id", "word_" + i);
-        let parent = highlights[i][0].parentNode;
-        for(var j = 0; j < highlights[i].length; j++) {
-            new_parent.appendChild(highlights[i][j]);
+        highlights[i][0].setAttribute("draggable", true);
+        for(var j = 1; j < highlights[i].length; j++) {
+            highlights[i][0].appendChild(highlights[i][j]);
         }
-
-        parent.insertBefore(new_parent, document.getElementById("special-text"));
     }
+}
+
+function insertAfter(newNode, existingNode) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
 }
