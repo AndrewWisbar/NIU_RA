@@ -16,7 +16,6 @@ let bracket = '">';
 let end_tag = "</span>";
 let inner_string = "";
 
-
 for(var i = 0; i < characters.length; i++) {
     //create a span for each character in the string
     inner_string += (start_tag + i + bracket + characters[i] + end_tag);
@@ -24,6 +23,8 @@ for(var i = 0; i < characters.length; i++) {
 }
 
 highlight_text.innerHTML = inner_string; // replace the original string
+
+
 
 
 scope.addEventListener("contextmenu", (event) => {
@@ -84,6 +85,7 @@ function unhighlight() {
     
     unhighlight_selection.setAttribute("draggable", "false");
     unhighlight_selection.classList.remove("highlighted-text");
+    unhighlight_selection.removeEventListener("dragstart", dragstart_handler);
 }
 
 function group_highlights() {
@@ -104,6 +106,7 @@ function group_highlights() {
 
     for(var i = 0; i < highlights.length; i++) {
         highlights[i][0].setAttribute("draggable", true);
+        highlights[i][0].addEventListener("dragstart", dragstart_handler);
         for(var j = 1; j < highlights[i].length; j++) {
             highlights[i][0].appendChild(highlights[i][j]);
         }

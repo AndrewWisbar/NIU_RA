@@ -28,54 +28,7 @@ let rect_ind = 0;
 
 let regions = [];
 
-/******************************************************************************
- ******************************Class Definitions*******************************
- *****************************************************************************/
 
-class selected_region {
-
-    constructor(left, up, right, low) {
-        let adj = base_img.naturalWidth / base_img.width
-        this.bounds = [left * adj, up * adj, right * adj, low * adj];
-    }
-
-    // called after a user selects a portion of the image
-    check() {
-        var ratio;
-
-        //if the width of the selection is greator
-        if((this.bounds[2] - this.bounds[0]) > (this.bounds[3] - this.bounds[1])) {
-            pre_canvas.width = 1000;
-
-            //get the ratio of width/height
-            ratio = pre_canvas.width / (this.bounds[2] - this.bounds[0]);
-
-            //set the height of the canvas to the appropriate size
-            pre_canvas.height = pre_canvas.width * ((this.bounds[3] - this.bounds[1]) / (this.bounds[2] - this.bounds[0]));
-        } else {
-            pre_canvas.height = 1000;
-
-            //get the ratio of height/width
-            ratio = pre_canvas.height / (this.bounds[3] - this.bounds[1]);
-
-            //set the width of the canvas based on the ratio
-            pre_canvas.width = pre_canvas.height * ((this.bounds[3] - this.bounds[1]) / (this.bounds[2] - this.bounds[0]));
-        }
-
-        //draw the image
-        pre_ctx.drawImage(base_img, this.bounds[0], this.bounds[1], 
-            this.bounds[2] - this.bounds[0],
-            this.bounds[3] - this.bounds[1], 0, 0,
-            pre_canvas.width,
-            pre_canvas.height);
-
-        //log the bounds of the selection
-        console.log("(", Math.floor(this.bounds[0]), ", ",
-            Math.floor(this.bounds[1]), ")  (", 
-            Math.floor(this.bounds[2]), ", ", 
-            Math.floor(this.bounds[3]), ")");
-    }
-} 
 
 /******************************************************************************
  ****************************Function Definitions******************************
@@ -148,7 +101,7 @@ function end_draw() {
 
     if(valid_selection) {
         regions.push(new selected_region(top_left_point[0], top_left_point[1], 
-                            bottom_right_point[0], bottom_right_point[1]));
+                            bottom_right_point[0], bottom_right_point[1], rectangles[rect_ind].id));
         //regions[rect_ind].check();
         rectangles[rect_ind].classList.add("finished_rect");
         select_rect(rectangles[rect_ind].getAttribute("id"));
@@ -174,7 +127,7 @@ function reset_image() {
     rectangles.splice(0, rectangles.length);
     rect_ind = 0;
     regions.splice(0, regions.length);
-
+    links.splice(0, links.length);
     pre_ctx.clearRect(0, 0, pre_canvas.width, pre_canvas.height);
 
 }
@@ -198,6 +151,8 @@ function draw() {
             rectangles[rect_ind].setAttribute("fill-opacity", 0);
             rectangles[rect_ind].setAttribute("id", rect_id);
             rectangles[rect_ind].setAttribute("onclick", "select_rect(this.id)");
+            rectangles[rect_ind].setAttribute('ondrop', "drop_handler(event)");
+            rectangles[rect_ind].setAttribute('ondragover', "dragover_handler(event)");
             rectangles[rect_ind].addEventListener('dragenter', function(e) {
                 e.preventDefault();
                 e.target.classList.add('dragging');
