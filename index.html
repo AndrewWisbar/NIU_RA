@@ -13,7 +13,7 @@
         <div id="drawing-panel" class="user-panel">
             <div >
                 <img src="https://www.niu.edu/locations/images/dekalb.jpg" alt="" class="base-img" draggable="false">
-                <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
 
                 </svg>
             </div>
@@ -29,11 +29,17 @@
             <p class="special-text">This is Sample Text for Highlighting.</p>
         </div>
     </div>
-    <div id="preview-panel" class="user-panel">
-        <p>Selection Preview:</p>
-        <canvas class="preview-canvas">
-            <p>Selection Preview Failed to Load</p>
-        </canvas>
+    <div class="flex-container">
+        <div id="preview-panel" class="user-panel">
+            <p>Selection Preview:</p>
+            <canvas class="preview-canvas">
+                <p>Selection Preview Failed to Load</p>
+            </canvas>
+        </div>
+        <div id="link-panel" class="user-panel">
+            <p>Active Links:</p>
+            <ul id="link-list"></ul>
+        </div>
     </div>
 
 

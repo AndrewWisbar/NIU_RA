@@ -1,6 +1,8 @@
 
 let links = [];
 
+const link_list = document.getElementById("link-list");
+
 function dragstart_handler(ev) {
     var target_el;
     if (RegExp('char_\d*').test(ev.target.parentNode.parentNode.id))
@@ -31,6 +33,7 @@ function drop_handler(ev) {
     var i = 0;
     while(i < links.length) {
         if(links[i].region.id === ev.target.id) {
+
             links.splice(i, 1);
             console.log("Old link removed");
 
@@ -46,5 +49,22 @@ function drop_handler(ev) {
 
     links.push(new word_link(regions[index], word));
 
+    write_links();
+
     console.log(links);
+}
+
+
+function write_links() {
+
+    link_list.innerHTML = '';
+
+    for(var i = 0; i < links.length; i++) {
+        let item = document.createElement("li");
+        item.innerHTML = links[i].region.id + ' is linked to the word "' + links[i].word + '"';
+
+        link_list.appendChild(item);
+    }
+
+
 }

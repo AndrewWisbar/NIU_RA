@@ -128,6 +128,7 @@ function reset_image() {
     rect_ind = 0;
     regions.splice(0, regions.length);
     links.splice(0, links.length);
+    link_list.innerHTML = '';
     pre_ctx.clearRect(0, 0, pre_canvas.width, pre_canvas.height);
 
 }
@@ -192,5 +193,7 @@ function select_rect(clicked_id) {
     regions[index].check();
 
 }
+
 //call draw to start recursion
 draw();
+

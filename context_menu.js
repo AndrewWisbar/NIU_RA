@@ -70,6 +70,15 @@ function highlight() {
 
 function unhighlight() {
     var unhighlight_id = unhighlight_selection.id;
+
+    var unhighlight_text = document.getElementById(unhighlight_id).innerText;
+
+    for(var i = 0; i < links.length; i++) {
+        if(links[i].word === unhighlight_text) {
+            links.splice(i, 1);
+        }
+    }
+
     for(var i = 0; i < highlights.length; i++) {
         if(highlights[i][0].id === unhighlight_id) {
             for(var j = highlights[i].length - 1; j >= 1; j--) {
@@ -86,6 +95,8 @@ function unhighlight() {
     unhighlight_selection.setAttribute("draggable", "false");
     unhighlight_selection.classList.remove("highlighted-text");
     unhighlight_selection.removeEventListener("dragstart", dragstart_handler);
+
+    write_links();
 }
 
 function group_highlights() {
