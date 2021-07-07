@@ -5,8 +5,8 @@
  class selected_region {
 
     constructor(left, up, right, low, id) {
-        let adj = base_img.naturalWidth / base_img.width
-        this.bounds = [left * adj, up * adj, right * adj, low * adj];
+        this.adj = base_img.naturalWidth / base_img.width
+        this.bounds = [left * this.adj, up * this.adj, right * this.adj, low * this.adj];
         this.unadjusted = [left, up, right, low];
         this.id = id;
     }
@@ -42,12 +42,17 @@
             pre_canvas.height);
 
         //log the bounds of the selection
-        /*
+        
         console.log("(", Math.floor(this.bounds[0]), ", ",
             Math.floor(this.bounds[1]), ")  (", 
             Math.floor(this.bounds[2]), ", ", 
             Math.floor(this.bounds[3]), ")");
-        */
+        
+    }
+
+    update(left, up, right, low) {
+        this.bounds = [left * this.adj, up * this.adj, right * this.adj, low * this.adj];
+        this.unadjusted = [left, up, right, low];
     }
 } 
 

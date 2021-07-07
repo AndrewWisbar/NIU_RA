@@ -14,7 +14,6 @@ const sizePicker = document.querySelector('input[type="range"]');
 
 //Flags to control mouse interaction
 let draw_flag = false;
-let edit_flag = false;
 let prev_point = false;
 let valid_selection = false;
 let rectangle_created = false;
@@ -102,12 +101,31 @@ function mouse_move(event) {
         valid_selection = true;
     }
 
-    if(edit_flag) {
+    if(edit_flag) { //if we're editing
+        
+        //get the mouse position
+        let pos = getMousePos(svg_cont, event);
 
-       set_corners(rect_ind);
+        //determine the coordinates of the top left and bottom right points
+        if(pos.x < edit_anchor[0]) { 
+            edit_brp[0] = edit_anchor[0];
+            edit_tlp[0] = pos.x;
+        }
+        else {
+            edit_brp[0] = pos.x;
+        }
 
-
-
+        if(pos.y < edit_anchor[1]) {
+            edit_brp[1] = edit_anchor[1];
+            edit_tlp[1] = pos.y;
+        }
+        else {
+            edit_brp[1] = pos.y;
+        }
+    
+        valid_edit = true;
+    
+       set_corners(selected_rect);
     }
 }
 
@@ -131,7 +149,11 @@ function end_draw() {
         anchor_point = [0, 0];
         top_left_point = [0, 0];
         bottom_right_point = [0, 0];
-    }      
+    }    
+    
+    if(edit_flag) {
+        end_edit();
+    }
 }
 
 
@@ -191,17 +213,15 @@ function draw() {
         prev_point = false;
     }
 
-    if(edit_flag) {
+    if(edit_flag && valid_edit) {
 
         let p_box = getCoords(document.getElementById("main_container"));
 
-        rectangles[rect_ind].setAttribute("x", top_left_point[0] - p_box.left);
-        rectangles[rect_ind].setAttribute("y", top_left_point[1] - p_box.top);
-        rectangles[rect_ind].setAttribute("width", bottom_right_point[0] - top_left_point[0]);
-        rectangles[rect_ind].setAttribute("height", bottom_right_point[1] - top_left_point[1]);
+        rectangles[selected_rect].setAttribute("x", edit_tlp[0]);
+        rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
+        rectangles[selected_rect].setAttribute("width", edit_brp[0] - edit_tlp[0]);
+        rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
 
-
-        rectangles[rect_ind]
     }
 
     requestAnimationFrame(draw);
@@ -221,52 +241,6 @@ function select_rect(clicked_id) {
 
     regions[index].check();
 
-}
-
-
-
-function begin_edit(event, id) {
-
-    edit_flag = true;
-    rect_ind = selected_rect;
-
-    let points = getCoords(rectangles[rect_ind]);
-
-    if(id == "corner_0")
-        anchor_point = [points.right, points.bottom];
-    else if(id == "corner_1")
-        anchor_point = [points.left, points.bottom];
-    else if(id == "corner_2")
-        anchor_point = [points.right, points.top];
-    else
-        anchor_point = [points.left, points.top];
-
-
-    top_left_point = [points.left, points.top];
-    bottom_right_point = [points.right, points.bottom];
-
-    console.log(anchor_point + "\n" + top_left_point + "\n" + bottom_right_point);
-}   
-
-function end_edit(event) {
-    edit_flag = false;
-}
-
-function set_corners(index) {
-    let box = getCoords(rectangles[index]);
-    let parent_box = getCoords(document.getElementById("main_container"));
-
-    corners[0].setAttribute("x", (box.left - parent_box.left) - 5);
-    corners[0].setAttribute("y", (box.top - parent_box.top) - 5);
-
-    corners[1].setAttribute("x", (box.right - parent_box.left) - 5);
-    corners[1].setAttribute("y", (box.top - parent_box.top) - 5);
-
-    corners[2].setAttribute("x", (box.left - parent_box.left) - 5);
-    corners[2].setAttribute("y", (box.bottom - parent_box.top) - 5);
-
-    corners[3].setAttribute("x", (box.right - parent_box.left) - 5);
-    corners[3].setAttribute("y", (box.bottom - parent_box.top) - 5);
 }
 
 //call draw to start recursion

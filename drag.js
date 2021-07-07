@@ -102,6 +102,18 @@ function getCoords(elem) {
     };
 }
 
+function getRelCoords(elem, elem_2) {
+    let box = elem.getBoundingClientRect();
+    let box_2 = elem_2.getBoundingClientRect();
+    return {
+      top: box.top - box_2.top,
+      right: box.right - box_2.left,
+      bottom: box.bottom - box_2.top,
+      left: box.left - box_2.left
+    };
+}
+
+
 function get_parents_bounds(elem) {
 
     let adj_left = 0;
