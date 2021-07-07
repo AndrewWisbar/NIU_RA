@@ -8,10 +8,17 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <div class="flex-container">
+    <svg id="line_cont" class="container_svg" width=100% height=1></svg>
+    <svg id="corner_cont" class="container_svg" width=100% height=1>
+        <rect id="corner_0" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(event)" onmouseup="end_edit(event)"></rect>
+        <rect id="corner_1" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(event)" onmouseup="end_edit(event)"></rect>
+        <rect id="corner_2" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(event)" onmouseup="end_edit(event)"></rect>
+        <rect id="corner_3" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(event)" onmouseup="end_edit(event)"></rect>
+    </svg>
+    <div class="flex-container" id="main_container">
         <div id="drawing-panel" class="user-panel">
             <div >
+                
                 <img src="https://www.niu.edu/locations/images/dekalb.jpg" alt="" class="base-img" draggable="false">
                 <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
 
@@ -49,6 +56,7 @@
         <!--<div class="menu-item"><button class="menu-button">Option 3</button></div>-->
     </div>
 
+    <script src="lib/d3.min.js"></script>
     <script src="classes.js"></script>
     <script src="drag.js"></script>
     <script src="draw.js"></script>

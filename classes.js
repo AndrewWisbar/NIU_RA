@@ -7,6 +7,7 @@
     constructor(left, up, right, low, id) {
         let adj = base_img.naturalWidth / base_img.width
         this.bounds = [left * adj, up * adj, right * adj, low * adj];
+        this.unadjusted = [left, up, right, low];
         this.id = id;
     }
 
@@ -41,18 +42,23 @@
             pre_canvas.height);
 
         //log the bounds of the selection
+        /*
         console.log("(", Math.floor(this.bounds[0]), ", ",
             Math.floor(this.bounds[1]), ")  (", 
             Math.floor(this.bounds[2]), ", ", 
             Math.floor(this.bounds[3]), ")");
+        */
     }
 } 
 
 
 
 class word_link {
-    constructor(region, word) {
+    constructor(region, word, rect, span) {
         this.region = region;
         this.word = word;
+        this.rect = rect;
+        this.span = span;
+
     }
 }

@@ -39,7 +39,6 @@ body {
     border: 2px solid var(--dark-text);   
     border-style: inset;
     border-radius: 5px;
-    margin-top: 4%;
 }
 
 /* Text - Caption Box */
@@ -90,8 +89,9 @@ body {
 }
 
 .selected {
-    stroke-width: 6px;
+    stroke-width: 4px;
     transition-duration: 0.1s;
+    stroke-dasharray: 5,5;
 }
 
 .preview-canvas {
@@ -121,7 +121,16 @@ body {
     stroke-opacity: 0.5;
 }
 
+.container_svg {
+    position: absolute;
+    margin:0;
+    overflow: visible;
+    z-index: 99 !important;
+}
 
+.marker {
+    position:absolute;
+}
 
 /****************/
 /* Context Menu */

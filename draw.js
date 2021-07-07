@@ -14,6 +14,7 @@ const sizePicker = document.querySelector('input[type="range"]');
 
 //Flags to control mouse interaction
 let draw_flag = false;
+let edit_flag = false;
 let prev_point = false;
 let valid_selection = false;
 let rectangle_created = false;
@@ -28,7 +29,10 @@ let rect_ind = 0;
 
 let regions = [];
 
-
+let corners = [];
+for(var i = 0; i < 4; i++) {
+    corners.push(document.getElementById("corner_" + i));
+}
 
 /******************************************************************************
  ****************************Function Definitions******************************
@@ -70,9 +74,11 @@ function begin_draw(event) {
 function mouse_move(event) {
     
     if(draw_flag) { //if we've begun drawing
-
+        
         //get the mouse position
         let pos = getMousePos(svg_cont, event);
+        
+       
         prev_point = true; // we now have two points to draw the rectangle
 
         //determine the coordinates of the top left and bottom right points
@@ -95,34 +101,43 @@ function mouse_move(event) {
         //we now have a valid selected region
         valid_selection = true;
     }
+
+    if(edit_flag) {
+
+       set_corners(rect_ind);
+
+
+
+    }
 }
 
 function end_draw() {
+    if(draw_flag) {
+        if(valid_selection) {
+            regions.push(new selected_region(top_left_point[0], top_left_point[1], 
+                                bottom_right_point[0], bottom_right_point[1], rectangles[rect_ind].id));
+            //regions[rect_ind].check();
+            rectangles[rect_ind].classList.add("finished_rect");
+            select_rect(rectangles[rect_ind].getAttribute("id"));
 
-    if(valid_selection) {
-        regions.push(new selected_region(top_left_point[0], top_left_point[1], 
-                            bottom_right_point[0], bottom_right_point[1], rectangles[rect_ind].id));
-        //regions[rect_ind].check();
-        rectangles[rect_ind].classList.add("finished_rect");
-        select_rect(rectangles[rect_ind].getAttribute("id"));
+            rect_ind++;
+        }
 
-        rect_ind++;
-    }
+        draw_flag = false;
+        prev_point = false;
+        valid_selection = false;
+        rectangle_created = false;
 
-    draw_flag = false;
-    prev_point = false;
-    valid_selection = false;
-    rectangle_created = false;
-
-    anchor_point = [0, 0];
-    top_left_point = [0, 0];
-    bottom_right_point = [0, 0];
-
+        anchor_point = [0, 0];
+        top_left_point = [0, 0];
+        bottom_right_point = [0, 0];
+    }      
 }
 
 
 function reset_image() {
     removeAllChildren(svg_cont);
+    removeAllChildren(line_cont);
 
     rectangles.splice(0, rectangles.length);
     rect_ind = 0;
@@ -143,7 +158,7 @@ function removeAllChildren(parent) {
 
 
 function draw() {
-    if(draw_flag && prev_point) {
+    if((draw_flag && prev_point)) {
         if(!rectangle_created) {
             let rect_id = "rect_" + rect_ind;
             rectangles[rect_ind].setAttribute("fill", colorPicker.value);
@@ -176,24 +191,86 @@ function draw() {
         prev_point = false;
     }
 
+    if(edit_flag) {
+
+        let p_box = getCoords(document.getElementById("main_container"));
+
+        rectangles[rect_ind].setAttribute("x", top_left_point[0] - p_box.left);
+        rectangles[rect_ind].setAttribute("y", top_left_point[1] - p_box.top);
+        rectangles[rect_ind].setAttribute("width", bottom_right_point[0] - top_left_point[0]);
+        rectangles[rect_ind].setAttribute("height", bottom_right_point[1] - top_left_point[1]);
+
+
+        rectangles[rect_ind]
+    }
+
     requestAnimationFrame(draw);
 }
 
 function select_rect(clicked_id) {
-    console.log(clicked_id);
     var index = parseInt(clicked_id.match(/\d+/),10);
 
     for(var i = 0; i < rectangles.length; i++) {
-        if(rectangles[i].classList.contains("selected"))
-            rectangles[i].classList.remove("selected");
+        rectangles[i].classList.remove("selected");
     }
 
+    selected_rect = index;
     rectangles[index].classList.add("selected");
+
+    set_corners(index);
 
     regions[index].check();
 
 }
 
+
+
+function begin_edit(event, id) {
+
+    edit_flag = true;
+    rect_ind = selected_rect;
+
+    let points = getCoords(rectangles[rect_ind]);
+
+    if(id == "corner_0")
+        anchor_point = [points.right, points.bottom];
+    else if(id == "corner_1")
+        anchor_point = [points.left, points.bottom];
+    else if(id == "corner_2")
+        anchor_point = [points.right, points.top];
+    else
+        anchor_point = [points.left, points.top];
+
+
+    top_left_point = [points.left, points.top];
+    bottom_right_point = [points.right, points.bottom];
+
+    console.log(anchor_point + "\n" + top_left_point + "\n" + bottom_right_point);
+}   
+
+function end_edit(event) {
+    edit_flag = false;
+}
+
+function set_corners(index) {
+    let box = getCoords(rectangles[index]);
+    let parent_box = getCoords(document.getElementById("main_container"));
+
+    corners[0].setAttribute("x", (box.left - parent_box.left) - 5);
+    corners[0].setAttribute("y", (box.top - parent_box.top) - 5);
+
+    corners[1].setAttribute("x", (box.right - parent_box.left) - 5);
+    corners[1].setAttribute("y", (box.top - parent_box.top) - 5);
+
+    corners[2].setAttribute("x", (box.left - parent_box.left) - 5);
+    corners[2].setAttribute("y", (box.bottom - parent_box.top) - 5);
+
+    corners[3].setAttribute("x", (box.right - parent_box.left) - 5);
+    corners[3].setAttribute("y", (box.bottom - parent_box.top) - 5);
+}
+
 //call draw to start recursion
 draw();
+
+
 
