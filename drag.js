@@ -27,7 +27,7 @@ function drop_handler(ev) {
     var data = ev.dataTransfer.getData("text/plain");
     var span = document.getElementById(data);
     var word = span.innerText;
-
+    
     console.log(ev.target.id, 'has been linked to the word "', word, '"');
     ev.target.classList.remove('dragging');
     var index = parseInt(ev.target.id.match(/\d+/),10);
@@ -48,7 +48,7 @@ function drop_handler(ev) {
     }
 
     links.push(new word_link(regions[index], word, rectangles[index], span));
-
+    select_rect(ev.target.id);
     write_links();
 }
 
@@ -61,17 +61,8 @@ function write_links() {
         let item = document.createElement("li");
         item.innerHTML = links[i].region.id + ' is linked to the word "' + links[i].word + '"';
         
-        let span_offset = getCoords(links[i].span);
-        let rect_offset = getCoords(links[i].rect);
-        
-        let path = get_path(span_offset, rect_offset, 12);
         link_list.appendChild(item);
-        line_cont.append('path')
-            .style("stroke", "black")
-            .style("stroke-width", 2)
-            .style("stroke-dasharray", "5,5")
-            .style("fill", "none")
-            .attr("d", path);      
+        draw_links(i);    
     }
 }
 
@@ -79,13 +70,35 @@ function get_path(start, end, intensity) {
 
     let parent_box = getCoords(document.getElementById("main_container"));
     var new_path = d3.path();
-    new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
-    new_path.bezierCurveTo(start.left - parent_box.left, 
-                            end.top - parent_box.top, 
-                            end.right - parent_box.left, 
-                            end.top- parent_box.top, 
-                            end.right - parent_box.left,
-                            end.top- parent_box.top);
+
+    if(end.top < start.top) {
+        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
+        new_path.bezierCurveTo(start.left - parent_box.left, 
+                                end.top - parent_box.top, 
+                                end.right - parent_box.left, 
+                                end.top- parent_box.top, 
+                                end.right - parent_box.left,
+                                end.top- parent_box.top);
+    }
+    else if(end.top < start.bottom) {
+        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
+        new_path.bezierCurveTo((start.left + start.right) / 2 - parent_box.left, 
+                                start.top - parent_box.top + (start.top - end.top), 
+                                end.right - parent_box.left, 
+                                end.top- parent_box.top, 
+                                end.right - parent_box.left,
+                                end.top- parent_box.top);
+    }
+    else{
+        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
+        new_path.bezierCurveTo(start.left - parent_box.left, 
+                                end.top - parent_box.top, 
+                                end.right - parent_box.left, 
+                                end.top- parent_box.top, 
+                                end.right - parent_box.left,
+                                end.top- parent_box.top);
+    }
+    
 
     return new_path;
 }
@@ -134,3 +147,16 @@ function get_parents_bounds(elem) {
     };
 }
 
+function draw_links(index) {
+    let span_offset = getCoords(links[index].span);
+    let rect_offset = getCoords(links[index].rect);
+
+    let path = get_path(span_offset, rect_offset, 12);
+
+    line_cont.append('path')
+        .style("stroke", "black")
+        .style("stroke-width", 2)
+        .style("stroke-dasharray", "5,5")
+        .style("fill", "none")
+        .attr("d", path);  
+}

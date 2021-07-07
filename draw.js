@@ -73,7 +73,6 @@ function begin_draw(event) {
 function mouse_move(event) {
     
     if(draw_flag) { //if we've begun drawing
-        
         //get the mouse position
         let pos = getMousePos(svg_cont, event);
         
@@ -102,7 +101,6 @@ function mouse_move(event) {
     }
 
     if(edit_flag) { //if we're editing
-        
         //get the mouse position
         let pos = getMousePos(svg_cont, event);
 
@@ -165,8 +163,9 @@ function reset_image() {
     rect_ind = 0;
     regions.splice(0, regions.length);
     links.splice(0, links.length);
-    link_list.innerHTML = '';
     pre_ctx.clearRect(0, 0, pre_canvas.width, pre_canvas.height);
+    write_links();
+    set_corners(-1);
 
 }
 
@@ -214,14 +213,13 @@ function draw() {
     }
 
     if(edit_flag && valid_edit) {
-
-        let p_box = getCoords(document.getElementById("main_container"));
-
         rectangles[selected_rect].setAttribute("x", edit_tlp[0]);
         rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
         rectangles[selected_rect].setAttribute("width", edit_brp[0] - edit_tlp[0]);
         rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
 
+        set_corners(selected_rect);
+        write_links();
     }
 
     requestAnimationFrame(draw);
