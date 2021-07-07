@@ -69,34 +69,29 @@ function write_links() {
 function get_path(start, end, intensity) {
 
     let parent_box = getCoords(document.getElementById("main_container"));
+    let text_box = getCoords(document.getElementById("sample-text"));
     var new_path = d3.path();
 
-    if(end.top < start.top) {
+    if((end.top + end.bottom) / 2 < start.top) {
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
-        new_path.bezierCurveTo(start.left - parent_box.left, 
-                                end.top - parent_box.top, 
-                                end.right - parent_box.left, 
-                                end.top- parent_box.top, 
-                                end.right - parent_box.left,
-                                end.top- parent_box.top);
+        new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
+                                    (end.top + end.bottom) / 2 - parent_box.top,
+                                    end.right - parent_box.left,
+                                    (end.top + end.bottom) / 2 - parent_box.top);
     }
-    else if(end.top < start.bottom) {
+    else if((end.top + end.bottom) / 2 < start.bottom) {
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
-        new_path.bezierCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                                start.top - parent_box.top + (start.top - end.top), 
-                                end.right - parent_box.left, 
-                                end.top- parent_box.top, 
+        new_path.quadraticCurveTo(text_box.left, 
+                                text_box.top,
                                 end.right - parent_box.left,
-                                end.top- parent_box.top);
+                                (end.top + end.bottom) / 2 - parent_box.top);
     }
     else{
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
-        new_path.bezierCurveTo(start.left - parent_box.left, 
-                                end.top - parent_box.top, 
-                                end.right - parent_box.left, 
-                                end.top- parent_box.top, 
-                                end.right - parent_box.left,
-                                end.top- parent_box.top);
+        new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
+                                    (end.top + end.bottom) / 2 - parent_box.top,
+                                    end.right - parent_box.left,
+                                    (end.top + end.bottom) / 2 - parent_box.top);
     }
     
 

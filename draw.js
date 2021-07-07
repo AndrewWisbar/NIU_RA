@@ -33,6 +33,8 @@ for(var i = 0; i < 4; i++) {
     corners.push(document.getElementById("corner_" + i));
 }
 
+corners.push(document.getElementById("center"));
+
 /******************************************************************************
  ****************************Function Definitions******************************
  *****************************************************************************/
@@ -125,6 +127,13 @@ function mouse_move(event) {
     
        set_corners(selected_rect);
     }
+
+
+    if(move_flag) {
+        let pos = getMousePos(svg_cont, event);
+
+        move_offset = [move_anchor[0] - pos.x, move_anchor[1] - pos.y];
+    }
 }
 
 function end_draw() {
@@ -151,6 +160,10 @@ function end_draw() {
     
     if(edit_flag) {
         end_edit();
+    }
+
+    if(move_flag) {
+        end_move();
     }
 }
 
@@ -217,6 +230,14 @@ function draw() {
         rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
         rectangles[selected_rect].setAttribute("width", edit_brp[0] - edit_tlp[0]);
         rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
+
+        set_corners(selected_rect);
+        write_links();
+    }
+
+    if(move_flag) {
+        rectangles[selected_rect].setAttribute("x", move_start[0] - move_offset[0]);
+        rectangles[selected_rect].setAttribute("y", move_start[1] - move_offset[1]);
 
         set_corners(selected_rect);
         write_links();
