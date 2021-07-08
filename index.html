@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <svg id="line_cont" class="container_svg" width=100% height=1></svg>
+    <svg id="line_cont" class="container_svg" width=1 height=1></svg>
     <svg id="corner_cont" class="container_svg" width=100% height=1>
-        <rect id="corner_0" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-        <rect id="corner_1" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-        <rect id="corner_2" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-        <rect id="corner_3" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-        <rect id="center" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_move(event)" onmouseup="end_move()" onmousemove="mouse_move(event)"></rect>
+        <rect id="corner_0" class="control_mark" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
+        <rect id="corner_1" class="control_mark" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
+        <rect id="corner_2" class="control_mark" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
+        <rect id="corner_3" class="control_mark" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
+        <rect id="center" class="control_mark" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_move(event)" onmouseup="end_move()" onmousemove="mouse_move(event)"></rect>
     </svg>
     <div class="flex-container" id="main_container">
         <div id="drawing-panel" class="user-panel">
@@ -22,7 +22,7 @@
                 
                 <img src="https://www.niu.edu/locations/images/dekalb.jpg" alt="" class="base-img" draggable="false">
                 <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
-
+                    
                 </svg>
             </div>
         
@@ -54,6 +54,7 @@
     <div id="context-menu">
         <div class="menu-item"><button class="menu-button" onclick="highlight()">Highlight Selection</button></div>
         <div class="menu-item"><button class="menu-button" onclick="unhighlight()">Unhighlight Word</button></div>
+        <div class="menu-item"><button class="menu-button" onclick="delete_rect()">Delete Rectangle</button></div>
         <!--<div class="menu-item"><button class="menu-button">Option 3</button></div>-->
     </div>
 

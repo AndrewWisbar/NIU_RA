@@ -53,6 +53,14 @@
     update(left, up, right, low) {
         this.bounds = [left * this.adj, up * this.adj, right * this.adj, low * this.adj];
         this.unadjusted = [left, up, right, low];
+        this.check();
+    }
+
+    rectUpdate(rect) {
+        let box = getRelCoords(rect, svg_cont);
+        this.bounds = [box.left * this.adj, box.top * this.adj, box.right * this.adj, box.bottom * this.adj];
+        this.unadjusted = [box.left, box.top, box.right, box.bottom];
+        this.id = rect.id;
     }
 } 
 
@@ -64,6 +72,7 @@ class word_link {
         this.word = word;
         this.rect = rect;
         this.span = span;
+        this.id = this.rect.id;
 
     }
 }

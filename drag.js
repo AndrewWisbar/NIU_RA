@@ -34,12 +34,12 @@ function drop_handler(ev) {
 
     var i = 0;
     while(i < links.length) {
-        if(links[i].region.id === ev.target.id) {
+        /*if(links[i].region.id === ev.target.id) {
 
             links.splice(i, 1);
 
         }
-        else if(links[i].word === word) {
+        else */if(links[i].word === word) {
             links.splice(i, 1);
         }
         else {
@@ -57,13 +57,42 @@ function write_links() {
 
     link_list.innerHTML = '';
     line_cont.html("");
-    for(var i = 0; i < links.length; i++) {
-        let item = document.createElement("li");
-        item.innerHTML = links[i].region.id + ' is linked to the word "' + links[i].word + '"';
-        
-        link_list.appendChild(item);
-        draw_links(i);    
+    let temp = new Array(rectangles.length);
+    for(var i = 0; i < temp.length; i++) {
+        temp[i] = new Array(0);
     }
+
+    for(var i = 0; i < links.length; i++) {
+        draw_links(i);
+
+        var tmp_i = parseInt(links[i].id.match(/\d+/),10);
+        temp[tmp_i].push(links[i].word);
+    }
+
+    for(var i = 0; i < temp.length; i++) {
+        if(temp[i].length > 1) {
+            let item = document.createElement("li");
+            item.innerHTML = "rect_" + i + ' is linked to the words "';
+            for(var j = 0; j < temp[i].length; j++) {
+                if(j == temp[i].length - 1) {
+                    item.innerHTML += temp[i][j] + '"';
+                }
+                else if(j == temp[i].length - 2) {
+                    item.innerHTML += temp[i][j] + '" and "';
+                }
+                else {
+                    item.innerHTML += temp[i][j] + '", '
+                }
+            }
+
+            link_list.appendChild(item);
+        }
+        else if(temp[i].length == 1) {
+            let item = document.createElement("li");
+            item.innerHTML = "rect_" + i + ' is linked to the word "' + temp[i][0] + '"';
+            link_list.appendChild(item);
+        }
+    }    
 }
 
 function get_path(start, end, intensity) {
@@ -149,7 +178,7 @@ function draw_links(index) {
     let path = get_path(span_offset, rect_offset, 12);
 
     line_cont.append('path')
-        .style("stroke", "black")
+        .style("stroke", "var(--light-acc)")
         .style("stroke-width", 2)
         .style("stroke-dasharray", "5,5")
         .style("fill", "none")

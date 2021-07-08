@@ -97,6 +97,7 @@ function unhighlight() {
     unhighlight_selection.removeEventListener("dragstart", dragstart_handler);
 
     write_links();
+    contextMenu.classList.remove("visible");
 }
 
 function group_highlights() {
@@ -126,4 +127,41 @@ function group_highlights() {
 
 function insertAfter(newNode, existingNode) {
     existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+}
+
+function delete_rect() {
+    /*
+    console.log(rectangles);
+    if(selected_rect < rectangles.length) {
+        
+        regions.splice(select_rect, 1);
+
+        var i = 0; 
+        while(i < links.length) {
+            if(links[i].rect == rectangles[selected_rect])
+                links.splice(i, 1);
+            else
+                i++
+        }
+        console.log(rectangles);
+        var remove_rect = document.getElementById("rect_" + selected_rect);
+        remove_rect.parentNode.removeChild(remove_rect);
+        rectangles.splice(selected_rect, 1);
+        rectangles.length -= 1;
+        console.log(rectangles.length)
+        for(var i = 0; i < rectangles.length; i++) {
+            rectangles[i].setAttribute("id", "rect_" + i);
+            regions[i].rectUpdate(rectangles[i]);
+            console.log(i);
+        }
+
+        rect_ind = rectangles.length;
+
+    
+    }
+
+    contextMenu.classList.remove("visible");
+    write_links();
+    set_corners(-1);
+    */
 }

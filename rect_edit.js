@@ -10,8 +10,9 @@ let edit_anchor = [0, 0];
 let edit_tlp = [0, 0];
 let edit_brp = [0, 0];
 
+const cor_anchor = document.getElementById("corner_anchor");
 
-function set_corners(index) {
+function set_corners(index, label) {
     if(index == -1) {
         corners[0].setAttribute("x", -10);
         corners[0].setAttribute("y", -10);
@@ -30,7 +31,7 @@ function set_corners(index) {
     }
     else {
 
-        let box = getRelCoords(rectangles[index], document.getElementById("main_container"));
+        let box = getRelCoords(rectangles[index], document.getElementById("corner_cont"));
 
         corners[0].setAttribute("x", (box.left) - 5);
         corners[0].setAttribute("y", (box.top) - 5);

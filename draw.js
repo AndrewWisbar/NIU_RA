@@ -28,6 +28,8 @@ let rect_ind = 0;
 
 let regions = [];
 
+let label;
+
 let corners = [];
 for(var i = 0; i < 4; i++) {
     corners.push(document.getElementById("corner_" + i));
@@ -125,7 +127,9 @@ function mouse_move(event) {
     
         valid_edit = true;
     
-       set_corners(selected_rect);
+       
+        let box = getRelCoords(rectangles[selected_rect], svg_cont);
+        regions[selected_rect].update(box.left, box.top, box.right, box.bottom);
     }
 
 
@@ -133,6 +137,8 @@ function mouse_move(event) {
         let pos = getMousePos(svg_cont, event);
 
         move_offset = [move_anchor[0] - pos.x, move_anchor[1] - pos.y];
+        let box = getRelCoords(rectangles[selected_rect], svg_cont);
+        regions[selected_rect].update(box.left, box.top, box.right, box.bottom);
     }
 }
 
@@ -143,7 +149,7 @@ function end_draw() {
                                 bottom_right_point[0], bottom_right_point[1], rectangles[rect_ind].id));
             //regions[rect_ind].check();
             rectangles[rect_ind].classList.add("finished_rect");
-            select_rect(rectangles[rect_ind].getAttribute("id"));
+            rectangles[rect_ind].setAttribute("onmouseover", "select_rect(this.id)");
 
             rect_ind++;
         }
@@ -200,7 +206,6 @@ function draw() {
             rectangles[rect_ind].setAttribute("stroke", colorPicker.value);
             rectangles[rect_ind].setAttribute("fill-opacity", 0);
             rectangles[rect_ind].setAttribute("id", rect_id);
-            rectangles[rect_ind].setAttribute("onclick", "select_rect(this.id)");
             rectangles[rect_ind].setAttribute('ondrop', "drop_handler(event)");
             rectangles[rect_ind].setAttribute('ondragover', "dragover_handler(event)");
             rectangles[rect_ind].addEventListener('dragenter', function(e) {
@@ -247,19 +252,21 @@ function draw() {
 }
 
 function select_rect(clicked_id) {
-    var index = parseInt(clicked_id.match(/\d+/),10);
 
-    for(var i = 0; i < rectangles.length; i++) {
-        rectangles[i].classList.remove("selected");
+    if(!(edit_flag || draw_flag || move_flag)) {
+        var index = parseInt(clicked_id.match(/\d+/),10);
+
+        for(var i = 0; i < rectangles.length; i++) {
+            rectangles[i].classList.remove("selected");
+        }
+
+        selected_rect = index;
+        rectangles[index].classList.add("selected");
+
+        set_corners(index, label);
+
+        regions[index].check();
     }
-
-    selected_rect = index;
-    rectangles[index].classList.add("selected");
-
-    set_corners(index);
-
-    regions[index].check();
-
 }
 
 //call draw to start recursion
