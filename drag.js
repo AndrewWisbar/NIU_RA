@@ -243,11 +243,9 @@ function draw_links(index) {
 function highlight_link(e) {
     let sel_link = e.target;
     sel_link.classList.add("selected_link");
-    console.log("it is done.")
 }
 
 function unhighlight_link(e) {
     let sel_link = e.target;
     sel_link.classList.remove("selected_link");
-    console.log("it is done.")
 }
