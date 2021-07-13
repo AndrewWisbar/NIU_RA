@@ -42,11 +42,12 @@
             pre_canvas.height);
 
         //log the bounds of the selection
-        
+        /*
         console.log("(", Math.floor(this.bounds[0]), ", ",
             Math.floor(this.bounds[1]), ")  (", 
             Math.floor(this.bounds[2]), ", ", 
             Math.floor(this.bounds[3]), ")");
+        */
         
     }
 
