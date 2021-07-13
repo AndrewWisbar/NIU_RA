@@ -39,7 +39,7 @@ function drop_handler(ev) {
             links.splice(i, 1);
 
         }
-        else */if(links[i].word === word) {
+        else */if(links[i].span === span) {
             links.splice(i, 1);
         }
         else {
@@ -65,7 +65,7 @@ function write_links() {
     for(var i = 0; i < links.length; i++) {
         draw_links(i);
 
-        var tmp_i = parseInt(links[i].id.match(/\d+/),10);
+        var tmp_i = parseInt(links[i].rect.id.match(/\d+/),10);
         temp[tmp_i].push(links[i].word);
     }
 
@@ -98,7 +98,9 @@ function write_links() {
 function get_path(start, end, intensity) {
 
     let parent_box = getCoords(document.getElementById("main_container"));
+    let svg_box = getCoords(document.getElementById("svg_cont"));
     let text_box = getCoords(document.getElementById("sample-text"));
+    let extent = ((start.left + start.right) / 2 + (svg_box.right - end.right)) / 10
     var new_path = d3.path();
 
     if((end.top + end.bottom) / 2 < start.top) {
@@ -114,6 +116,15 @@ function get_path(start, end, intensity) {
                                 text_box.top,
                                 end.right - parent_box.left,
                                 (end.top + end.bottom) / 2 - parent_box.top);
+    }
+    else if (end.top - start.top > 50) {
+        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
+        new_path.bezierCurveTo(text_box.left - parent_box.left, 
+        (start.top + start.bottom) / 2 - parent_box.top, 
+        svg_box.right - parent_box.left, 
+        (end.top + end.bottom) / 2 - parent_box.top, 
+        end.right - parent_box.left,
+        (end.top + end.bottom) / 2 - parent_box.top); 
     }
     else{
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
@@ -178,9 +189,23 @@ function draw_links(index) {
     let path = get_path(span_offset, rect_offset, 12);
 
     line_cont.append('path')
-        .style("stroke", "var(--light-acc)")
+        /*.style("stroke", "var(--light-acc)")
         .style("stroke-width", 2)
         .style("stroke-dasharray", "5,5")
-        .style("fill", "none")
-        .attr("d", path);  
+        .style("fill", "none")*/
+        .attr("d", path)
+        .attr("onmouseover", "highlight_link(event)")
+        .attr("onmouseout", "unhighlight_link(event)"); 
+}
+
+function highlight_link(e) {
+    let sel_link = e.target;
+    sel_link.classList.add("selected_link");
+    console.log("it is done.")
+}
+
+function unhighlight_link(e) {
+    let sel_link = e.target;
+    sel_link.classList.remove("selected_link");
+    console.log("it is done.")
 }

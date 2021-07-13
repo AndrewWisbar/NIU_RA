@@ -17,6 +17,7 @@ body {
     margin: 0;
     overflow-x: hidden;
     background-color: var(--main-dark);
+    overflow: overlay;
 }
 
 .flex-container {
@@ -95,8 +96,8 @@ body {
 }
 
 .preview-canvas {
-    width: 90%;
-    margin-left: 5%;
+    width: 50%;
+    margin-left: 25%;
     margin-top: 2.5%;
 }
 
@@ -108,6 +109,7 @@ body {
     border: 2px solid var(--dark-text);   
     border-style: inset;
     border-radius: 5px;
+    align-content: center;
 }
 
 #controls {
@@ -130,6 +132,20 @@ body {
 
 .marker {
     position:absolute;
+}
+
+.selected_link {
+    transition-duration: .1s;
+    stroke: var(--mid-acc);
+    stroke-width: 5px;
+    stroke-dasharray: none;
+}
+
+path {
+    stroke: var(--light-acc);
+    stroke-width: 2;
+    stroke-dasharray: 5,5;
+    fill: none;
 }
 
 
