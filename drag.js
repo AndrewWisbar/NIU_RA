@@ -103,28 +103,70 @@ function get_path(start, end, intensity) {
     let extent = ((start.left + start.right) / 2 + (svg_box.right - end.right)) / 10
     var new_path = d3.path();
 
-    if((end.top + end.bottom) / 2 < start.top) {
+
+    if((end.top + end.bottom) / 2 < start.bottom + 2) { //middle of rect is above top of span
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
         new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                                    (end.top + end.bottom) / 2 - parent_box.top,
-                                    end.right - parent_box.left,
-                                    (end.top + end.bottom) / 2 - parent_box.top);
+                                start.top - parent_box.top - 6,
+                                text_box.left - parent_box.left,
+                                start.top - parent_box.top - 6);
+
+        new_path.bezierCurveTo(svg_box.right - parent_box.left, 
+                                start.top - parent_box.top - 6, 
+                                svg_box.right - parent_box.left, 
+                                (end.top + end.bottom) / 2 - parent_box.top, 
+                                end.right - parent_box.left,
+                                (end.top + end.bottom) / 2 - parent_box.top); 
     }
-    else if((end.top + end.bottom) / 2 < start.bottom) {
+    else { // rect is significantly lower than span
+        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
+        new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
+                                start.bottom - parent_box.top + 6,
+                                text_box.left - parent_box.left,
+                                start.bottom - parent_box.top + 6);
+
+        new_path.bezierCurveTo(svg_box.right - parent_box.left, 
+                                start.bottom - parent_box.top + 6, 
+                                svg_box.right - parent_box.left, 
+                                (end.top + end.bottom) / 2 - parent_box.top, 
+                                end.right - parent_box.left,
+                                (end.top + end.bottom) / 2 - parent_box.top); 
+    }
+    /*
+    if((end.top + end.bottom) / 2 < start.top + 2) { //middle of rect is above top of span
+        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
+        new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
+                                start.top - parent_box.top - 6,
+                                text_box.left - parent_box.left,
+                                start.top - parent_box.top - 6);
+
+        new_path.bezierCurveTo(svg_box.right - parent_box.left, 
+                                start.top - parent_box.top - 6, 
+                                svg_box.right - parent_box.left, 
+                                (end.top + end.bottom) / 2 - parent_box.top, 
+                                end.right - parent_box.left,
+                                (end.top + end.bottom) / 2 - parent_box.top); 
+    }
+    else if((end.top + end.bottom) / 2 < start.bottom) { // middle of rect is within height of span
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
         new_path.quadraticCurveTo(text_box.left, 
                                 text_box.top,
                                 end.right - parent_box.left,
                                 (end.top + end.bottom) / 2 - parent_box.top);
     }
-    else if (end.top - start.top > 50) {
+    else if (end.top - start.top > 5) { // rect is significantly lower than span
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
-        new_path.bezierCurveTo(text_box.left - parent_box.left, 
-        (start.top + start.bottom) / 2 - parent_box.top, 
-        svg_box.right - parent_box.left, 
-        (end.top + end.bottom) / 2 - parent_box.top, 
-        end.right - parent_box.left,
-        (end.top + end.bottom) / 2 - parent_box.top); 
+        new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
+                                start.bottom - parent_box.top + 6,
+                                text_box.left - parent_box.left,
+                                start.bottom - parent_box.top + 6);
+
+        new_path.bezierCurveTo(svg_box.right - parent_box.left, 
+                                start.bottom - parent_box.top + 6, 
+                                svg_box.right - parent_box.left, 
+                                (end.top + end.bottom) / 2 - parent_box.top, 
+                                end.right - parent_box.left,
+                                (end.top + end.bottom) / 2 - parent_box.top); 
     }
     else{
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
@@ -133,7 +175,7 @@ function get_path(start, end, intensity) {
                                     end.right - parent_box.left,
                                     (end.top + end.bottom) / 2 - parent_box.top);
     }
-    
+    */
 
     return new_path;
 }
