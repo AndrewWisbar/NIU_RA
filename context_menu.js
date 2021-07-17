@@ -3,7 +3,7 @@ const contextMenu = document.getElementById("context-menu");
 const scope = document.querySelector("body");
 const highlight_text = document.querySelector(".special-text");
 
-let unhighlight_selection;
+let menu_selection;
 
 let highlights = [];
 let is_highlighted = [];
@@ -28,27 +28,40 @@ highlight_text.innerHTML = inner_string; // replace the original string
 
 
 scope.addEventListener("contextmenu", (event) => {
-
+    hide_context_menu();
+    menu_selection = null;
     event.preventDefault();
-    if(RegExp('char_\d*').test(event.target.id))
+    if(RegExp('char_\d*').test(event.target.id)) {
+        document.getElementById("hilite_btn").classList.add("visible");
+        document.getElementById("unhilite_btn").classList.add("visible");
+        document.getElementById("unlink_word_btn").classList.add("visible");    
         if(RegExp('char_\d*').test(event.target.parentNode.id))
-            unhighlight_selection = event.target.parentNode;
+            menu_selection = event.target.parentNode;
         else
-            unhighlight_selection = event.target;
-    else
-            unhighlight_selection = null;
-
+            menu_selection = event.target;
+    }
+    else if(RegExp('rect_\d*').test(event.target.id)) {
+        document.getElementById("delete_rect_btn").classList.add("visible");
+        menu_selection = event.target;
+    }
+    else if(RegExp('link_\d*').test(event.target.id)) {
+        document.getElementById("delete_link_btn").classList.add("visible");
+        menu_selection = event.target;
+    }
+    else {
+        return;
+    }
     const {clientX: mouseX, clientY: mouseY} = event;
 
     contextMenu.style.top = `${mouseY}px`;
     contextMenu.style.left = `${mouseX}px`;
-
+    
     contextMenu.classList.add("visible");
 });
 
 scope.addEventListener("click", (e) => {
     if(e.target.offsetParent != contextMenu) {
-        contextMenu.classList.remove("visible");
+        hide_context_menu();
     }
 });
 
@@ -64,15 +77,15 @@ function highlight() {
             }
         }
     }
-    contextMenu.classList.remove("visible");
+    hide_context_menu();
 
     group_highlights();
 }
 
 
 function unhighlight() {
-    if(unhighlight_selection) {
-        var unhighlight_id = unhighlight_selection.id;
+    if(menu_selection) {
+        var unhighlight_id = menu_selection.id;
 
         for(var i = 0; i < links.length; i++) {
             if(links[i].span === document.getElementById(unhighlight_id)) {
@@ -93,30 +106,34 @@ function unhighlight() {
             }
         }
         
-        unhighlight_selection.setAttribute("draggable", "false");
-        unhighlight_selection.classList.remove("highlighted-text");
-        unhighlight_selection.removeEventListener("dragstart", dragstart_handler);
+        menu_selection.setAttribute("draggable", "false");
+        menu_selection.classList.remove("highlighted-text");
+        menu_selection.removeEventListener("dragstart", dragstart_handler);
 
         write_links();
     }
-    contextMenu.classList.remove("visible");
+    hide_context_menu();
 }
 
-function remove_link() {
-    if(unhighlight_selection) {
-        var unhighlight_id = unhighlight_selection.id;
+function unlink_word() {
+    if(menu_selection) {
+        var unhighlight_id = menu_selection.id;
 
         var unlink_span = document.getElementById(unhighlight_id);
 
-        for(var i = 0; i < links.length; i++) {
+        let i = 0;
+        while(i < links.length) {
             if(links[i].span === unlink_span) {
                 links.splice(i, 1);
+            }
+            else {
+                i++;
             }
         }
 
         write_links();
     }
-    contextMenu.classList.remove("visible");
+    hide_context_menu();
 }
 
 function group_highlights() {
@@ -179,8 +196,25 @@ function delete_rect() {
     
     }
 
-    contextMenu.classList.remove("visible");
+    hide_context_menu();
     write_links();
     set_corners(-1);
     
+}
+
+function delete_link() {
+    var index = parseInt(menu_selection.id.match(/\d+/),10);
+    links.splice(index, 1);
+    console.log(menu_selection.id);
+    write_links();
+    hide_context_menu();
+}
+
+function hide_context_menu() {
+    contextMenu.classList.remove("visible");
+    document.getElementById("hilite_btn").classList.remove("visible");
+    document.getElementById("unhilite_btn").classList.remove("visible");
+    document.getElementById("unlink_word_btn").classList.remove("visible"); 
+    document.getElementById("delete_rect_btn").classList.remove("visible"); 
+    document.getElementById("delete_link_btn").classList.remove("visible"); 
 }

@@ -34,13 +34,10 @@ function drop_handler(ev) {
 
     var i = 0;
     while(i < links.length) {
-        /*if(links[i].region.id === ev.target.id) {
+        if(links[i].region.id === ev.target.id && links[i].span === span) {
 
             links.splice(i, 1);
 
-        }
-        else */if(links[i].span === span) {
-            links.splice(i, 1);
         }
         else {
             i++;
@@ -81,7 +78,7 @@ function write_links() {
                     item.innerHTML += temp[i][j] + '" and "';
                 }
                 else {
-                    item.innerHTML += temp[i][j] + '", '
+                    item.innerHTML += temp[i][j] + '", "'
                 }
             }
 
@@ -132,51 +129,6 @@ function get_path(start, end, intensity) {
                                 end.right - parent_box.left,
                                 (end.top + end.bottom) / 2 - parent_box.top); 
     }
-    /*
-    if((end.top + end.bottom) / 2 < start.top + 2) { //middle of rect is above top of span
-        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
-        new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                                start.top - parent_box.top - 6,
-                                text_box.left - parent_box.left,
-                                start.top - parent_box.top - 6);
-
-        new_path.bezierCurveTo(svg_box.right - parent_box.left, 
-                                start.top - parent_box.top - 6, 
-                                svg_box.right - parent_box.left, 
-                                (end.top + end.bottom) / 2 - parent_box.top, 
-                                end.right - parent_box.left,
-                                (end.top + end.bottom) / 2 - parent_box.top); 
-    }
-    else if((end.top + end.bottom) / 2 < start.bottom) { // middle of rect is within height of span
-        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
-        new_path.quadraticCurveTo(text_box.left, 
-                                text_box.top,
-                                end.right - parent_box.left,
-                                (end.top + end.bottom) / 2 - parent_box.top);
-    }
-    else if (end.top - start.top > 5) { // rect is significantly lower than span
-        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
-        new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                                start.bottom - parent_box.top + 6,
-                                text_box.left - parent_box.left,
-                                start.bottom - parent_box.top + 6);
-
-        new_path.bezierCurveTo(svg_box.right - parent_box.left, 
-                                start.bottom - parent_box.top + 6, 
-                                svg_box.right - parent_box.left, 
-                                (end.top + end.bottom) / 2 - parent_box.top, 
-                                end.right - parent_box.left,
-                                (end.top + end.bottom) / 2 - parent_box.top); 
-    }
-    else{
-        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
-        new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                                    (end.top + end.bottom) / 2 - parent_box.top,
-                                    end.right - parent_box.left,
-                                    (end.top + end.bottom) / 2 - parent_box.top);
-    }
-    */
-
     return new_path;
 }
 
@@ -231,13 +183,10 @@ function draw_links(index) {
     let path = get_path(span_offset, rect_offset, 12);
 
     line_cont.append('path')
-        /*.style("stroke", "var(--light-acc)")
-        .style("stroke-width", 2)
-        .style("stroke-dasharray", "5,5")
-        .style("fill", "none")*/
         .attr("d", path)
         .attr("onmouseover", "highlight_link(event)")
-        .attr("onmouseout", "unhighlight_link(event)"); 
+        .attr("onmouseout", "unhighlight_link(event)")
+        .attr("id", "link_" + index);
 }
 
 function highlight_link(e) {

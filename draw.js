@@ -147,9 +147,9 @@ function end_draw() {
         if(valid_selection) {
             regions.push(new selected_region(top_left_point[0], top_left_point[1], 
                                 bottom_right_point[0], bottom_right_point[1], rectangles[rect_ind].id));
-            //regions[rect_ind].check();
             rectangles[rect_ind].classList.add("finished_rect");
             rectangles[rect_ind].setAttribute("onmouseover", "select_rect(this.id)");
+            //rectangles[rect_ind].setAttribute("onmouseout", "unselect_rect(this.id)");
 
             rect_ind++;
         }
@@ -198,6 +198,7 @@ function removeAllChildren(parent) {
 
 
 function draw() {
+    let parent_box = getCoords(svg_cont);
     if((draw_flag && prev_point)) {
         if(!rectangle_created) {
             let rect_id = "rect_" + rect_ind;
@@ -219,7 +220,6 @@ function draw() {
             });
             rectangle_created = true;
         }
-        
         rectangles[rect_ind].setAttribute("x", top_left_point[0]);
         rectangles[rect_ind].setAttribute("y", top_left_point[1]);
         rectangles[rect_ind].setAttribute("width", bottom_right_point[0] - top_left_point[0]);
@@ -231,10 +231,16 @@ function draw() {
     }
 
     if(edit_flag && valid_edit) {
-        rectangles[selected_rect].setAttribute("x", edit_tlp[0]);
-        rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
-        rectangles[selected_rect].setAttribute("width", edit_brp[0] - edit_tlp[0]);
-        rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
+        console.log(edit_tlp, edit_brp);
+        console.log(parent_box.right, parent_box.bottom)
+        if((edit_tlp[0] > 0))
+            rectangles[selected_rect].setAttribute("x", edit_tlp[0]);
+        if(edit_brp[0] < parent_box.right)
+            rectangles[selected_rect].setAttribute("width", edit_brp[0] - edit_tlp[0]);
+        if(edit_tlp[1] > 0)
+            rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
+        if(edit_brp[1] < parent_box.bottom)
+            rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
 
         set_corners(selected_rect);
         write_links();
@@ -268,6 +274,13 @@ function select_rect(clicked_id) {
         regions[index].check();
     }
 }
+
+/*function unselect_rect() {
+    for(var i = 0; i < rectangles.length; i++) {
+        rectangles[i].classList.remove("selected");
+    }
+    set_corners(-1);
+}*/
 
 //call draw to start recursion
 draw();

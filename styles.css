@@ -184,7 +184,12 @@ path {
     background-color: var(--mid-dark);
     border: none;
     color: var(--light-text);
+    display: none;
     transition-duration: 0.4s;
+}
+
+button.visible {
+    display: block;
 }
 
 .menu-button:hover {
