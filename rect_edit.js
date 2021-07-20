@@ -94,8 +94,6 @@ function begin_move(e) {
     let box = getRelCoords(rectangles[selected_rect], svg_cont);
     move_anchor = [pos.x, pos.y];
     move_start = [box.left, box.top];
-
-    console.log(move_anchor);
 }
 
 function end_move() {
@@ -111,5 +109,4 @@ function end_move() {
 
     regions[selected_rect].check();
     set_corners(selected_rect);
-    console.log("End");
 }

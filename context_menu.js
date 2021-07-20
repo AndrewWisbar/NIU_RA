@@ -167,8 +167,6 @@ function insertAfter(newNode, existingNode) {
 }
 
 function delete_rect() {
-    
-    console.log(rectangles);
     if(selected_rect < rectangles.length) {
         regions.splice(selected_rect, 1);
 
@@ -183,7 +181,7 @@ function delete_rect() {
 
         var deleted_rect = document.getElementById("rect_" + selected_rect);
         deleted_rect.remove();
-        console.log(rectangles);
+        
 
         let children = svg_cont.children;
         for(let i = 0; i < children.length; i++) {
@@ -200,7 +198,6 @@ function delete_rect() {
 function delete_link() {
     var index = parseInt(menu_selection.id.match(/\d+/),10);
     links.splice(index, 1);
-    console.log(menu_selection.id);
     write_links();
     hide_context_menu();
 }

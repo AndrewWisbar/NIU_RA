@@ -28,13 +28,12 @@ function drop_handler(ev) {
     var span = document.getElementById(data);
     var word = span.innerText;
     
-    console.log(ev.target.id, 'has been linked to the word "', word, '"');
     ev.target.classList.remove('dragging');
     var index = parseInt(ev.target.id.match(/\d+/),10);
 
     var i = 0;
     while(i < links.length) {
-        if(links[i].region.id === ev.target.id && links[i].span === span) {
+        if(links[i].rect === document.getElementById(ev.target.id) && links[i].span === span) {
 
             links.splice(i, 1);
 

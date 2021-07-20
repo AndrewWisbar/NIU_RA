@@ -155,7 +155,6 @@ function mouse_move(event) {
         move_offset = [move_anchor[0] - pos.x, move_anchor[1] - pos.y];
         let box = getRelCoords(rectangles[selected_rect], svg_cont);
         regions[selected_rect].update(box.left, box.top, box.right, box.bottom);
-        console.log("Move");
     }
 }
 
@@ -218,7 +217,6 @@ function draw() {
     let parent_box = getCoords(svg_cont);
     if((draw_flag && prev_point)) {
 
-        console.log(rect_ind);
         if(!rectangle_created) {
             let rect_id = "rect_" + rect_ind;
             rectangles[rect_ind].setAttribute("fill", colorPicker.value);
