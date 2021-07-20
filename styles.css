@@ -144,7 +144,6 @@ body {
 path {
     stroke: var(--light-acc);
     stroke-width: 2;
-    stroke-dasharray: 5,5;
     fill: none;
 }
 
@@ -169,8 +168,7 @@ path {
 
 #context-menu .menu-item {
     width: inherit;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    
     font-size: 15px;
     color: var(--light-text);
     cursor: pointer;
@@ -178,9 +176,9 @@ path {
 }
 
 .menu-button {
+    padding: 0;
     font-size: 18px;
     width: inherit;
-    padding: 8px;
     background-color: var(--mid-dark);
     border: none;
     color: var(--light-text);
@@ -189,7 +187,10 @@ path {
 }
 
 button.visible {
+    padding-top: 4px;
+    padding-bottom: 4px;
     display: block;
+    padding: 8px;
 }
 
 .menu-button:hover {

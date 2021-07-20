@@ -110,4 +110,6 @@ function end_move() {
     regions[selected_rect].update(points.left, points.top, points.right, points.bottom);
 
     regions[selected_rect].check();
+    set_corners(selected_rect);
+    console.log("End");
 }

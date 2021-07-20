@@ -41,8 +41,8 @@ corners.push(document.getElementById("center"));
  ****************************Function Definitions******************************
  *****************************************************************************/
 
-base_img.onload = function() {
-    svg_cont.setAttribute("height", base_img.height);
+svg_cont.onload = function() {
+    svg_cont.setAttribute("height", base_img.clientHeight);
 }
 
 function  getMousePos(area, evt) {
@@ -75,16 +75,23 @@ function begin_draw(event) {
 }
 
 function mouse_move(event) {
-    
+    let pos = getMousePos(svg_cont, event);
+
+    if(pos.x < 0)
+        pos.x = 0;
+    if(pos.x > svg_cont.clientWidth)
+        pos.x = svg_cont.clientWidth;
+    if(pos.y < 0)
+        pos.y = 0;
+    if(pos.y > svg_cont.clientHeight)
+        pos.y = svg_cont.clientHeight;
     if(draw_flag) { //if we've begun drawing
-        //get the mouse position
-        let pos = getMousePos(svg_cont, event);
         
-       
         prev_point = true; // we now have two points to draw the rectangle
 
         //determine the coordinates of the top left and bottom right points
-        if(pos.x < anchor_point[0]) { 
+        if(pos.x < anchor_point[0]) {
+            
             bottom_right_point[0] = anchor_point[0];
             top_left_point[0] = pos.x;
         }
@@ -105,9 +112,7 @@ function mouse_move(event) {
     }
 
     if(edit_flag) { //if we're editing
-        //get the mouse position
-        let pos = getMousePos(svg_cont, event);
-
+        
         //determine the coordinates of the top left and bottom right points
         if(pos.x < edit_anchor[0]) { 
             edit_brp[0] = edit_anchor[0];
@@ -134,11 +139,23 @@ function mouse_move(event) {
 
 
     if(move_flag) {
-        let pos = getMousePos(svg_cont, event);
+        let rect_h = rectangles[selected_rect].getAttribute("height")/2;
+        let rect_w = rectangles[selected_rect].getAttribute("width")/2;
+
+        if(pos.x > svg_cont.clientWidth - rect_w)
+            pos.x = svg_cont.clientWidth - rect_w;
+        else if(pos.x < rect_w)
+            pos.x = rect_w;
+
+        if(pos.y < rect_h)
+            pos.y = rect_h;
+        else if(pos.y > svg_cont.clientHeight - rect_h)
+            pos.y = svg_cont.clientHeight - rect_h;
 
         move_offset = [move_anchor[0] - pos.x, move_anchor[1] - pos.y];
         let box = getRelCoords(rectangles[selected_rect], svg_cont);
         regions[selected_rect].update(box.left, box.top, box.right, box.bottom);
+        console.log("Move");
     }
 }
 
@@ -231,22 +248,18 @@ function draw() {
     }
 
     if(edit_flag && valid_edit) {
-        console.log(edit_tlp, edit_brp);
-        console.log(parent_box.right, parent_box.bottom)
-        if((edit_tlp[0] > 0))
-            rectangles[selected_rect].setAttribute("x", edit_tlp[0]);
-        if(edit_brp[0] < parent_box.right)
-            rectangles[selected_rect].setAttribute("width", edit_brp[0] - edit_tlp[0]);
-        if(edit_tlp[1] > 0)
-            rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
-        if(edit_brp[1] < parent_box.bottom)
-            rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
+        rectangles[selected_rect].setAttribute("x", edit_tlp[0]);
+        rectangles[selected_rect].setAttribute("width", edit_brp[0] - edit_tlp[0]);
+        rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
+        rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
 
         set_corners(selected_rect);
         write_links();
     }
 
     if(move_flag) {
+        let rect_box = getCoords(rectangles[selected_rect]);
+        
         rectangles[selected_rect].setAttribute("x", move_start[0] - move_offset[0]);
         rectangles[selected_rect].setAttribute("y", move_start[1] - move_offset[1]);
 

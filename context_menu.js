@@ -72,8 +72,8 @@ function highlight() {
         let node = document.getElementById("char_" + i);
         if(node) {
             if(userSelection.containsNode(node, true)) {
-                node.classList.add("highlighted-text");
                 is_highlighted[i] = true;
+                node.classList.add("highlighted-text");
             }
         }
     }
@@ -86,11 +86,12 @@ function highlight() {
 function unhighlight() {
     if(menu_selection) {
         var unhighlight_id = menu_selection.id;
-
-        for(var i = 0; i < links.length; i++) {
-            if(links[i].span === document.getElementById(unhighlight_id)) {
+        var i = 0;
+        while(i < links.length) {
+            if(links[i].span === document.getElementById(unhighlight_id))
                 links.splice(i, 1);
-            }
+            else
+                i++;
         }
 
         for(var i = 0; i < highlights.length; i++) {
@@ -169,31 +170,7 @@ function delete_rect() {
     
     console.log(rectangles);
     if(selected_rect < rectangles.length) {
-        
-        regions.splice(select_rect, 1);
 
-        var i = 0; 
-        while(i < links.length) {
-            if(links[i].rect == rectangles[selected_rect])
-                links.splice(i, 1);
-            else
-                i++
-        }
-        console.log(rectangles);
-        var remove_rect = document.getElementById("rect_" + selected_rect);
-        remove_rect.parentNode.removeChild(remove_rect);
-        rectangles.splice(selected_rect, 1);
-        rectangles.length -= 1;
-        console.log(rectangles.length)
-        for(var i = 0; i < rectangles.length; i++) {
-            rectangles[i].setAttribute("id", "rect_" + i);
-            regions[i].rectUpdate(rectangles[i]);
-            console.log(i);
-        }
-
-        rect_ind = rectangles.length;
-
-    
     }
 
     hide_context_menu();
