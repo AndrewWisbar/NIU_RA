@@ -24,11 +24,10 @@ let top_left_point = [0, 0];
 let bottom_right_point = [0, 0];
 
 let rectangles = [];
-let rect_ind = 0;
-
 let regions = [];
 
 let label;
+let rect_ind;
 
 let corners = [];
 for(var i = 0; i < 4; i++) {
@@ -57,6 +56,7 @@ function  getMousePos(area, evt) {
 function begin_draw(event) {
     //protect against user moving mouse off canvas while drawing
     if(!draw_flag) {
+        rect_ind = svg_cont.childElementCount;
         //get the mouse position when the user clicks
         let pos = getMousePos(svg_cont, event);
 
@@ -162,6 +162,7 @@ function mouse_move(event) {
 function end_draw() {
     if(draw_flag) {
         if(valid_selection) {
+            
             regions.push(new selected_region(top_left_point[0], top_left_point[1], 
                                 bottom_right_point[0], bottom_right_point[1], rectangles[rect_ind].id));
             rectangles[rect_ind].classList.add("finished_rect");
@@ -196,7 +197,6 @@ function reset_image() {
     removeAllChildren(line_cont);
 
     rectangles.splice(0, rectangles.length);
-    rect_ind = 0;
     regions.splice(0, regions.length);
     links.splice(0, links.length);
     pre_ctx.clearRect(0, 0, pre_canvas.width, pre_canvas.height);
@@ -217,6 +217,8 @@ function removeAllChildren(parent) {
 function draw() {
     let parent_box = getCoords(svg_cont);
     if((draw_flag && prev_point)) {
+
+        console.log(rect_ind);
         if(!rectangle_created) {
             let rect_id = "rect_" + rect_ind;
             rectangles[rect_ind].setAttribute("fill", colorPicker.value);
@@ -244,6 +246,7 @@ function draw() {
 
         
         svg_cont.appendChild(rectangles[rect_ind]);
+        
         prev_point = false;
     }
 

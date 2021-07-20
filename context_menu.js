@@ -170,7 +170,25 @@ function delete_rect() {
     
     console.log(rectangles);
     if(selected_rect < rectangles.length) {
+        regions.splice(selected_rect, 1);
 
+        for(var i = 0; i < links.length; i++) {
+            if(links[i].rect === rectangles[selected_rect]) {
+                delete links[i].rect;
+                links.splice(i, 1);
+            }
+        }
+
+        rectangles.splice(selected_rect, 1);
+
+        var deleted_rect = document.getElementById("rect_" + selected_rect);
+        deleted_rect.remove();
+        console.log(rectangles);
+
+        let children = svg_cont.children;
+        for(let i = 0; i < children.length; i++) {
+            children[i].setAttribute("id", "rect_" + i);
+        }
     }
 
     hide_context_menu();
