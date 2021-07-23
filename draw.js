@@ -214,10 +214,11 @@ function removeAllChildren(parent) {
 
 
 function draw() {
-    let parent_box = getCoords(svg_cont);
     if((draw_flag && prev_point)) {
 
         if(!rectangle_created) {
+            if(rect_ind != svg_cont.childElementCount)
+                rect_ind = svg_cont
             let rect_id = "rect_" + rect_ind;
             rectangles[rect_ind].setAttribute("fill", colorPicker.value);
             rectangles[rect_ind].setAttribute("stroke-width", sizePicker.value);
@@ -254,7 +255,7 @@ function draw() {
         rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
         rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
 
-        set_corners(selected_rect);
+        set_corners(selected_rect, regions[selected_rect].name);
         write_links();
     }
 
@@ -264,7 +265,7 @@ function draw() {
         rectangles[selected_rect].setAttribute("x", move_start[0] - move_offset[0]);
         rectangles[selected_rect].setAttribute("y", move_start[1] - move_offset[1]);
 
-        set_corners(selected_rect);
+        set_corners(selected_rect, regions[selected_rect].name);
         write_links();
     }
 
@@ -282,6 +283,8 @@ function select_rect(clicked_id) {
 
         selected_rect = index;
         rectangles[index].classList.add("selected");
+
+        label = regions[index].name;
 
         set_corners(index, label);
 

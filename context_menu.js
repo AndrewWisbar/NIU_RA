@@ -8,6 +8,8 @@ let menu_selection;
 let highlights = [];
 let is_highlighted = [];
 
+let rename_rect;
+
 const display_string = highlight_text.innerHTML;
 var characters = display_string.split(''); //split the innerHTML into each char
 
@@ -42,6 +44,7 @@ scope.addEventListener("contextmenu", (event) => {
     }
     else if(RegExp('rect_\d*').test(event.target.id)) {
         document.getElementById("delete_rect_btn").classList.add("visible");
+        document.getElementById("rename_rect_btn").classList.add("visible");
         menu_selection = event.target;
     }
     else if(RegExp('link_\d*').test(event.target.id)) {
@@ -170,10 +173,14 @@ function delete_rect() {
     if(selected_rect < rectangles.length) {
         regions.splice(selected_rect, 1);
 
-        for(var i = 0; i < links.length; i++) {
+        var i = 0;
+        while(i < links.length) {
             if(links[i].rect === rectangles[selected_rect]) {
                 delete links[i].rect;
                 links.splice(i, 1);
+            }
+            else {
+                i++;
             }
         }
 
@@ -207,6 +214,23 @@ function hide_context_menu() {
     document.getElementById("hilite_btn").classList.remove("visible");
     document.getElementById("unhilite_btn").classList.remove("visible");
     document.getElementById("unlink_word_btn").classList.remove("visible"); 
-    document.getElementById("delete_rect_btn").classList.remove("visible"); 
-    document.getElementById("delete_link_btn").classList.remove("visible"); 
+    document.getElementById("delete_rect_btn").classList.remove("visible");
+    document.getElementById("rename_rect_btn").classList.remove("visible");  
+    document.getElementById("delete_link_btn").classList.remove("visible");
+}
+
+function start_rename() {
+    document.getElementById("rename_controls").classList.add("visible");
+    rename_rect = selected_rect;
+    hide_context_menu();
+}
+
+function set_name() {
+    let new_name = document.getElementById("name_input");
+    document.getElementById("rename_controls").classList.remove("visible");
+    regions[rename_rect].rename(new_name.value);
+    set_corners(rename_rect, new_name.value);
+    new_name.value = "";
+    write_links();
+
 }

@@ -4,13 +4,21 @@
 
  class selected_region {
 
-    constructor(left, up, right, low, id) {
+    constructor(left, up, right, low, id, name) {
         this.adj = base_img.naturalWidth / base_img.width
         this.bounds = [left * this.adj, up * this.adj, right * this.adj, low * this.adj];
         this.unadjusted = [left, up, right, low];
         this.id = id;
+
+        if(name)
+            this.name = name;
+        else
+            this.name = this.id;
     }
 
+    rename(name) {
+        this.name = name;
+    }
     // called after a user selects a portion of the image
     check() {
         var ratio;

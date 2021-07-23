@@ -15,6 +15,7 @@
         <rect id="corner_2" class="control_mark" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
         <rect id="corner_3" class="control_mark" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
         <rect id="center" class="control_mark" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_move(event)" onmouseup="end_move()" onmousemove="mouse_move(event)"></rect>
+        <text id="label_text" class="svg_text"></text>
     </svg>
     <div class="flex-container" id="main_container">
         <div id="drawing-panel" class="user-panel">
@@ -22,7 +23,6 @@
                 
                 <img src="https://www.niu.edu/locations/images/dekalb.jpg" alt="" class="base-img" draggable="false">
                 <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
-                    
                 </svg>
             </div>
         
@@ -30,6 +30,10 @@
                 <input type="color">
                 <input type="range" min="1" max="4" value="2">
                 <button onclick="reset_image()">Reset Drawing</button>
+                <div id=rename_controls>
+                    <input type="text" id="name_input">
+                    <button onclick="set_name()" id="rename_btn">Submit</button>
+                </div>
             </div>
         </div>
         
@@ -56,6 +60,7 @@
         <div class="menu-item"><button class="menu-button" id="unhilite_btn" onclick="unhighlight()">Unhighlight Word</button></div>
         <div class="menu-item"><button class="menu-button" id="unlink_word_btn" onclick="unlink_word()">Remove All Links</button></div>
         <div class="menu-item"><button class="menu-button" id="delete_rect_btn" onclick="delete_rect()">Delete Rectangle</button></div>
+        <div class="menu-item"><button class="menu-button" id="rename_rect_btn" onclick="start_rename()">Rename Rectangle</button></div>
         <div class="menu-item"><button class="menu-button" id="delete_link_btn" onclick="delete_link()">Delete Link</button></div>
         <!--<div class="menu-item"><button class="menu-button">Option 3</button></div>-->
     </div>

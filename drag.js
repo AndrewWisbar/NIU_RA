@@ -68,7 +68,7 @@ function write_links() {
     for(var i = 0; i < temp.length; i++) {
         if(temp[i].length > 1) {
             let item = document.createElement("li");
-            item.innerHTML = "rect_" + i + ' is linked to the words "';
+            item.innerHTML = regions[i].name + ' is linked to the words "';
             for(var j = 0; j < temp[i].length; j++) {
                 if(j == temp[i].length - 1) {
                     item.innerHTML += temp[i][j] + '"';
@@ -85,7 +85,7 @@ function write_links() {
         }
         else if(temp[i].length == 1) {
             let item = document.createElement("li");
-            item.innerHTML = "rect_" + i + ' is linked to the word "' + temp[i][0] + '"';
+            item.innerHTML = regions[i].name + ' is linked to the word "' + temp[i][0] + '"';
             link_list.appendChild(item);
         }
     }    

@@ -147,6 +147,12 @@ path {
     fill: none;
 }
 
+.svg_text {
+    stroke: var(--dark-text);
+    fill: var(--light-text);
+    stroke-width: 1px;
+    font: bold 24px sans-serif;
+}
 
 /****************/
 /* Context Menu */
@@ -196,4 +202,12 @@ button.visible {
 .menu-button:hover {
     background-color: var(--mid-tone);
     color: var(--dark-text);
+}
+
+#rename_controls {
+    display: none;
+}
+
+#rename_controls.visible {
+    display: block;
 }

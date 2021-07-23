@@ -10,6 +10,7 @@ let edit_anchor = [0, 0];
 let edit_tlp = [0, 0];
 let edit_brp = [0, 0];
 
+const label_text = document.getElementById("label_text");
 const cor_anchor = document.getElementById("corner_anchor");
 
 function set_corners(index, label) {
@@ -28,6 +29,11 @@ function set_corners(index, label) {
 
         corners[4].setAttribute("x", -10);
         corners[4].setAttribute("y", -10);
+
+        label_text.innerHTML = "";
+        label_text.setAttribute("x", -10);
+        label_text.setAttribute("y", -10);
+        
     }
     else {
 
@@ -47,6 +53,12 @@ function set_corners(index, label) {
 
         corners[4].setAttribute("x", (box.left + box.right) / 2 - 5);
         corners[4].setAttribute("y", (box.top + box.bottom) / 2 - 5);
+
+        if(label) {
+            label_text.innerHTML = label;
+            label_text.setAttribute("x", box.left -5);
+            label_text.setAttribute("y", box.top - 10);
+        }
     }
 }
 
