@@ -69,6 +69,8 @@
         let box = getRelCoords(rect, svg_cont);
         this.bounds = [box.left * this.adj, box.top * this.adj, box.right * this.adj, box.bottom * this.adj];
         this.unadjusted = [box.left, box.top, box.right, box.bottom];
+        if(this.name == this.id)
+            this.name = rect.id;
         this.id = rect.id;
     }
 } 

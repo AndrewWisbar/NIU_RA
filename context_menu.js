@@ -13,9 +13,9 @@ let rename_rect;
 const display_string = highlight_text.innerHTML;
 var characters = display_string.split(''); //split the innerHTML into each char
 
-let start_tag = '<span id="char_';
-let bracket = '">';
-let end_tag = "</span>";
+const start_tag = '<span id="char_';
+const bracket = '">';
+const end_tag = "</span>";
 let inner_string = "";
 
 for(var i = 0; i < characters.length; i++) {
@@ -113,7 +113,7 @@ function unhighlight() {
         menu_selection.setAttribute("draggable", "false");
         menu_selection.classList.remove("highlighted-text");
         menu_selection.removeEventListener("dragstart", dragstart_handler);
-
+        menu_selection = null;
         write_links();
     }
     hide_context_menu();
@@ -134,7 +134,7 @@ function unlink_word() {
                 i++;
             }
         }
-
+        menu_selection = null;
         write_links();
     }
     hide_context_menu();
@@ -170,12 +170,14 @@ function insertAfter(newNode, existingNode) {
 }
 
 function delete_rect() {
-    if(selected_rect < rectangles.length) {
-        regions.splice(selected_rect, 1);
+    if(menu_selection) {
+        let del_index = parseInt(menu_selection.id.match(/\d+/),10);
+        
+        regions.splice(del_index, 1);
 
         var i = 0;
         while(i < links.length) {
-            if(links[i].rect === rectangles[selected_rect]) {
+            if(links[i].rect === menu_selection) {
                 delete links[i].rect;
                 links.splice(i, 1);
             }
@@ -183,16 +185,17 @@ function delete_rect() {
                 i++;
             }
         }
+        menu_selection = null;
+        
 
-        rectangles.splice(selected_rect, 1);
-
-        var deleted_rect = document.getElementById("rect_" + selected_rect);
+        var deleted_rect = document.getElementById("rect_" + del_index);
         deleted_rect.remove();
         
 
         let children = svg_cont.children;
         for(let i = 0; i < children.length; i++) {
             children[i].setAttribute("id", "rect_" + i);
+            regions[i].rectUpdate(children[i]);
         }
     }
 
@@ -205,6 +208,8 @@ function delete_rect() {
 function delete_link() {
     var index = parseInt(menu_selection.id.match(/\d+/),10);
     links.splice(index, 1);
+
+    menu_selection = null;
     write_links();
     hide_context_menu();
 }
@@ -221,15 +226,16 @@ function hide_context_menu() {
 
 function start_rename() {
     document.getElementById("rename_controls").classList.add("visible");
-    rename_rect = selected_rect;
+    rename_rect = parseInt(menu_selection.id.match(/\d+/),10);
     hide_context_menu();
+    menu_selection = null;
 }
 
 function set_name() {
     let new_name = document.getElementById("name_input");
     document.getElementById("rename_controls").classList.remove("visible");
     regions[rename_rect].rename(new_name.value);
-    set_corners(rename_rect, new_name.value);
+    set_corners(document.getElementById("rect_" + rename_rect), new_name.value);
     new_name.value = "";
     write_links();
 

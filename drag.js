@@ -43,8 +43,8 @@ function drop_handler(ev) {
         }
     }
 
-    links.push(new word_link(regions[index], word, rectangles[index], span));
-    select_rect(ev.target.id);
+    links.push(new word_link(regions[index], word, ev.target, span));
+    select_rect(ev.target);
     write_links();
 }
 
@@ -53,7 +53,7 @@ function write_links() {
 
     link_list.innerHTML = '';
     line_cont.html("");
-    let temp = new Array(rectangles.length);
+    let temp = new Array(regions.length);
     for(var i = 0; i < temp.length; i++) {
         temp[i] = new Array(0);
     }

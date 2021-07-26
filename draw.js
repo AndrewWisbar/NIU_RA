@@ -23,7 +23,7 @@ let anchor_point = [0, 0];
 let top_left_point = [0, 0];
 let bottom_right_point = [0, 0];
 
-let rectangles = [];
+let active_rect;
 let regions = [];
 
 let label;
@@ -70,7 +70,7 @@ function begin_draw(event) {
         //allow drawing to begin
         draw_flag = true;
 
-        rectangles.push(document.createElementNS(svgns, "rect"));
+        active_rect = document.createElementNS(svgns, "rect");
     }
 }
 
@@ -133,14 +133,14 @@ function mouse_move(event) {
         valid_edit = true;
     
        
-        let box = getRelCoords(rectangles[selected_rect], svg_cont);
-        regions[selected_rect].update(box.left, box.top, box.right, box.bottom);
+        let box = getRelCoords(edit_rect, svg_cont);
+        regions[edit_index].update(box.left, box.top, box.right, box.bottom);
     }
 
 
     if(move_flag) {
-        let rect_h = rectangles[selected_rect].getAttribute("height")/2;
-        let rect_w = rectangles[selected_rect].getAttribute("width")/2;
+        let rect_h = move_rect.getAttribute("height")/2;
+        let rect_w = move_rect.getAttribute("width")/2;
 
         if(pos.x > svg_cont.clientWidth - rect_w)
             pos.x = svg_cont.clientWidth - rect_w;
@@ -153,8 +153,8 @@ function mouse_move(event) {
             pos.y = svg_cont.clientHeight - rect_h;
 
         move_offset = [move_anchor[0] - pos.x, move_anchor[1] - pos.y];
-        let box = getRelCoords(rectangles[selected_rect], svg_cont);
-        regions[selected_rect].update(box.left, box.top, box.right, box.bottom);
+        let box = getRelCoords(move_rect, svg_cont);
+        regions[move_index].update(box.left, box.top, box.right, box.bottom);
     }
 }
 
@@ -163,13 +163,14 @@ function end_draw() {
         if(valid_selection) {
             
             regions.push(new selected_region(top_left_point[0], top_left_point[1], 
-                                bottom_right_point[0], bottom_right_point[1], rectangles[rect_ind].id));
-            rectangles[rect_ind].classList.add("finished_rect");
-            rectangles[rect_ind].setAttribute("onmouseover", "select_rect(this.id)");
-            //rectangles[rect_ind].setAttribute("onmouseout", "unselect_rect(this.id)");
+                                bottom_right_point[0], bottom_right_point[1], active_rect.id));
+            active_rect.classList.add("finished_rect");
+            active_rect.setAttribute("onmouseover", "select_rect(this)");
 
             rect_ind++;
         }
+
+        active_rect = null;
 
         draw_flag = false;
         prev_point = false;
@@ -195,7 +196,6 @@ function reset_image() {
     removeAllChildren(svg_cont);
     removeAllChildren(line_cont);
 
-    rectangles.splice(0, rectangles.length);
     regions.splice(0, regions.length);
     links.splice(0, links.length);
     pre_ctx.clearRect(0, 0, pre_canvas.width, pre_canvas.height);
@@ -217,87 +217,79 @@ function draw() {
     if((draw_flag && prev_point)) {
 
         if(!rectangle_created) {
-            if(rect_ind != svg_cont.childElementCount)
-                rect_ind = svg_cont
             let rect_id = "rect_" + rect_ind;
-            rectangles[rect_ind].setAttribute("fill", colorPicker.value);
-            rectangles[rect_ind].setAttribute("stroke-width", sizePicker.value);
-            rectangles[rect_ind].setAttribute("stroke", colorPicker.value);
-            rectangles[rect_ind].setAttribute("fill-opacity", 0);
-            rectangles[rect_ind].setAttribute("id", rect_id);
-            rectangles[rect_ind].setAttribute('ondrop', "drop_handler(event)");
-            rectangles[rect_ind].setAttribute('ondragover', "dragover_handler(event)");
-            rectangles[rect_ind].addEventListener('dragenter', function(e) {
+                active_rect.setAttribute("fill", colorPicker.value);
+                active_rect.setAttribute("stroke-width", sizePicker.value);
+                active_rect.setAttribute("stroke", colorPicker.value);
+                active_rect.setAttribute("fill-opacity", 0);
+                active_rect.setAttribute("id", rect_id);
+                active_rect.setAttribute('ondrop', "drop_handler(event)");
+                active_rect.setAttribute('ondragover', "dragover_handler(event)");
+                active_rect.addEventListener('dragenter', function(e) {
                 e.preventDefault();
                 e.target.classList.add('dragging');
             });
             
-            rectangles[rect_ind].addEventListener('dragleave', function(e) {
+            active_rect.addEventListener('dragleave', function(e) {
                 e.preventDefault();
                 e.target.classList.remove('dragging');
             });
             rectangle_created = true;
         }
-        rectangles[rect_ind].setAttribute("x", top_left_point[0]);
-        rectangles[rect_ind].setAttribute("y", top_left_point[1]);
-        rectangles[rect_ind].setAttribute("width", bottom_right_point[0] - top_left_point[0]);
-        rectangles[rect_ind].setAttribute("height", bottom_right_point[1] - top_left_point[1]);
+        active_rect.setAttribute("x", top_left_point[0]);
+        active_rect.setAttribute("y", top_left_point[1]);
+        active_rect.setAttribute("width", bottom_right_point[0] - top_left_point[0]);
+        active_rect.setAttribute("height", bottom_right_point[1] - top_left_point[1]);
 
         
-        svg_cont.appendChild(rectangles[rect_ind]);
+        svg_cont.appendChild(active_rect);
         
         prev_point = false;
     }
 
     if(edit_flag && valid_edit) {
-        rectangles[selected_rect].setAttribute("x", edit_tlp[0]);
-        rectangles[selected_rect].setAttribute("width", edit_brp[0] - edit_tlp[0]);
-        rectangles[selected_rect].setAttribute("y", edit_tlp[1]);
-        rectangles[selected_rect].setAttribute("height", edit_brp[1] - edit_tlp[1]);
-
-        set_corners(selected_rect, regions[selected_rect].name);
+        edit_rect.setAttribute("x", edit_tlp[0]);
+        edit_rect.setAttribute("width", edit_brp[0] - edit_tlp[0]);
+        edit_rect.setAttribute("y", edit_tlp[1]);
+        edit_rect.setAttribute("height", edit_brp[1] - edit_tlp[1]);
+        regions[edit_index].check();
+        set_corners(edit_rect, regions[edit_index].name);
         write_links();
     }
 
     if(move_flag) {
-        let rect_box = getCoords(rectangles[selected_rect]);
-        
-        rectangles[selected_rect].setAttribute("x", move_start[0] - move_offset[0]);
-        rectangles[selected_rect].setAttribute("y", move_start[1] - move_offset[1]);
+        move_rect.setAttribute("x", move_start[0] - move_offset[0]);
+        move_rect.setAttribute("y", move_start[1] - move_offset[1]);
 
-        set_corners(selected_rect, regions[selected_rect].name);
+        
+        regions[move_index].check();
+        set_corners(move_rect, regions[move_index].name);
         write_links();
     }
 
     requestAnimationFrame(draw);
 }
 
-function select_rect(clicked_id) {
+function select_rect(selected) {
 
     if(!(edit_flag || draw_flag || move_flag)) {
-        var index = parseInt(clicked_id.match(/\d+/),10);
+        let index = parseInt(selected.id.match(/\d+/),10);
 
-        for(var i = 0; i < rectangles.length; i++) {
-            rectangles[i].classList.remove("selected");
+        let children = svg_cont.children;
+        for(var i = 0; i < children.length; i++) {
+            children[i].classList.remove("selected");
         }
 
-        selected_rect = index;
-        rectangles[index].classList.add("selected");
+        selected.classList.add("selected");
 
         label = regions[index].name;
 
-        set_corners(index, label);
+        set_corners(selected, label);
 
         regions[index].check();
     }
 }
 
-/*function unselect_rect() {
-    for(var i = 0; i < rectangles.length; i++) {
-        rectangles[i].classList.remove("selected");
-    }
-    set_corners(-1);
-}*/
 
 //call draw to start recursion
 draw();

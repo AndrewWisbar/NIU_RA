@@ -10,11 +10,17 @@ let edit_anchor = [0, 0];
 let edit_tlp = [0, 0];
 let edit_brp = [0, 0];
 
+let move_rect;
+let move_index;
+
+let edit_rect;
+let edit_index;
+
 const label_text = document.getElementById("label_text");
 const cor_anchor = document.getElementById("corner_anchor");
 
-function set_corners(index, label) {
-    if(index == -1) {
+function set_corners(rect, label) {
+    if(rect == -1) {
         corners[0].setAttribute("x", -10);
         corners[0].setAttribute("y", -10);
 
@@ -37,7 +43,7 @@ function set_corners(index, label) {
     }
     else {
 
-        let box = getRelCoords(rectangles[index], document.getElementById("corner_cont"));
+        let box = getRelCoords(rect, document.getElementById("corner_cont"));
 
         corners[0].setAttribute("x", (box.left) - 5);
         corners[0].setAttribute("y", (box.top) - 5);
@@ -63,8 +69,18 @@ function set_corners(index, label) {
 }
 
 function begin_edit(id) {
+
+    let children = svg_cont.children;
+    for(var i = 0; i < children.length; i++) {
+        if(children[i].classList.contains("selected"))
+            edit_rect = children[i];
+    }
+    edit_index = parseInt(edit_rect.id.match(/\d+/),10);
     edit_flag = true;
-    let box = getRelCoords(rectangles[selected_rect], document.getElementById("svg_cont"));
+
+
+    let box = getRelCoords(edit_rect, document.getElementById("svg_cont"));
+    
     if(id == "corner_0") {
         edit_anchor = [box.right, box.bottom];
         
@@ -86,39 +102,41 @@ function begin_edit(id) {
 function end_edit() {
     edit_flag = false;
 
-    points = getRelCoords(rectangles[selected_rect], document.getElementById("svg_cont"));
+    regions[edit_index].rectUpdate(edit_rect);
+    set_corners(edit_rect);
 
-    regions[selected_rect].update(points.left, points.top, points.right, points.bottom);
+    regions[edit_index].check();
 
-    regions[selected_rect].check();
-
-    set_corners(selected_rect);
-
+    edit_rect = null;
     edit_anchor = [0, 0];
     edit_tlp = [0, 0];
     edit_brp = [0, 0];
 }
 
 function begin_move(e) {
+
+    let children = svg_cont.children;
+    for(var i = 0; i < children.length; i++) {
+        if(children[i].classList.contains("selected"))
+            move_rect = children[i];
+    }
+    move_index = parseInt(move_rect.id.match(/\d+/),10);
     move_flag = true;
 
     let pos = getMousePos(svg_cont, e);
-    let box = getRelCoords(rectangles[selected_rect], svg_cont);
+    let box = getRelCoords(move_rect, svg_cont);
     move_anchor = [pos.x, pos.y];
     move_start = [box.left, box.top];
 }
 
 function end_move() {
-
-    points = getRelCoords(rectangles[selected_rect], document.getElementById("svg_cont"));
-    move_flag = false;
+    regions[move_index].rectUpdate(move_rect);
+    set_corners(move_rect);
+    move_rect = null;
     move_flag = false;
     move_anchor = [0, 0];
     move_start = [0, 0];
     move_offset = [0, 0];
 
-    regions[selected_rect].update(points.left, points.top, points.right, points.bottom);
-
-    regions[selected_rect].check();
-    set_corners(selected_rect);
+    regions[move_index].check();
 }
