@@ -20,6 +20,11 @@ body {
     overflow: overlay;
 }
 
+p {
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
 .flex-container {
     margin-top: 2.5%;
     margin-bottom: 2.5%;
@@ -36,6 +41,20 @@ body {
     width: 45%;
     margin-left: 2.5%;
     margin-right: 2.5%;
+    background-color: var(--mid-tone);
+    border: 2px solid var(--dark-text);   
+    border-style: inset;
+    border-radius: 5px;
+}
+
+#instructions-panel {
+    position: relative;
+    width: 90%;
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    margin-bottom: 2.5%;
     background-color: var(--mid-tone);
     border: 2px solid var(--dark-text);   
     border-style: inset;
@@ -77,7 +96,6 @@ body {
     position: absolute;
     top: 0px;
     left: 0px;
-    width: 90%;
     margin-left: 5%;
     margin-top: 2.5%;
     z-index: 2;
@@ -151,7 +169,7 @@ path {
     stroke: var(--dark-text);
     fill: var(--light-text);
     stroke-width: 1px;
-    font: bold 24px sans-serif;
+    font: bold 20px sans-serif;
 }
 
 /****************/

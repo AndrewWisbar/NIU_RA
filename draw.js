@@ -5,6 +5,7 @@ const svg_cont = document.querySelector('.svg_cont');
 const pre_canvas = document.querySelector('.preview-canvas');
 const pre_ctx = pre_canvas.getContext('2d');
 
+window.addEventListener('resize', resizeSVG);
 
 const svgns = "http://www.w3.org/2000/svg";
 
@@ -42,6 +43,39 @@ corners.push(document.getElementById("center"));
 
 svg_cont.onload = function() {
     svg_cont.setAttribute("height", base_img.clientHeight);
+    svg_cont.setAttribute("width", base_img.clientWidth);
+}
+
+function resizeSVG() {
+    let oldWidth = svg_cont.clientWidth;
+    let oldHeight = svg_cont.clientHeight;
+    console.log(oldHeight);
+    svg_cont.setAttribute("height", base_img.clientHeight);
+    svg_cont.setAttribute("width", base_img.clientWidth);
+    console.log(svg_cont.clientWidth)
+    let widthAdj = oldWidth / base_img.clientWidth;
+    let heightAdj = oldHeight / base_img.clientHeight;
+
+    let children = svg_cont.children;
+    for(let i = 0; i < children.length; i++) {
+        let oldX = parseFloat(children[i].getAttribute("x"));
+        let oldY = parseFloat(children[i].getAttribute("y"));
+
+        let oldW = parseFloat(children[i].getAttribute("width"));
+        let oldH = parseFloat(children[i].getAttribute("height"));
+
+        children[i].setAttribute("x", oldX / widthAdj);
+        children[i].setAttribute("y", oldY / heightAdj);
+        children[i].setAttribute("width", oldW / widthAdj);
+        children[i].setAttribute("height", oldH / heightAdj);
+        regions[i].adjUpdate();
+        regions[i].rectUpdate(children[i]);
+
+        if(children[i].classList.contains("selected"))
+            select_rect(children[i]);
+
+        write_links();
+    }
 }
 
 function  getMousePos(area, evt) {
@@ -211,37 +245,18 @@ function removeAllChildren(parent) {
 }
 
 
-
-
 function draw() {
     if((draw_flag && prev_point)) {
 
         if(!rectangle_created) {
-            let rect_id = "rect_" + rect_ind;
-                active_rect.setAttribute("fill", colorPicker.value);
-                active_rect.setAttribute("stroke-width", sizePicker.value);
-                active_rect.setAttribute("stroke", colorPicker.value);
-                active_rect.setAttribute("fill-opacity", 0);
-                active_rect.setAttribute("id", rect_id);
-                active_rect.setAttribute('ondrop', "drop_handler(event)");
-                active_rect.setAttribute('ondragover', "dragover_handler(event)");
-                active_rect.addEventListener('dragenter', function(e) {
-                e.preventDefault();
-                e.target.classList.add('dragging');
-            });
-            
-            active_rect.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                e.target.classList.remove('dragging');
-            });
-            rectangle_created = true;
+            createRect(rect_ind);
         }
         active_rect.setAttribute("x", top_left_point[0]);
         active_rect.setAttribute("y", top_left_point[1]);
         active_rect.setAttribute("width", bottom_right_point[0] - top_left_point[0]);
         active_rect.setAttribute("height", bottom_right_point[1] - top_left_point[1]);
 
-        
+        console.log("Draw")
         svg_cont.appendChild(active_rect);
         
         prev_point = false;
@@ -288,6 +303,28 @@ function select_rect(selected) {
 
         regions[index].check();
     }
+}
+
+function createRect(ind) {
+    console.log("Created Rect")
+    let rect_id = "rect_" + ind;
+    active_rect.setAttribute("fill", colorPicker.value);
+    active_rect.setAttribute("stroke-width", sizePicker.value);
+    active_rect.setAttribute("stroke", colorPicker.value);
+    active_rect.setAttribute("fill-opacity", 0);
+    active_rect.setAttribute("id", rect_id);
+    active_rect.setAttribute('ondrop', "drop_handler(event)");
+    active_rect.setAttribute('ondragover', "dragover_handler(event)");
+    active_rect.addEventListener('dragenter', function(e) {
+        e.preventDefault();
+        e.target.classList.add('dragging');
+    });
+
+    active_rect.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.target.classList.remove('dragging');
+    });
+rectangle_created = true;
 }
 
 

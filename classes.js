@@ -27,19 +27,14 @@
         if((this.bounds[2] - this.bounds[0]) > (this.bounds[3] - this.bounds[1])) {
             pre_canvas.width = 1000;
 
-            //get the ratio of width/height
-            ratio = pre_canvas.width / (this.bounds[2] - this.bounds[0]);
-
             //set the height of the canvas to the appropriate size
             pre_canvas.height = pre_canvas.width * ((this.bounds[3] - this.bounds[1]) / (this.bounds[2] - this.bounds[0]));
         } else {
             pre_canvas.height = 1000;
 
             //get the ratio of height/width
-            ratio = pre_canvas.height / (this.bounds[3] - this.bounds[1]);
 
             //set the width of the canvas based on the ratio
-            pre_canvas.width = pre_canvas.height * ((this.bounds[3] - this.bounds[1]) / (this.bounds[2] - this.bounds[0]));
         }
 
         //draw the image
@@ -72,6 +67,10 @@
         if(this.name == this.id)
             this.name = rect.id;
         this.id = rect.id;
+    }
+
+    adjUpdate() {
+        this.adj = base_img.naturalWidth / base_img.width;
     }
 } 
 

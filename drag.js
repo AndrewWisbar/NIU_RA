@@ -94,21 +94,28 @@ function write_links() {
 function get_path(start, end, intensity) {
 
     let parent_box = getCoords(document.getElementById("main_container"));
-    let svg_box = getCoords(document.getElementById("svg_cont"));
+    let svg_box = getCoords(svg_cont);
     let text_box = getCoords(document.getElementById("sample-text"));
-    let extent = ((start.left + start.right) / 2 + (svg_box.right - end.right)) / 10
+    let oldRange = (text_box.right - text_box.left);
+    let text_el = document.getElementById("caption-text");
+    let text_style = window.getComputedStyle(text_el)
+    let newRange = parseFloat(text_style.getPropertyValue("font-size")) * .2;
+    let value = ((start.left + start.right) / 2);
+    
+    let newValue = (((value - text_box.left) * newRange) / oldRange);
+    console.log(newRange, value, oldRange);
     var new_path = d3.path();
 
 
     if((end.top + end.bottom) / 2 < start.bottom + 2) { //middle of rect is above top of span
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.top - parent_box.top);
         new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                                start.top - parent_box.top - 6,
-                                text_box.left - parent_box.left,
-                                start.top - parent_box.top - 6);
-
+                                start.top - parent_box.top - newValue,
+                                start.left - parent_box.left,
+                                start.top - parent_box.top - newValue);
+        new_path.lineTo(text_box.left - parent_box.left, start.top - parent_box.top - newValue);
         new_path.bezierCurveTo(svg_box.right - parent_box.left, 
-                                start.top - parent_box.top - 6, 
+                                start.top - parent_box.top - newValue, 
                                 svg_box.right - parent_box.left, 
                                 (end.top + end.bottom) / 2 - parent_box.top, 
                                 end.right - parent_box.left,
@@ -117,12 +124,12 @@ function get_path(start, end, intensity) {
     else { // rect is significantly lower than span
         new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
         new_path.quadraticCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                                start.bottom - parent_box.top + 6,
+                                start.bottom - parent_box.top + newValue,
                                 text_box.left - parent_box.left,
-                                start.bottom - parent_box.top + 6);
+                                start.bottom - parent_box.top + newValue);
 
         new_path.bezierCurveTo(svg_box.right - parent_box.left, 
-                                start.bottom - parent_box.top + 6, 
+                                start.bottom - parent_box.top + newValue, 
                                 svg_box.right - parent_box.left, 
                                 (end.top + end.bottom) / 2 - parent_box.top, 
                                 end.right - parent_box.left,
