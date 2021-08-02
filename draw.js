@@ -74,8 +74,9 @@ function resizeSVG() {
         if(children[i].classList.contains("selected"))
             select_rect(children[i]);
 
-        write_links();
+        
     }
+    write_links();
 }
 
 function  getMousePos(area, evt) {

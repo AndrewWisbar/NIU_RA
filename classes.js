@@ -71,6 +71,8 @@
 
     adjUpdate() {
         this.adj = base_img.naturalWidth / base_img.width;
+        for(let i = 0; i < this.bounds.length; i++)
+            this.bounds[i] = this.unadjusted[i] * this.adj;
     }
 } 
 
