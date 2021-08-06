@@ -1,33 +1,42 @@
 :root {
     /*define colors*/
-    --main-dark: #313638;
-    --mid-dark: #898B87;
-    --mid-tone: #E0DFD5;
-    --light: #E8E9EB;
-    --dark-acc: #04151F;
-    --mid-acc: #183A37;
-    --light-acc: #ABC69C;
+    --main-dark: #2F3230;
+    --mid-dark: #2D4848;
+    --light: #D7DFDC;
+    --dark-acc: #CAAC9B;
+    --light-acc: #ECC4AC;
+    --off-white:  #F7E7DE;
     --light-text: #FFFFFF;
     --dark-text: #000000;
-    --highlight: #fca5b5;
+    --highlight: #7D84B2;
+    
 }
 
 body {
     user-select: none;
     margin: 0;
     overflow-x: hidden;
-    background-color: var(--main-dark);
+    background-color: var(--mid-dark);
     overflow: overlay;
 }
 
 p {
-    margin-top: 1%;
-    margin-bottom: 1%;
+    margin-block-start: 0px;
+    line-height: 1.6;
+    max-width: 60ch;
+}
+
+h1, h2, h3 {
+    margin-top: 1.25%;
+    margin-bottom: 1.25%;
+    margin-block-start: 0;
+    line-height: 1.2;
 }
 
 .flex-container {
     margin-top: 2.5%;
     margin-bottom: 2.5%;
+    width: 100%;
     display: flex;
     flex-direction: row;
 }
@@ -36,29 +45,44 @@ p {
 /* User Interaction */
 /********************/
 
+#user-container {
+    padding-top: 1.25%;
+    padding-bottom: 1.25%;
+    background-color: var(--off-white);
+    box-shadow: 5px 5px 10px 1px var(--main-dark);
+}
+
+#main_container {
+    width: 73.75%;
+    margin-left: 1%;
+    margin-right: 2.5%;
+}
+
+#info-panel {
+    width: 21.25%;
+    margin-left: 2.5%;
+    margin-right: 1%;
+    background-color: var(--off-white);
+    box-shadow: 5px 5px 10px 1px var(--main-dark);
+}
+
 .user-panel {
     position: relative;
-    width: 45%;
-    margin-left: 2.5%;
-    margin-right: 2.5%;
-    background-color: var(--mid-tone);
-    border: 2px solid var(--dark-text);   
-    border-style: inset;
-    border-radius: 5px;
+    width: 100%;
+    background-color: var(--off-white);
 }
 
 #instructions-panel {
     position: relative;
-    width: 90%;
+    width: 95%;
+
     padding-left: 2.5%;
     padding-right: 2.5%;
-    margin-left: 2.5%;
-    margin-right: 2.5%;
+    padding-top: 1.25%;
+    margin-top: 2.5%;
     margin-bottom: 2.5%;
-    background-color: var(--mid-tone);
-    border: 2px solid var(--dark-text);   
-    border-style: inset;
-    border-radius: 5px;
+    background-color: var(--off-white);
+    box-shadow: 5px 5px 10px 1px var(--main-dark);
 }
 
 /* Text - Caption Box */
@@ -115,19 +139,22 @@ p {
 
 .preview-canvas {
     width: 50%;
+    height: 50%;
     margin-left: 25%;
     margin-top: 2.5%;
 }
 
-.preview-panel {
-    width: 15%;
-    margin-left: 2.5%;
-    margin-right: 2.5%;
-    background-color: var(--mid-tone);
-    border: 2px solid var(--dark-text);   
-    border-style: inset;
-    border-radius: 5px;
-    align-content: center;
+#link-panel {
+    width: 97.5%;
+    margin-left: 1.25%;
+    margin-right: 1.25%;
+}
+
+#preview-panel {
+    height: 24%;
+    width: 97.5%;
+    margin-left: 1.25%;
+    margin-right: 1.25%;
 }
 
 #controls {
@@ -150,18 +177,26 @@ p {
 
 .marker {
     position:absolute;
+    display: none;
+}
+
+.vis-marker {
+    position:absolute;
+    display: block;
 }
 
 .selected_link {
     transition-duration: .1s;
-    stroke: var(--mid-acc);
+    stroke: var(--dark-acc);
     stroke-width: 5px;
     stroke-dasharray: none;
+    stroke-opacity: .4;
 }
 
 path {
     stroke: var(--light-acc);
     stroke-width: 2;
+    stroke-opacity: 0.75;
     fill: none;
 }
 
@@ -184,9 +219,8 @@ path {
     position: fixed;
     z-index: 10000;
     width: 170px;
-    background: var(--mid-dark);
-    border: 2px solid var(--dark-text);
-    border-radius: 5px;
+    background: var(--dark-acc);
+    border: 2px solid var(--main-dark);
     display: none;
 }
 
@@ -203,7 +237,7 @@ path {
     padding: 0;
     font-size: 18px;
     width: inherit;
-    background-color: var(--mid-dark);
+    background-color: var(--dark-acc);
     border: none;
     color: var(--light-text);
     display: none;
@@ -218,7 +252,7 @@ button.visible {
 }
 
 .menu-button:hover {
-    background-color: var(--mid-tone);
+    background-color: var(--light-acc);
     color: var(--dark-text);
 }
 
@@ -228,4 +262,29 @@ button.visible {
 
 #rename_controls.visible {
     display: block;
+}
+
+/****************/
+/*** Title Bar **/
+/****************/
+
+#title-bar {
+    width: 95%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    border-bottom: 3px solid var(--main-dark);
+    color: var(--light-text);
+}
+
+#Page-Title {
+    width: 90%;
+    font-size: 48px;
+    margin: 0;
+}
+
+.nav-btn {
+    width: 5%;
+    background-color: var(--mid-dark);
+    font-size: 24px;
+    border: none;
 }

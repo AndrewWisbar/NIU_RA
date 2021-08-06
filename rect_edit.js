@@ -36,6 +36,11 @@ function set_corners(rect, label) {
         corners[4].setAttribute("x", -10);
         corners[4].setAttribute("y", -10);
 
+        let children = document.getElementById("corner_cont").children;
+        for(let i = 0; i < children.length - 1; i++) {
+            children[i].classList.add("marker");
+        }
+
         label_text.innerHTML = "";
         label_text.setAttribute("x", -10);
         label_text.setAttribute("y", -10);
@@ -59,6 +64,11 @@ function set_corners(rect, label) {
 
         corners[4].setAttribute("x", (box.left + box.right) / 2 - 5);
         corners[4].setAttribute("y", (box.top + box.bottom) / 2 - 5);
+
+        let children = document.getElementById("corner_cont").children;
+        for(let i = 0; i < children.length - 1; i++) { 
+            children[i].classList.remove("marker");
+        }
 
         if(label) {
             label_text.innerHTML = label;

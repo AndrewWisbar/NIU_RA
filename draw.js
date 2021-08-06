@@ -28,7 +28,6 @@ let active_rect;
 let regions = [];
 
 let label;
-let rect_ind;
 
 let corners = [];
 for(var i = 0; i < 4; i++) {
@@ -42,8 +41,9 @@ corners.push(document.getElementById("center"));
  *****************************************************************************/
 
 svg_cont.onload = function() {
-    svg_cont.setAttribute("height", base_img.clientHeight);
-    svg_cont.setAttribute("width", base_img.clientWidth);
+    let img_box = base_img.getBoundingClientRect();
+    svg_cont.setAttribute("height", img_box.height);
+    svg_cont.setAttribute("width", img_box.width);
 }
 
 function resizeSVG() {
@@ -91,7 +91,6 @@ function  getMousePos(area, evt) {
 function begin_draw(event) {
     //protect against user moving mouse off canvas while drawing
     if(!draw_flag) {
-        rect_ind = svg_cont.childElementCount;
         //get the mouse position when the user clicks
         let pos = getMousePos(svg_cont, event);
 
@@ -201,11 +200,9 @@ function end_draw() {
                                 bottom_right_point[0], bottom_right_point[1], active_rect.id));
             active_rect.classList.add("finished_rect");
             active_rect.setAttribute("onmouseover", "select_rect(this)");
-
-            rect_ind++;
         }
 
-        active_rect = null;
+        
 
         draw_flag = false;
         prev_point = false;
@@ -224,6 +221,8 @@ function end_draw() {
     if(move_flag) {
         end_move();
     }
+
+    active_rect = null;
 }
 
 
@@ -250,7 +249,8 @@ function draw() {
     if((draw_flag && prev_point)) {
 
         if(!rectangle_created) {
-            createRect(rect_ind);
+            console.log(svg_cont.childElementCount)
+            createRect(svg_cont.childElementCount, active_rect);
         }
         active_rect.setAttribute("x", top_left_point[0]);
         active_rect.setAttribute("y", top_left_point[1]);
@@ -306,26 +306,25 @@ function select_rect(selected) {
     }
 }
 
-function createRect(ind) {
-    console.log("Created Rect")
+function createRect(ind, rect) {
     let rect_id = "rect_" + ind;
-    active_rect.setAttribute("fill", colorPicker.value);
-    active_rect.setAttribute("stroke-width", sizePicker.value);
-    active_rect.setAttribute("stroke", colorPicker.value);
-    active_rect.setAttribute("fill-opacity", 0);
-    active_rect.setAttribute("id", rect_id);
-    active_rect.setAttribute('ondrop', "drop_handler(event)");
-    active_rect.setAttribute('ondragover', "dragover_handler(event)");
-    active_rect.addEventListener('dragenter', function(e) {
+    rect.setAttribute("fill", colorPicker.value);
+    rect.setAttribute("stroke-width", sizePicker.value);
+    rect.setAttribute("stroke", colorPicker.value);
+    rect.setAttribute("fill-opacity", 0);
+    rect.setAttribute("id", rect_id);
+    rect.setAttribute('ondrop', "drop_handler(event)");
+    rect.setAttribute('ondragover', "dragover_handler(event)");
+    rect.addEventListener('dragenter', function(e) {
         e.preventDefault();
         e.target.classList.add('dragging');
     });
 
-    active_rect.addEventListener('dragleave', function(e) {
+    rect.addEventListener('dragleave', function(e) {
         e.preventDefault();
         e.target.classList.remove('dragging');
     });
-rectangle_created = true;
+    rectangle_created = true;
 }
 
 
