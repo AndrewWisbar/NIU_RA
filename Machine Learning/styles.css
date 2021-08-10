@@ -1,0 +1,7 @@
+.flex-container {
+    display: flex;
+}
+
+#src-img {
+    display: none;
+}

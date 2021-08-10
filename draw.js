@@ -49,10 +49,8 @@ svg_cont.onload = function() {
 function resizeSVG() {
     let oldWidth = svg_cont.clientWidth;
     let oldHeight = svg_cont.clientHeight;
-    console.log(oldHeight);
     svg_cont.setAttribute("height", base_img.clientHeight);
     svg_cont.setAttribute("width", base_img.clientWidth);
-    console.log(svg_cont.clientWidth)
     let widthAdj = oldWidth / base_img.clientWidth;
     let heightAdj = oldHeight / base_img.clientHeight;
 
@@ -249,7 +247,6 @@ function draw() {
     if((draw_flag && prev_point)) {
 
         if(!rectangle_created) {
-            console.log(svg_cont.childElementCount)
             createRect(svg_cont.childElementCount, active_rect);
         }
         active_rect.setAttribute("x", top_left_point[0]);
@@ -257,7 +254,6 @@ function draw() {
         active_rect.setAttribute("width", bottom_right_point[0] - top_left_point[0]);
         active_rect.setAttribute("height", bottom_right_point[1] - top_left_point[1]);
 
-        console.log("Draw")
         svg_cont.appendChild(active_rect);
         
         prev_point = false;

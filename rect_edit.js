@@ -114,6 +114,7 @@ function end_edit() {
 
     regions[edit_index].rectUpdate(edit_rect);
     set_corners(edit_rect);
+    write_links();
 
     regions[edit_index].check();
 
@@ -142,6 +143,7 @@ function begin_move(e) {
 function end_move() {
     regions[move_index].rectUpdate(move_rect);
     set_corners(move_rect);
+    write_links();
     move_rect = null;
     move_flag = false;
     move_anchor = [0, 0];

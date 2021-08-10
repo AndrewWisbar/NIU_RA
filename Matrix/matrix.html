@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Visualizer</title>
+    
+</head>
+<body>
+    <canvas id="matrix-canv" width="500" height="500"></canvas>
+
+    <div>
+        <label for="width-slider">Width</label>
+        <input id="width-slider" type="range" min="4" max="20" value="5">
+        <label for="height-slider">Height</label>
+        <input id="height-slider" type="range" min="4" max="20" value="5">
+        <button onclick="generate()">Generate</button>
+    </div>
+
+    <div>
+        <h3>Logic</h3>
+        <input type="radio" id="OR"
+        name="LOGIC" value="o" checked>
+        <label for="OR">OR</label>
+
+        <input type="radio" id="AND"
+            name="LOGIC" value="a">
+        <label for="AND">AND</label>
+
+        <input type="radio" id="XOR"
+            name="LOGIC" value="x">
+        <label for="XOR">XOR</label>
+
+        <button onclick="redraw()">Redraw</button>
+    </div>
+    <script src="matrix.js"></script>
+
+
+</body>
+</html>

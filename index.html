@@ -9,12 +9,21 @@
 </head>
 <body>  
     <div id="title-bar" class="flex-container">
-        <h1 id="Page-Title">Title</h1>
+        <h1 id="Page-Title">Image-Caption Linking</h1>
         <button class="nav-btn">Instructions</button>
         <button class="nav-btn">About</button>
     </div>
     <div class="flex-container">
         <div id="info-panel">
+            <svg id="line_cont" class="container_svg" width=20 height=20></svg>
+                <svg id="corner_cont" class="container_svg" width=20 height=20>
+                    <rect id="corner_0" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
+                    <rect id="corner_1" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
+                    <rect id="corner_2" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
+                    <rect id="corner_3" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
+                    <rect id="center" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_move(event)" onmouseup="end_move()" onmousemove="mouse_move(event)"></rect>
+                    <text id="label_text" class="svg_text"></text>
+                </svg>  
             <div id="preview-panel" class="user-panel">
                 <h3>Selection Preview</h3>
                 <canvas class="preview-canvas">
@@ -29,15 +38,7 @@
         <div id="main_container">
             
             <div id=user-container>
-                <svg id="line_cont" class="container_svg" width=1 height=1></svg>
-                <svg id="corner_cont" class="container_svg" width=1 height=1>
-                    <rect id="corner_0" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-                    <rect id="corner_1" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-                    <rect id="corner_2" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-                    <rect id="corner_3" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-                    <rect id="center" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_move(event)" onmouseup="end_move()" onmousemove="mouse_move(event)"></rect>
-                    <text id="label_text" class="svg_text"></text>
-                </svg>  
+                
                 <div id="sample-text" class="user-panel">
                     <p class="special-text" id="caption-text">This is Sample Text for Highlighting. This is Sample Text for Highlighting. This is Sample Text for Highlighting. This is Sample Text for Highlighting.</p>
                 </div>
@@ -71,7 +72,7 @@
          
                     The rectangle represents the portion of the image that you wish to link to a word in the caption. 
           
-                    A rectangle can be moved or resized by using the small <span style="color: var(--highlight)">colored</span> 
+                    A rectangle can be moved or resized by using the small <span style="background-color: var(--highlight)">colored</span> 
                     rectangles that appear when the rectangle is selected with the mouse. 
         
                     Additonally, a rectangle can be deleted or renamed by right clicking the rectangle and selecting the appropriate

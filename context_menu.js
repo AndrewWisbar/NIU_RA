@@ -172,9 +172,7 @@ function insertAfter(newNode, existingNode) {
 function delete_rect() {
     if(menu_selection) {
         let del_index = parseInt(menu_selection.id.match(/\d+/),10);
-        console.log(del_index, regions);
         regions.splice(del_index, 1);
-        console.log(regions);
         var i = 0;
         while(i < links.length) {
             if(links[i].rect === menu_selection) {
@@ -185,19 +183,18 @@ function delete_rect() {
                 i++;
             }
         }
-        console.log(menu_selection);
         menu_selection = null;
         
 
         var deleted_rect = document.getElementById("rect_" + del_index);
-        console.log(deleted_rect);
         deleted_rect.remove();
-        console.log(deleted_rect);
         let children = svg_cont.children;
         for(let i = 0; i < children.length; i++) {
             children[i].setAttribute("id", "rect_" + i);
             regions[i].rectUpdate(children[i]);
         }
+
+        end_draw();
     }
 
     hide_context_menu();

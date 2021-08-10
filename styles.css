@@ -1,14 +1,14 @@
 :root {
     /*define colors*/
-    --main-dark: #2F3230;
-    --mid-dark: #2D4848;
+    --main-dark: #4b5d68;
+    --mid-dark: #97a8a8;
     --light: #D7DFDC;
-    --dark-acc: #CAAC9B;
-    --light-acc: #ECC4AC;
-    --off-white:  #F7E7DE;
+    --dark-acc: #54724a;
+    --light-acc: #9fc891;
+    --off-white:  #f3f0ed;
     --light-text: #FFFFFF;
     --dark-text: #000000;
-    --highlight: #7D84B2;
+    --highlight: #6bff8c;
     
 }
 
@@ -64,6 +64,7 @@ h1, h2, h3 {
     margin-right: 1%;
     background-color: var(--off-white);
     box-shadow: 5px 5px 10px 1px var(--main-dark);
+
 }
 
 .user-panel {
@@ -194,7 +195,7 @@ h1, h2, h3 {
 }
 
 path {
-    stroke: var(--light-acc);
+    stroke: var(--main-dark);
     stroke-width: 2;
     stroke-opacity: 0.75;
     fill: none;
@@ -226,11 +227,10 @@ path {
 
 #context-menu .menu-item {
     width: inherit;
-    
+    margin: 5px 0px;
     font-size: 15px;
     color: var(--light-text);
     cursor: pointer;
-    border-radius: inherit;
 }
 
 .menu-button {
