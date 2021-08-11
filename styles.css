@@ -1,7 +1,7 @@
 :root {
     /*define colors*/
     --main-dark: #4b5d68;
-    --mid-dark: #97a8a8;
+    --mid-dark: #8db2b2;
     --light: #D7DFDC;
     --dark-acc: #54724a;
     --light-acc: #9fc891;
@@ -272,19 +272,31 @@ button.visible {
     width: 95%;
     margin-left: 2.5%;
     margin-right: 2.5%;
-    border-bottom: 3px solid var(--main-dark);
+    background-color: var(--main-dark);
     color: var(--light-text);
 }
 
 #Page-Title {
+    padding-top: 1rem;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
     width: 90%;
     font-size: 48px;
     margin: 0;
 }
 
 .nav-btn {
-    width: 5%;
-    background-color: var(--mid-dark);
-    font-size: 24px;
+    /* width: 5%; */
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background-color: var(--main-dark);
+    font-size: 16px;
     border: none;
+    color: var(--light-text);
+}
+
+.nav-btn:hover {
+    transition-duration: .2s;
+    background-color: var(--mid-dark);
+    font-size: 20px;
 }
