@@ -5,13 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drawing</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="src/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
 </head>
 <body>  
     <div id="title-bar" class="flex-container">
         <h1 id="Page-Title">Image-Caption Linking</h1>
         <button class="nav-btn" onclick="window.location.href=''">Instructions</button>
-        <button class="nav-btn" onclick="window.location.href='Machine Learning/index.html'">Machine Learning</button>
         <button class="nav-btn" onclick="window.location.href='Matrix/matrix.html'">Matrix</button>
         <button class="nav-btn">About</button>
     </div>
@@ -46,7 +47,7 @@
                 </div>
                 <div id="drawing-panel" class="user-panel">
                     <div id="drawing-parent">
-                        <img src="https://www.niu.edu/locations/images/dekalb.jpg" alt="" class="base-img" draggable="false">
+                        <img src="" alt="" class="base-img" draggable="false">
                         <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
                         </svg>
                     </div>
@@ -105,11 +106,12 @@
     </div>
 
     <script src="lib/d3.min.js"></script>
-    <script src="classes.js"></script>
-    <script src="drag.js"></script>
-    <script src="rect_edit.js"></script>
-    <script src="draw.js"></script>
-    <script src="context_menu.js"></script>
+    <script src="src/object_detection.js"></script>
+    <script src="src/classes.js"></script>
+    <script src="src/drag.js"></script>
+    <script src="src/rect_edit.js"></script>
+    <script src="src/draw.js"></script>
+    <script src="src/context_menu.js"></script>
 
     
 

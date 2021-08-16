@@ -21,9 +21,10 @@
     }
     // called after a user selects a portion of the image
     check() {
+        
         var ratio;
 
-        //if the width of the selection is greator
+        //if the width of the selection is greater
         if((this.bounds[2] - this.bounds[0]) > (this.bounds[3] - this.bounds[1])) {
             pre_canvas.width = 1000;
 
