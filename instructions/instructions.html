@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Project Name" - Instructions</title>
+    <link rel="stylesheet" href="instr_styles.css">
+</head>
+<body>  
+    <div id="title-bar" class="flex-container">
+        <h1 class="main-title">Instructions</h1>
+        <button class="nav-btn" onclick="window.location.href='../index.html'">Home</button>
+        <button class="nav-btn" onclick="window.location.href='Matrix/matrix.html'">Matrix</button>
+        <button class="nav-btn">About</button>
+    </div>
+    
+
+    <div id="instructions-panel">
+        <h2>Instructions</h2>
+        <h3 class="instr-header">Getting Started</h3>
+            <p class="instr-body">
+                When the webpage is first loaded, the computer will begin by attempting to identify all of the objects present in a randomly selected image.
+                Once the computer thinks it has detected each important object in the image, it will display this information by drawing rectangles corresponding to each detected object. 
+                That is where the user's job begins.
+                The computer can only guess at the location of objects and what type of object it is. It doesn't know for certain, and will therefore, often be wrong. 
+                It is the users job to correct the computer, so it can learn to make better guesses in the future. 
+            </p>
+            <p class="instr-body">
+                To do this, a user should start by correcting any rectangles the computer may have generated.
+                This could include rectangles which are not completely covering a detected object, mislabeled rectangles, 
+                or even the computer drawing a rectangle where no object is present.
+            </p>
+            <p class="instr-body">
+                Once all the necessary corrections have been made to any generated rectangles, 
+                a user should move on to selecting any significant objects in the image that the computer may have missed.
+
+            </p>
+        <h3 class="instr-header">Editing Computer Generated Content</h3>
+            <p class="instr-body">
+                The webpage provides many tools one can use to edit the computer's detected objects, 
+                and each of these tools can also be used by a user to edit selections they have made.
+            </p>
+            <h4 class="instr-sub-header">Moving and Resizing</h4>
+            <p class="instr-body">
+                Perhaps the most useful of the available tools is the ability to move and resize rectangles.
+                To do this, begin by selecting the desired rectangle. 
+                This can be done by simply moving the mouse within the bounds of the rectangle. 
+                When a rectangle becomes selected, its borders will become slightly thicker, and 
+                five small <span style="background-color: var(--highlight)">colored</span> squares will appear,
+                one in each corner, and one in the center. Clicking and dragging one of the squares in a corner 
+                will allow you to move that specfic corner, and clicking and dragging the middle square will move
+                the entire rectangle without changing its shape.
+            </p>
+            <h4 class="instr-sub-header">Renaming Rectangles</h4>
+            <p class="instr-body">
+                Another very useful tool is the ability to re-label, or rename a rectangle. 
+                To do this, simply right-click on the target rectangle and select the "Rename Rectangle" option.
+                Once you do this, a text input box will appear underneath the image. 
+                Type the desired label into the box and click sumbit.
+            </p>
+            <p class="instr-body"> 
+                The name of a rectangle is important because it is how the computer knows what an object is. 
+                The computer doesn't really know what a word like "person" means, 
+                but by analyzing all the images it has that are labeled "person",
+                it can begin to guess at what the connections between the images are.
+                Then the computer can apply these connections to new images to hopefully detect
+                each person present.
+            </p>
+            <h4 class="instr-sub-header">Deleting Rectangles</h4>
+            <p class="instr-body">
+                Yet another tool is the ability to delete a rectangle. To do this right click on a rectangle select "Delete Rectangle." 
+            </p>
+        <h3 class="instr-header">Selecting Image Content</h3>
+            <p class="instr-body">
+                To select a part of the image, simply click and drag anywhere on the image. 
+                The rectangle will be drawn between that point and where ever the mouse is released.
+            </p>
+        <h3 class="instr-header">Selecting Text</h3>
+            <p class="instr-body">
+                To select a word from the caption, first, highlight the word by clicking and dragging. Then, right-click the selection and choose "Highlight Selection" from the context menu.
+            
+                After the text has been highlighted, you can click and drag the highlighted text. When you drop the highlighted text onto a rectangle, it will create a link between that rectangle and word.
+            
+                Using the context menu, you can also remove a highlight, or remove any links the word may have. Alternatively, links can be deleted individually by right-clicking the link itself.
+            </p>
+    </div>
+</body>
+</html>

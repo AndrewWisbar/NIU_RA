@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drawing</title>
-    <link rel="stylesheet" href="src/styles.css">
+    <title>"Project Name" - User Interface</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
     <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
 </head>
 <body>  
     <div id="title-bar" class="flex-container">
-        <h1 id="Page-Title">Image-Caption Linking</h1>
-        <button class="nav-btn" onclick="window.location.href=''">Instructions</button>
+        <h1 class="main-title">Image-Caption Linking</h1>
+        <button class="nav-btn" onclick="window.location.href='instructions/instructions.html'">Instructions</button>
         <button class="nav-btn" onclick="window.location.href='Matrix/matrix.html'">Matrix</button>
         <button class="nav-btn">About</button>
     </div>
     <div class="flex-container">
-        <div id="info-panel">
+        <div id="info-panel" class="user-panel">
             <svg id="line_cont" class="container_svg" width=20 height=20></svg>
                 <svg id="corner_cont" class="container_svg" width=20 height=20>
                     <rect id="corner_0" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
@@ -27,69 +27,36 @@
                     <rect id="center" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_move(event)" onmouseup="end_move()" onmousemove="mouse_move(event)"></rect>
                     <text id="label_text" class="svg_text"></text>
                 </svg>  
-            <div id="preview-panel" class="user-panel">
+            <div id="preview-panel">
                 <h3>Selection Preview</h3>
                 <canvas class="preview-canvas">
                     <p>Selection Preview Failed to Load</p>
                 </canvas>
             </div>
-            <div id="link-panel" class="user-panel">
+            <div id="link-panel">
                 <h3>Active Links</h3>
                 <ul id="link-list"></ul>
             </div>
         </div>
-        <div id="main_container">
-            
-            <div id=user-container>
-                
-                <div id="sample-text" class="user-panel">
-                    <p class="special-text" id="caption-text">This is Sample Text for Highlighting. This is Sample Text for Highlighting. This is Sample Text for Highlighting. This is Sample Text for Highlighting.</p>
+        <div id="main-panel" class="user-panel">
+            <p class="caption-text" id="caption-text">This is Sample Text for Highlighting. This is Sample Text for Highlighting. This is Sample Text for Highlighting. This is Sample Text for Highlighting.</p>
+            <div id="drawing-panel">
+                <div id="drawing-parent">
+                    <img src="" alt="" id="base-img" draggable="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
+                    </svg>
                 </div>
-                <div id="drawing-panel" class="user-panel">
-                    <div id="drawing-parent">
-                        <img src="" alt="" class="base-img" draggable="false">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
-                        </svg>
-                    </div>
-                
-                    <div id="controls">
-                        <input type="color">
-                        <input type="range" min="1" max="4" value="2">
-                        <button onclick="reset_image()">Reset Drawing</button>
-                        <div id=rename_controls>
-                            <h3>Rename Rectangle</h3>
-                            <input type="text" id="name_input" value="Enter Name">
-                            <button onclick="set_name()" id="rename_btn">Submit</button>
-                        </div>
+            
+                <div id="controls">
+                    <input type="color">
+                    <input type="range" min="1" max="4" value="2">
+                    <button onclick="reset_image()">Reset Drawing</button>
+                    <div id=rename_controls>
+                        <h3>Rename Rectangle</h3>
+                        <input type="text" id="name_input" value="Enter Name">
+                        <button onclick="set_name()" id="rename_btn">Submit</button>
                     </div>
                 </div>
-            </div>
-            
-            
-
-            <div id="instructions-panel">
-                <h2>Instructions</h2>
-                <h3>Selecting Image Content</h3>
-                <p>
-                    To select a part of the image, simply click and drag. This will draw a rectangle.
-         
-                    The rectangle represents the portion of the image that you wish to link to a word in the caption. 
-          
-                    A rectangle can be moved or resized by using the small <span style="background-color: var(--highlight)">colored</span> 
-                    rectangles that appear when the rectangle is selected with the mouse. 
-        
-                    Additonally, a rectangle can be deleted or renamed by right clicking the rectangle and selecting the appropriate
-                    option from the context menu.
-                
-                    If necessary, you can also use the provided color and size selector to change the appearance of future rectangles.</p>
-                <h3>Selecting Text</h3>
-                <p>
-                    To select a word from the caption, first, highlight the word by clicking and dragging. Then, right-click the selection and choose "Highlight Selection" from the context menu.
-        
-                    After the text has been highlighted, you can click and drag the highlighted text. When you drop the highlighted text onto a rectangle, it will create a link between that rectangle and word.
-        
-                    Using the context menu, you can also remove a highlight, or remove any links the word may have. Alternatively, links can be deleted individually by right-clicking the link itself.
-                </p>
             </div>
         </div>
     </div>

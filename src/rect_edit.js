@@ -89,7 +89,7 @@ function begin_edit(id) {
     edit_flag = true;
 
 
-    let box = getRelCoords(edit_rect, document.getElementById("svg_cont"));
+    let box = getRelCoords(edit_rect, svg_cont);
     
     if(id == "corner_0") {
         edit_anchor = [box.right, box.bottom];

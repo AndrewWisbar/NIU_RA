@@ -1,7 +1,7 @@
 
 // Setting up page elements that we need
-const base_img = document.querySelector('.base-img');
-const svg_cont = document.querySelector('.svg_cont');
+const base_img = document.querySelector('#base-img');
+const svg_cont = document.querySelector('#svg_cont');
 const pre_canvas = document.querySelector('.preview-canvas');
 const pre_ctx = pre_canvas.getContext('2d');
 

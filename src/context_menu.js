@@ -1,7 +1,7 @@
 
 const contextMenu = document.getElementById("context-menu");
 const scope = document.querySelector("body");
-const highlight_text = document.querySelector(".special-text");
+const highlight_text = document.querySelector(".caption-text");
 
 let menu_selection;
 
