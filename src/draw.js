@@ -36,9 +36,22 @@ for(var i = 0; i < 4; i++) {
 
 corners.push(document.getElementById("center"));
 
+let img_num = 8;
+let img_ind = Math.floor(Math.random() * img_num);
+let img_path = 'images/img000' + img_ind + '.jpg';
+base_img.setAttribute('src', img_path);
+
 /******************************************************************************
  ****************************Function Definitions******************************
  *****************************************************************************/
+
+ svg_cont.onload = function() {
+    let img_box = base_img.getBoundingClientRect();
+    console.log(img_box);
+    svg_cont.setAttribute("width", img_box.width);
+    svg_cont.setAttribute("height", img_box.height);
+    console.log
+}
 
 function resizeSVG() {
     let oldWidth = svg_cont.clientWidth;

@@ -1,25 +1,17 @@
-let img;
-const img_num = 8;
-let rct_c = {r:0, g:255, b:255};
-let col_string = 'rgb(' + rct_c.r + ',' + rct_c.g + ',' + rct_c.b + ')';
+let col_string = "#00FFFF";
+
+let img = document.getElementById("base-img");
 
 
-function preload() {
-    let img_ind = nf(Math.floor(Math.random() * img_num), 4, 0);
-    let img_path = `images/img${img_ind}.jpg`;
-    base_img.setAttribute('src', img_path);
-    img = loadImage(img_path);
-    detector = ml5.objectDetector('cocosd');
 
-    
-}
+cocoSsd.load().then(model => {
+    model.detect(img).then(predictions => {
+        gotDetection(predictions);
+    })
+})
 
-function gotDetection(error, results) {
-    if(error)
-        console.error(error);
-    
+function gotDetection(results) {    
     console.log(results);
-    let img_box = base_img.getBoundingClientRect();
     for(let i = 0; i < results.length; i++) {
         let obj = results[i];
         let new_rect = document.createElementNS(svgns, "rect");
@@ -44,38 +36,18 @@ function gotDetection(error, results) {
         });
 
         
-        new_rect.setAttribute("x", obj.normalized.x * img_box.width);
-        new_rect.setAttribute("y", obj.normalized.y * img_box.height);
-        new_rect.setAttribute("width", obj.normalized.width * img_box.width);
-        new_rect.setAttribute("height", obj.normalized.height * img_box.height);
+        new_rect.setAttribute("x", obj.bbox[0]);
+        new_rect.setAttribute("y", obj.bbox[1]);
+        new_rect.setAttribute("width", obj.bbox[2]);
+        new_rect.setAttribute("height", obj.bbox[3]);
 
         new_rect.classList.add("finished_rect");
         new_rect.setAttribute("onmouseover", "select_rect(this)");
 
         regions.push(new selected_region(0, 0, 0, 0, new_rect.id));
         
-        regions[i].rename(obj.label);
+        regions[i].rename(obj.class);
         regions[i].rectUpdate(new_rect);
         
     }
-}
-
-
-function setup () {
-    let img_box = base_img.getBoundingClientRect();
-    svg_cont.setAttribute("height", img_box.height);
-    svg_cont.setAttribute("width", img_box.width);
-    colorPicker.value  = rgbToHex(rct_c.r, rct_c.g, rct_c.b);
-    detector.detect(img, gotDetection);
-
-    noLoop();
-}
-
-function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
 }

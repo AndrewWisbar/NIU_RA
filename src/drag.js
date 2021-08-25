@@ -95,51 +95,16 @@ function get_path(start, end, intensity) {
 
     let parent_box = getCoords(document.getElementById("line_cont"));
     var new_path = d3.path();
-    let range = (end.right < start.left) ? start.left - end.right: start.right - end.left;
-    let end_width = (end.right - end.left);
 
 
-    if(end.right < start.left) { // if end is entirely to the left of the start
-        new_path.moveTo(start.left - parent_box.left, (start.top + start.bottom) / 2 - parent_box.top);
-        new_path.bezierCurveTo((start.left - (range / 2)) - parent_box.left, 
-                                (start.top + start.bottom) / 2 - parent_box.top,
-                                (end.right + (range / 2)) - parent_box.left,
-                                (end.top + end.bottom) / 2 - parent_box.top,
-                                end.right - parent_box.left,
-                                (end.top + end.bottom) / 2 - parent_box.top);
-    }
-    else if(end.right > start.left && (end.right + end.left) / 2 < start.left) { // ends x-range overlaps the starts
-        new_path.moveTo(start.left - parent_box.left, (start.top + start.bottom) / 2 - parent_box.top);
-        new_path.quadraticCurveTo((end.left + end.right) / 2 - parent_box.left, 
-                                    (start.top + start.bottom) / 2 - parent_box.top,
-                                    (end.left + end.right) / 2 - parent_box.left,
-                                    end.top - parent_box.top);
-    }
-    else if((end.right + end.left) / 2 > start.left && (end.right + end.left) / 2 < start.right) { // the middle of end is within start
-        new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
-        new_path.bezierCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                                (start.bottom + end.top) / 2 - parent_box.top,
-                                (end.right + end.left) / 2 - parent_box.left,
-                                (start.bottom + end.top) / 2 - parent_box.top,
-                                (end.right + end.left) / 2 - parent_box.left,
-                                end.top - parent_box.top);
-    }
-    else if((end.left + end.right) / 2 > start.right && end.left < start.right) { 
-        new_path.moveTo(start.right - parent_box.left, (start.top + start.bottom) / 2 - parent_box.top);
-        new_path.quadraticCurveTo((end.left + end.right) / 2 - parent_box.left, 
-                                    (start.top + start.bottom) / 2 - parent_box.top,
-                                    (end.left + end.right) / 2 - parent_box.left,
-                                    end.top - parent_box.top);
-    }
-    else {
-        new_path.moveTo(start.right - parent_box.left, (start.top + start.bottom) / 2 - parent_box.top);
-        new_path.bezierCurveTo((start.right - (range / 2)) - parent_box.left, 
-                                (start.top + start.bottom) / 2 - parent_box.top,
-                                (end.left + (range / 2)) - parent_box.left,
-                                (end.top + end.bottom) / 2 - parent_box.top,
-                                end.left - parent_box.left,
-                                (end.top + end.bottom) / 2 - parent_box.top); 
-    }
+    new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
+    new_path.bezierCurveTo((start.left + start.right) / 2 - parent_box.left, 
+                            (start.bottom + end.top) / 2 - parent_box.top,
+                            (end.right + end.left) / 2 - parent_box.left,
+                            (start.bottom + end.top) / 2 - parent_box.top,
+                            (end.right + end.left) / 2 - parent_box.left,
+                            end.top - parent_box.top);
+
     return new_path;
 }
 

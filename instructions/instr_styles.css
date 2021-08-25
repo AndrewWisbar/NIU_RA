@@ -71,6 +71,7 @@ h2 {
     background-color: var(--off-white);
     box-shadow: 5px 5px 10px 1px var(--shadow);
     padding-bottom: 2em;
+    border-radius: 10px;
 }
 
 #title-bar {
@@ -92,6 +93,7 @@ h2 {
 
 .nav-btn {
     /* width: 5%; */
+
     padding-left: 1rem;
     padding-right: 1rem;
     background-color: var(--main-dark);
