@@ -26,7 +26,7 @@ h1, h2, h3 {
     margin-top: 1.25%;
     margin-bottom: 1.25%;
     margin-block-start: 0;
-    line-height: 1.2;
+    line-height: 1.1;
 }
 
 h2 {
@@ -74,37 +74,10 @@ h2 {
     border-radius: 10px;
 }
 
-#title-bar {
-    width: 95%;
-    margin-left: 2.5%;
-    margin-right: 2.5%;
-    background-color: var(--main-dark);
-    color: var(--light-text);
+div.text-div {
+    display: none;
 }
 
-.main-title {
-    padding-top: 1rem;
-    padding-left: 1rem;
-    padding-bottom: 1rem;
-    width: 90%;
-    font-size: 48px;
-    margin: 0;
-}
-
-.nav-btn {
-    /* width: 5%; */
-
-    padding-left: 1rem;
-    padding-right: 1rem;
-    background-color: var(--main-dark);
-    font-size: 16px;
-    border: none;
-    color: var(--light-text);
-}
-
-.nav-btn:hover {
-    transition-duration: .2s;
-    background-color: var(--mid);
-    font-size: 20px;
-    color: var(--dark-text);
+div.text-div.visible {
+    display: block;
 }

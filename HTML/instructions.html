@@ -5,25 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>"Project Name" - Instructions</title>
-    <link rel="stylesheet" href="instr_styles.css">
+    <link rel="stylesheet" href="../CSS/instr_styles.css">
+    <link rel="stylesheet" href="../CSS/styles.css">
 </head>
 <body>  
     <div id="title-bar" class="flex-container">
         <h1 class="main-title">Instructions</h1>
         <button class="nav-btn" onclick="window.location.href='../index.html'">Home</button>
-        <button class="nav-btn" onclick="window.location.href='Matrix/matrix.html'">Matrix</button>
+        <button class="nav-btn" onclick="window.location.href='matrix.html'">Matrix</button>
         <button class="nav-btn">About</button>
     </div>
     
 
     <div id="instructions-panel">
         <h2>Instructions</h2>
-        <h3 class="instr-header">Getting Started</h3>
+        <h3 class="instr-header" onclick="toggle('get-start')">Getting Started</h3>
+        <div id="get-start" class="text-div visible">
             <p class="instr-body">
                 When the webpage is first loaded, the computer will begin by attempting to identify all of the objects present in a randomly selected image.
                 Once the computer thinks it has detected each important object in the image, it will display this information by drawing rectangles corresponding to each detected object. 
                 That is where the user's job begins.
-                The computer can only guess at the location of objects and what type of object it is. It doesn't know for certain, and will therefore, often be wrong. 
+                The computer can only guess at the location of objects and what type of object it is. It doesn't know for certain, and therefore, will often be wrong. 
                 It is the users job to correct the computer, so it can learn to make better guesses in the future. 
             </p>
             <p class="instr-body">
@@ -36,7 +38,9 @@
                 a user should move on to selecting any significant objects in the image that the computer may have missed.
 
             </p>
-        <h3 class="instr-header">Editing Computer Generated Content</h3>
+        </div>
+        <h3 class="instr-header" onclick="toggle('gen-cont')">Editing Computer Generated Content</h3>
+        <div id="gen-cont" class="text-div">
             <p class="instr-body">
                 The webpage provides many tools one can use to edit the computer's detected objects, 
                 and each of these tools can also be used by a user to edit selections they have made.
@@ -71,12 +75,16 @@
             <p class="instr-body">
                 Yet another tool is the ability to delete a rectangle. To do this right click on a rectangle select "Delete Rectangle." 
             </p>
-        <h3 class="instr-header">Selecting Image Content</h3>
+        </div>
+        <h3 class="instr-header" onclick='toggle("sel-cont")'>Selecting Image Content</h3>
+        <div id="sel-cont" class="text-div">
             <p class="instr-body">
                 To select a part of the image, simply click and drag anywhere on the image. 
                 The rectangle will be drawn between that point and where ever the mouse is released.
             </p>
-        <h3 class="instr-header">Selecting Text</h3>
+        </div>
+        <h3 class="instr-header" onclick="toggle('sel-text')">Selecting Text</h3>
+        <div id="sel-text" class="text-div">
             <p class="instr-body">
                 To select a word from the caption, first, highlight the word by clicking and dragging. Then, right-click the selection and choose "Highlight Selection" from the context menu.
             
@@ -84,6 +92,31 @@
             
                 Using the context menu, you can also remove a highlight, or remove any links the word may have. Alternatively, links can be deleted individually by right-clicking the link itself.
             </p>
+        </div>
+        <h3 class="instr-header" onclick="toggle('tips')">Tips</h3>
+        <div id="tips" class="text-div">
+            <p class="instr-body">
+                When an image contains multiple instances of the same type of object, i.e. cars in traffic, or people on a city street,
+                it is preferable for a user to draw a rectangle around each object individually. 
+                However, sometimes this will simply be impractical. In such a case, like a large crowd of people, or a bookshelf full of books, 
+                the user can simply draw one rectangle that contains the entire group, and as few other objects as possible, 
+                and label it as if it were a single object of that type.   
+            </p>
+            <p class="instr-body">
+                For example, if an image of the inside of a grocery store were to show a pile of apples, and a pile of bananas, 
+                a user should draw two boxes, one around each pile, and label them "apple" and "banana" respectively.
+                It is important not to make the label plural, because the computer will interprate the label "bananas" as a type
+                of object entirely unrelated to the type "banana." 
+            </p>
+        </div>
     </div>
+
+    <script>
+        function toggle(id) {
+            let elem = document.getElementById(id);
+            console.log(elem)
+            elem.classList.toggle("visible");
+        }
+    </script>
 </body>
 </html>

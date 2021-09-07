@@ -59,7 +59,7 @@ function write_links() {
     }
 
     for(var i = 0; i < links.length; i++) {
-        draw_links(i);
+        draw_links(i, links.length);
 
         var tmp_i = parseInt(links[i].rect.id.match(/\d+/),10);
         temp[tmp_i].push(links[i].word);
@@ -152,17 +152,18 @@ function get_parents_bounds(elem) {
     };
 }
 
-function draw_links(index) {
+function draw_links(index, num) {
     let span_offset = getCoords(links[index].span);
     let rect_offset = getCoords(links[index].rect);
 
     let path = get_path(span_offset, rect_offset, 12);
-
+    let hue  = (360 / num + 1) * index; 
     line_cont.append('path')
         .attr("d", path)
         .attr("onmouseover", "highlight_link(event)")
         .attr("onmouseout", "unhighlight_link(event)")
-        .attr("id", "link_" + index);
+        .attr("id", "link_" + index)
+        .attr("stroke", "hsla(" + hue + ",80%,75%,.75)");
 }
 
 function highlight_link(e) {

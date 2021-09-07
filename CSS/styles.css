@@ -83,6 +83,7 @@ p {
 
 #base-img {
     max-height: 50vh;
+    max-width: 50%;
     margin-left: 5%;
     margin-top: 2.5%;
 }
@@ -117,7 +118,7 @@ p {
 }
 
 path {
-    stroke: var(--light-acc);
+    /* stroke: var(--light-acc); */
     stroke-width: 2;
     fill: none;
 }
@@ -171,13 +172,14 @@ path {
     font-size: 16px;
     border: none;
     color: var(--light-text);
+    transition-duration: 0.25s;
 }
 
 .nav-btn:hover {
-    transition-duration: .2s;
     background-color: var(--mid);
     font-size: 20px;
     color: var(--dark-text);
+    transition-duration: 0.25s;
 }
 
 #context-menu {
