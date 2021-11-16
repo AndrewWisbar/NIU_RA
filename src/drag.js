@@ -1,5 +1,6 @@
 
 let links = [];
+let tracing = -1;
 const line_cont = d3.select('#line_cont');
 
 const link_list = document.getElementById("link-list");
@@ -91,25 +92,6 @@ function write_links() {
     }    
 }
 
-function get_path(start, end, intensity) {
-
-    let parent_box = getCoords(document.getElementById("line_cont"));
-    var new_path = d3.path();
-
-
-    new_path.moveTo((start.left + start.right) / 2 - parent_box.left, start.bottom - parent_box.top);
-    new_path.bezierCurveTo((start.left + start.right) / 2 - parent_box.left, 
-                            (start.bottom + end.top) / 2 - parent_box.top,
-                            (end.right + end.left) / 2 - parent_box.left,
-                            (start.bottom + end.top) / 2 - parent_box.top,
-                            (end.right + end.left) / 2 - parent_box.left,
-                            end.top - parent_box.top);
-
-    return new_path;
-}
-
-
-
 function getCoords(elem) {
     let box = elem.getBoundingClientRect();
     return {
@@ -153,15 +135,15 @@ function get_parents_bounds(elem) {
 }
 
 function draw_links(index, num) {
-    let span_offset = getCoords(links[index].span);
-    let rect_offset = getCoords(links[index].rect);
+    links[index].update();
 
-    let path = get_path(span_offset, rect_offset, 12);
+    let path = links[index].get_path();
     let hue  = (360 / num + 1) * index; 
     line_cont.append('path')
         .attr("d", path)
         .attr("onmouseover", "highlight_link(event)")
         .attr("onmouseout", "unhighlight_link(event)")
+        .attr('onmousedown', "trace_link(event)")
         .attr("id", "link_" + index)
         .attr("stroke", "hsla(" + hue + ",80%,75%,.75)");
 }
@@ -175,3 +157,39 @@ function unhighlight_link(e) {
     let sel_link = e.target;
     sel_link.classList.remove("selected_link");
 }
+
+function trace_link(e) {
+    
+    var index = parseInt(e.target.id.match(/\d+/),10);
+    let l = links[index];
+    let len = l.end.y - l.start.y;
+    let t = (e.clientY - l.start.y) / len;
+    console.log(t)
+    let circ = document.getElementById('tracker');
+    circ.classList.add("visible");
+    circ.setAttribute('cx', l.get_point_x(t));
+    circ.setAttribute('cy', l.get_point_y(t));
+
+    tracing = index;
+}
+
+document.addEventListener('mousemove', function(event) {
+    if(tracing >= 0) {
+        let l = links[tracing];
+        let len = l.end.y - l.start.y;
+        let t = (event.clientY - l.start.y) / len;
+        let circ = document.getElementById('tracker');
+        circ.setAttribute('cx', l.get_point_x(t));
+        circ.setAttribute('cy', l.get_point_y(t));
+    }
+}, true)
+
+document.addEventListener("mouseup", function(event) {
+    if(tracing >= 0) {
+        tracing = -1;
+        let circ = document.getElementById('tracker');
+        circ.classList.remove("visible");
+        circ.setAttribute('cx', '-10');
+        circ.setAttribute('cy', '-10');
+    }
+})

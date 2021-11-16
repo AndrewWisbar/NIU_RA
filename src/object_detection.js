@@ -2,53 +2,6 @@ let col_string = "#00FFFF";
 
 let img = document.getElementById("base-img");
 
-function buildModel() {
-    const mod = tf.sequential();
-
-    mod.add(tf.layers.conv2d({
-        inputShape: [28, 28, 1],
-        filters: 8,
-        kernelSize: 5,
-        padding: 'same',
-        activation: 'relu'
-    }));
-  
-    mod.add(tf.layers.maxPooling2d({
-        poolSize: 2,
-        strides: 2
-    }));
-  
-    // Again we set  another convolution layer
-    mod.add(tf.layers.conv2d({
-        filters: 16,
-        kernelSize: 5,
-        padding: 'same',
-        activation: 'relu'
-    }));
-      
-    mod.add(tf.layers.maxPooling2d({
-        poolSize: 3,
-        strides: 3
-    }));
-  
-    const numofClasses = 10;
-    mod.add(tf.layers.flatten());
-    mod.add(tf.layers.dense({
-        units: numofClasses,
-        activation: 'softmax'
-    }));
-  
-    // Compile the model
-    mod.compile({
-        optimizer: 'adam',
-        loss: 'categoricalCrossentropy',
-        metrics: ['accuracy']
-    });
-  
-
-    return mod;
-}
-
 
 
 cocoSsd.load().then(model => {
@@ -96,8 +49,3 @@ function gotDetection(results) {
         regions[i].rectUpdate(new_rect);
     }
 }
-
-
-let mod = buildModel();
-const surface = {name:'Model Summary', tab: 'Model Inspection'};
-tfvis.show.modelSummary(surface, mod);

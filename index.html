@@ -20,6 +20,7 @@
     <div class="flex-container">
         <div id="info-panel" class="user-panel">
             <svg id="line_cont" class="container_svg" width=20 height=20></svg>
+                
                 <svg id="corner_cont" class="container_svg" width=20 height=20>
                     <rect id="corner_0" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
                     <rect id="corner_1" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
@@ -27,6 +28,7 @@
                     <rect id="corner_3" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
                     <rect id="center" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_move(event)" onmouseup="end_move()" onmousemove="mouse_move(event)"></rect>
                     <text id="label_text" class="svg_text"></text>
+                    <circle id="tracker" cx='-10' cy='-10' r="5"></circle>
                 </svg>  
             <h3>Selection Preview</h3>
             <canvas class="preview-canvas">

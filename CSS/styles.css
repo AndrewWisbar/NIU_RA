@@ -107,6 +107,14 @@ p {
     display: none;
 }
 
+#tracker {
+    display: none;
+}
+
+#tracker.visible {
+    display:block;
+}
+
 .vis-marker {
     position:absolute;
     display: block;
