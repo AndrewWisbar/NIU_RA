@@ -33,6 +33,10 @@ h1, h2, h3 {
     line-height: 1.2;
 }
 
+.hide {
+    display: none;
+}
+
 .flex-container {
     margin-top: 2.5%;
     margin-bottom: 2.5%;
@@ -92,6 +96,7 @@ h1, h2, h3 {
 }
 
 .highlighted-text {
+    cursor: grab;
     background-color: var(--highlight);
 }
 
@@ -172,14 +177,8 @@ h1, h2, h3 {
     z-index: 99 !important;
 }
 
-.marker {
-    position:absolute;
-    display: none;
-}
-
-.vis-marker {
-    position:absolute;
-    display: block;
+.corner {
+    cursor: crosshair;
 }
 
 .selected_link {
@@ -306,7 +305,6 @@ button.visible {
     font-size: 28px;
     margin-left: 7.5vw;
 }
-
 
 .instr-body {
     line-height: 1.8;

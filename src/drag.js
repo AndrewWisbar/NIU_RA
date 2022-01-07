@@ -44,7 +44,7 @@ function drop_handler(ev) {
         }
     }
 
-    links.push(new word_link(regions[index], word, ev.target, span));
+    links.push(new word_link(rect_control.rects[index], word, ev.target, span));
     select_rect(ev.target);
     write_links();
 }
@@ -54,7 +54,7 @@ function write_links() {
 
     link_list.innerHTML = '';
     line_cont.html("");
-    let temp = new Array(regions.length);
+    let temp = new Array(rect_control.rects.length);
     for(var i = 0; i < temp.length; i++) {
         temp[i] = new Array(0);
     }
@@ -69,7 +69,7 @@ function write_links() {
     for(var i = 0; i < temp.length; i++) {
         if(temp[i].length > 1) {
             let item = document.createElement("li");
-            item.innerHTML = regions[i].name + ' is linked to the words "';
+            item.innerHTML = rect_control.rects[i].name + ' is linked to the words "';
             for(var j = 0; j < temp[i].length; j++) {
                 if(j == temp[i].length - 1) {
                     item.innerHTML += temp[i][j] + '"';
@@ -86,7 +86,7 @@ function write_links() {
         }
         else if(temp[i].length == 1) {
             let item = document.createElement("li");
-            item.innerHTML = regions[i].name + ' is linked to the word "' + temp[i][0] + '"';
+            item.innerHTML = rect_control.rects[i].name + ' is linked to the word "' + temp[i][0] + '"';
             link_list.appendChild(item);
         }
     }    

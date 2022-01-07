@@ -5,12 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>"Project Name" - User Interface</title>
-    <link rel="stylesheet" href="./CSS/styles.css">
+    <link rel="stylesheet" href="./CSS/styles.css?v=Math.Random()">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"> </script>
+
 </head>
-<body>  
+<body>
     <div id="title-bar" class="flex-container">
         <h1 class="main-title">Image-Caption Linking</h1>
         <button class="nav-btn" onclick="window.location.href='./HTML/instructions.html'">Instructions</button>
@@ -22,12 +23,6 @@
             <svg id="line_cont" class="container_svg" width=20 height=20></svg>
                 
                 <svg id="corner_cont" class="container_svg" width=20 height=20>
-                    <rect id="corner_0" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-                    <rect id="corner_1" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-                    <rect id="corner_2" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-                    <rect id="corner_3" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_edit(this.id)" onmouseup="end_edit(event)" onmousemove="mouse_move(event)"></rect>
-                    <rect id="center" class="marker" x=-10 y=-10 width=10 height=10 fill="var(--highlight)" class="marker" onmousedown="begin_move(event)" onmouseup="end_move()" onmousemove="mouse_move(event)"></rect>
-                    <text id="label_text" class="svg_text"></text>
                     <circle id="tracker" cx='-10' cy='-10' r="5"></circle>
                 </svg>  
             <h3>Selection Preview</h3>
@@ -44,7 +39,7 @@
             <div id="drawing-panel">
                 <div id="drawing-parent">
                     <img src="images/img0007.jpg" alt="" id="base-img" draggable="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)" onmouseup="end_draw(event)" onmousemove="mouse_move(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="svg_cont" id="svg_cont" onmousedown="begin_draw(event)">
                     </svg>
                 </div>
             
@@ -75,8 +70,11 @@
 
     <script src="lib/d3.min.js"></script>
     
-    <script src="src/classes.js"></script>
-    
+    <script src="src/classes/classes.js"></script>
+    <script src="src/classes/controller.js"></script>
+    <script src="src/classes/link.js"></script>
+    <script src="src/classes/rect.js"></script>
+
     <script src="src/drag.js"></script>
     <script src="src/rect_edit.js"></script>
     <script src="src/draw.js"></script>

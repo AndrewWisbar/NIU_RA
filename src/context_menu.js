@@ -30,6 +30,7 @@ highlight_text.innerHTML = inner_string; // replace the original string
 
 
 scope.addEventListener("contextmenu", (event) => {
+    console.log(event.target);
     hide_context_menu();
     menu_selection = null;
     event.preventDefault();
@@ -172,8 +173,8 @@ function insertAfter(newNode, existingNode) {
 function delete_rect() {
     if(menu_selection) {
         let del_index = parseInt(menu_selection.id.match(/\d+/),10);
-        regions.splice(del_index, 1);
         var i = 0;
+        rect_control.delete_rect(del_index);
         while(i < links.length) {
             if(links[i].rect === menu_selection) {
                 delete links[i].rect;
@@ -185,22 +186,12 @@ function delete_rect() {
         }
         menu_selection = null;
         
-
-        var deleted_rect = document.getElementById("rect_" + del_index);
-        deleted_rect.remove();
-        let children = svg_cont.children;
-        for(let i = 0; i < children.length; i++) {
-            children[i].setAttribute("id", "rect_" + i);
-            regions[i].rectUpdate(children[i]);
-        }
+        rect_control.update_children();
 
         end_draw();
     }
-
     hide_context_menu();
     write_links();
-    set_corners(-1);
-    
 }
 
 function delete_link() {
