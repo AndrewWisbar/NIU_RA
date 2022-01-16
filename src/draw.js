@@ -25,6 +25,7 @@ const colorPicker = document.querySelector('input[type="color"]');
 const sizePicker = document.querySelector('input[type="range"]');
 
 
+
 let img_num = 8;
 let img_ind = Math.floor(Math.random() * img_num);
 let img_path = 'images/img000' + img_ind + '.jpg';
@@ -49,7 +50,7 @@ function  getMousePos(area, evt) {
 }
 
 function begin_draw(event) {
-    rect_control.start_draw(event);
+    rect_control.begin_draw(event);
 }
 
 function begin_edit(e, corner) {

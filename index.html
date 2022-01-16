@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>"Project Name" - User Interface</title>
-    <link rel="stylesheet" href="./CSS/styles.css?v=Math.Random()">
+    <link rel="stylesheet" href="./CSS/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"> </script>
@@ -21,10 +21,6 @@
     <div class="flex-container">
         <div id="info-panel" class="user-panel">
             <svg id="line_cont" class="container_svg" width=20 height=20></svg>
-                
-                <svg id="corner_cont" class="container_svg" width=20 height=20>
-                    <circle id="tracker" cx='-10' cy='-10' r="5"></circle>
-                </svg>  
             <h3>Selection Preview</h3>
             <canvas class="preview-canvas">
                 <p>Selection Preview Failed to Load</p>
@@ -44,7 +40,7 @@
                 </div>
             
                 <div id="controls">
-                    <input type="color">
+                    <input type="color" value="#00FFFF">
                     <input type="range" min="1" max="4" value="2">
                     <button onclick="reset_image()">Reset Drawing</button>
                     <div id=rename_controls>

@@ -143,7 +143,7 @@ function draw_links(index, num) {
         .attr("d", path)
         .attr("onmouseover", "highlight_link(event)")
         .attr("onmouseout", "unhighlight_link(event)")
-        .attr('onmousedown', "trace_link(event)")
+        .attr('onmousedown', "start_trace(event)")
         .attr("id", "link_" + index)
         .attr("stroke", "hsla(" + hue + ",80%,75%,.75)");
 }
@@ -158,38 +158,63 @@ function unhighlight_link(e) {
     sel_link.classList.remove("selected_link");
 }
 
-function trace_link(e) {
+function start_trace(e) {
     
     var index = parseInt(e.target.id.match(/\d+/),10);
     let l = links[index];
     let len = l.end.y - l.start.y;
     let t = (e.clientY - l.start.y) / len;
-    console.log(t)
-    let circ = document.getElementById('tracker');
-    circ.classList.add("visible");
-    circ.setAttribute('cx', l.get_point_x(t));
-    circ.setAttribute('cy', l.get_point_y(t));
-
     tracing = index;
+
+    document.addEventListener('mousemove', trace)
+    document.addEventListener("mouseup", end_trace)
+
 }
 
-document.addEventListener('mousemove', function(event) {
-    if(tracing >= 0) {
-        let l = links[tracing];
-        let len = l.end.y - l.start.y;
-        let t = (event.clientY - l.start.y) / len;
-        let circ = document.getElementById('tracker');
-        circ.setAttribute('cx', l.get_point_x(t));
-        circ.setAttribute('cy', l.get_point_y(t));
-    }
-}, true)
+function end_trace() {
+    links.forEach(link => link.remove_tracker());
+    //document.removeEventListener("mouseup", end_trace);
+    document.removeEventListener('mousemove', trace);
+}
 
-document.addEventListener("mouseup", function(event) {
-    if(tracing >= 0) {
-        tracing = -1;
-        let circ = document.getElementById('tracker');
-        circ.classList.remove("visible");
-        circ.setAttribute('cx', '-10');
-        circ.setAttribute('cy', '-10');
+function trace(event) {
+    console.log("OK")
+    let l = []; // array to hold the links we're interested in
+    let len = links[tracing].end.y - links[tracing].start.y;
+    let t = (event.clientY - links[tracing].start.y) / len;
+
+    if(event.shiftKey) {
+        //clear the current trackers 
+        links.forEach(link => link.remove_tracker())
+
+        //if the user is holding shift we want to trace multiple links
+        l.push(links[tracing]);
+        if(event.movementY >= 0) {
+            // get other links connected to this word
+            links.forEach(link => {
+                if(link.span == links[tracing].span) {
+                    l.push(link);
+                }
+            }) 
+        }
+        else {
+            // get other links connected to this rect
+            links.forEach(link => {
+                if(link.rect == links[tracing].rect) {
+                    l.push(link);
+                }
+            }) 
+        }
+
+        l.forEach(link => link.place_tracker(t));
     }
-})
+    else {
+        l = links[tracing];
+        l.place_tracker(t);
+        links.forEach(link => {
+            if(link != l) {
+                link.remove_tracker();
+            }
+        })
+    }
+}

@@ -94,12 +94,21 @@ p {
     left: 0;
     margin-left: 5%;
     margin-top: 2.5%;
+    overflow: visible;
     z-index: 2;
     position: absolute;
 }
 
 #drawing-parent {
     position: relative;
+}
+
+.corner {
+    cursor: crosshair;
+}
+
+.center {
+    cursor: move;
 }
 
 .marker {

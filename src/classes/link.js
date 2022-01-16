@@ -4,6 +4,7 @@ class word_link {
         this.word = word;
         this.rect = rect;
         this.span = span;
+        this.tracker = null;
         this.id = this.rect.id;
         this.start;
         this.cp1;
@@ -87,5 +88,22 @@ class word_link {
         let e2 = 3 * (1 - t) * Math.pow(t, 2) * this.cp2.y;
         let e3 = Math.pow(t, 3) * this.end.y;
         return e0 + e1 + e2 + e3 - parent_box.top; 
+    }
+
+    place_tracker(t) {
+        if(!this.tracker) {
+            this.tracker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            this.tracker.setAttribute('r', 5);
+        }
+
+        this.tracker.setAttribute('cx', this.get_point_x(t));
+        this.tracker.setAttribute('cy', this.get_point_y(t));
+        document.getElementById('line_cont').appendChild(this.tracker);
+    }
+
+    remove_tracker() {
+        if(this.tracker)
+            this.tracker.remove();
+        this.tracker = null;
     }
 }

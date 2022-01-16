@@ -187,8 +187,6 @@ function delete_rect() {
         menu_selection = null;
         
         rect_control.update_children();
-
-        end_draw();
     }
     hide_context_menu();
     write_links();

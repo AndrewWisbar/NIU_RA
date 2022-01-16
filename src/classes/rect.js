@@ -33,9 +33,6 @@ class rectangle {
     }
     // called after a user selects a portion of the image
     check() {
-        
-        var ratio;
-
         //if the width of the selection is greater
         if((this.bounds[2] - this.bounds[0]) > (this.bounds[3] - this.bounds[1])) {
             pre_canvas.width = 1000;
@@ -87,6 +84,7 @@ class rectangle {
             this.tl_crn.setAttribute("x",  box.left - marker_size/2);
             this.tl_crn.setAttribute("y", box.top - marker_size/2);
             this.tl_crn.setAttribute('id', this.id + '_tl');
+            this.tl_crn.classList.add("corner");
             this.tl_crn.setAttribute('onmousedown', "begin_edit(event, 'tl')");
             this.make_marker(this.tl_crn);
         }
@@ -96,6 +94,7 @@ class rectangle {
             this.tr_crn.setAttribute("x", box.right - marker_size/2);
             this.tr_crn.setAttribute("y",  box.top - marker_size/2);
             this.tr_crn.setAttribute('id', this.id + '_tr');
+            this.tr_crn.classList.add("corner");
             this.tr_crn.setAttribute('onmousedown', "begin_edit(event, 'tr')");
             this.make_marker(this.tr_crn);
         }
@@ -105,6 +104,7 @@ class rectangle {
             this.bl_crn.setAttribute("x", (box.left) - marker_size/2);
             this.bl_crn.setAttribute("y", (box.bottom) - marker_size/2);
             this.bl_crn.setAttribute('id', this.id + '_bl');
+            this.bl_crn.classList.add("corner");
             this.bl_crn.setAttribute('onmousedown', "begin_edit(event, 'bl')");
             this.make_marker(this.bl_crn);
         }
@@ -114,6 +114,7 @@ class rectangle {
             this.br_crn.setAttribute("x", (box.right) - marker_size/2);
             this.br_crn.setAttribute("y", (box.bottom) - marker_size/2);
             this.br_crn.setAttribute('id', this.id + '_br');
+            this.br_crn.classList.add("corner");
             this.br_crn.setAttribute('onmousedown', "begin_edit(event, 'br')");
             this.make_marker(this.br_crn);
         }
@@ -124,6 +125,7 @@ class rectangle {
             this.mid.setAttribute("y", (box.top + box.bottom) / 2 - marker_size/2);
             this.mid.setAttribute('onmousedown', "begin_move(event)");
             this.mid.setAttribute('id', this.id + '_mid');
+            this.mid.classList.add("center");
             this.make_marker(this.mid);
         }
 
@@ -139,7 +141,6 @@ class rectangle {
     }
 
     make_marker(marker) {
-        marker.classList.add("corner");
         marker.setAttribute('width', marker_size);
         marker.setAttribute('height', marker_size);
         marker.setAttribute('fill', 'var(--highlight)');
@@ -182,16 +183,21 @@ class rectangle {
 
     select() {
         this.svg.classList.add('selected');
+        this.check();
     }
 
     delete() {
-        let children = this.group.children;
-        for(let i = 0; i < children.length; i++) {
-            console.log(children[i]);
-            this.group.removeChild(children[i]);
-        }
+        console.log(this);
+        let rect = this.svg;
+        this.svg = null;
+        rect.remove();
 
-        this.group.remove();
+        let group = this.group;
+        this.group = null;
+        group.remove();
+        console.log(this)
+
+
     }
 
     update_index(ind) {
@@ -200,6 +206,29 @@ class rectangle {
         }
         this.group.setAttribute('id', "group_" + ind);
         this.svg.setAttribute('id', "rect_" + ind);
+    }
+
+
+    resize(wAdj, hAdj) {
+        let oldX = parseFloat(this.svg.getAttribute("x"));
+        let oldY = parseFloat(this.svg.getAttribute("y"));
+
+        let oldW = parseFloat(this.svg.getAttribute("width"));
+        let oldH = parseFloat(this.svg.getAttribute("height"));
+
+        this.svg.setAttribute("x", oldX / wAdj);
+        this.svg.setAttribute("y", oldY / hAdj);
+        this.svg.setAttribute("width", oldW / wAdj);
+        this.svg.setAttribute("height", oldH / hAdj);
+        this.adjUpdate();
+        this.rectUpdate(this);
+
+        if(this.isSelected) {
+            this.select();
+            this.set_corners();
+        }
+
+        
     }
 } 
 
