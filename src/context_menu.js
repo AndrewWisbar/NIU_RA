@@ -46,6 +46,7 @@ scope.addEventListener("contextmenu", (event) => {
     else if(RegExp('rect_\d*').test(event.target.id)) {
         document.getElementById("delete_rect_btn").classList.add("visible");
         document.getElementById("rename_rect_btn").classList.add("visible");
+        document.getElementById("set_color_btn").classList.add("visible");
         menu_selection = event.target;
     }
     else if(RegExp('link_\d*').test(event.target.id)) {
@@ -207,7 +208,8 @@ function hide_context_menu() {
     document.getElementById("unhilite_btn").classList.remove("visible");
     document.getElementById("unlink_word_btn").classList.remove("visible"); 
     document.getElementById("delete_rect_btn").classList.remove("visible");
-    document.getElementById("rename_rect_btn").classList.remove("visible");  
+    document.getElementById("rename_rect_btn").classList.remove("visible");
+    document.getElementById("set_color_btn").classList.remove("visible");  
     document.getElementById("delete_link_btn").classList.remove("visible");
 }
 
@@ -226,4 +228,10 @@ function set_name() {
     new_name.value = "";
     write_links();
 
+}
+
+function set_rect_color() {
+    rect_control.set_rect_color(parseInt(menu_selection.id.match(/\d+/),10), colorPicker.value);
+    hide_context_menu();
+    menu_selection = null;
 }

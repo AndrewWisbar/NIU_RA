@@ -2,11 +2,14 @@
 // Setting up page elements that we need
 const base_img = document.querySelector('#base-img');
 const svg_cont = document.querySelector('#svg_cont');
+const col_string = "#00FFFF";
 
 const pre_canvas = document.querySelector('.preview-canvas');
 const pre_ctx = pre_canvas.getContext('2d');
 
 const svgns = "http://www.w3.org/2000/svg";
+
+const rect_stroke = 2;
 
 let rect_control = new rectangle_controller(svg_cont, svgns, base_img, pre_canvas);
 
@@ -22,7 +25,6 @@ window.addEventListener('resize', resizeSVG);
 
 //User interface controls 
 const colorPicker = document.querySelector('input[type="color"]');
-const sizePicker = document.querySelector('input[type="range"]');
 
 
 
@@ -102,44 +104,13 @@ function createRect(ind, rect) {
     rect_control.createRect(ind, rect);
 }
 
-// function draw() {
-//     if((rect_control.draw_flag && rect_control.prev_point)) {
-
-//         if(!rect_control.rectangle_created) {
-//             rect_control.createRect(rect_control.svg.childElementCount, rect_control.active_rect);
-//         }
-//         rect_control.active_rect.setAttribute("x", rect_control.top_left_point.x);
-//         rect_control.active_rect.setAttribute("y", rect_control.top_left_point.y);
-//         rect_control.active_rect.setAttribute("width", rect_control.bottom_right_point.x - rect_control.top_left_point.x);
-//         rect_control.active_rect.setAttribute("height", rect_control.bottom_right_point.y - rect_control.top_left_point.y);
-
-//         rect_control.svg.appendChild(rect_control.active_rect);
-        
-//         rect_control.prev_point = false;
-//     }
-
-//     if(rect_control.edit_flag && rect_control.valid_edit) {
-//         rect_control.edit_rect.svg.setAttribute("x", rect_control.edit_tlp.x);
-//         rect_control.edit_rect.svg.setAttribute("width", rect_control.edit_brp.x - rect_control.edit_tlp.x);
-//         rect_control.edit_rect.svg.setAttribute("y", rect_control.edit_tlp.y);
-//         rect_control.edit_rect.svg.setAttribute("height", rect_control.edit_brp.y - rect_control.edit_tlp.y);
-//         rect_control.rects[rect_control.edit_index].check();
-//         rect_control.select_rect(rect_control.edit_rect, rect_control.rects[rect_control.edit_index].name);
-//         write_links();
-//     }
-
-//     if(rect_control.move_flag) {
-//         rect_control.move_rect.setAttribute("x", rect_control.move_start.x - rect_control.move_offset.x);
-//         rect_control.move_rect.setAttribute("y", rect_control.move_start.y - rect_control.move_offset.y);
-
-        
-//         rect_control.rects[rect_control.move_index].check();
-//         rect_control.select_rect(rect_control.move_rect);
-//         write_links();
-//     }
-
-//     requestAnimationFrame(draw);
-// }
+function change_colors() {
+    rect_control.set_colors(colorPicker.value);
+}
 
 
-// draw();
+cocoSsd.load().then(model => {
+    model.detect(base_img).then(predictions => {
+        rect_control.gotDetection(predictions);
+    })
+})

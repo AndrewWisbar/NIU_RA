@@ -227,8 +227,11 @@ class rectangle {
             this.select();
             this.set_corners();
         }
+    }
 
-        
+    set_color(col) {
+        this.svg.setAttribute("fill", col);
+        this.svg.setAttribute("stroke", col);
     }
 } 
 

@@ -41,7 +41,7 @@
             
                 <div id="controls">
                     <input type="color" value="#00FFFF">
-                    <input type="range" min="1" max="4" value="2">
+                    <button onclick="change_colors()">Set All Colors</button>
                     <button onclick="reset_image()">Reset Drawing</button>
                     <div id=rename_controls>
                         <h3>Rename Rectangle</h3>
@@ -60,6 +60,7 @@
         <div class="menu-item"><button class="menu-button" id="unlink_word_btn" onclick="unlink_word()">Remove All Links</button></div>
         <div class="menu-item"><button class="menu-button" id="delete_rect_btn" onclick="delete_rect()">Delete Rectangle</button></div>
         <div class="menu-item"><button class="menu-button" id="rename_rect_btn" onclick="start_rename()">Rename Rectangle</button></div>
+        <div class="menu-item"><button class="menu-button" id="set_color_btn" onclick="set_rect_color()">Rename Rectangle</button></div>
         <div class="menu-item"><button class="menu-button" id="delete_link_btn" onclick="delete_link()">Delete Link</button></div>
         <!--<div class="menu-item"><button class="menu-button">Option 3</button></div>-->
     </div>

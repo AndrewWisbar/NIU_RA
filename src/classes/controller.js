@@ -79,7 +79,7 @@ class rectangle_controller {
     createRect(ind, rect) {
         let rect_id = "rect_" + ind;
         rect.setAttribute("fill", colorPicker.value);
-        rect.setAttribute("stroke-width", sizePicker.value);
+        rect.setAttribute("stroke-width", rect_stroke);
         rect.setAttribute("stroke", colorPicker.value);
         rect.setAttribute("fill-opacity", 0);
         rect.setAttribute("id", rect_id);
@@ -144,6 +144,7 @@ class rectangle_controller {
         this.active_rect = document.createElementNS(svgns, "rect");
         this.createRect(this.svg.childElementCount, this.active_rect);
         this.svg.appendChild(this.active_rect);
+        this.svg.classList.add("hide-cursor");
         this.svg.setAttribute("onmousemove", "rect_control.draw(event)");
         this.svg.setAttribute("onmouseup", "rect_control.end_draw(event)");
     }
@@ -168,11 +169,13 @@ class rectangle_controller {
         this.svg.removeAttribute("onmousemove");
         this.svg.removeAttribute("onmouseup");
         this.active_rect = null;
+        this.svg.classList.remove("hide-cursor");
     }
 
     begin_edit(e, corner) {
         this.edit_index = parseInt(e.target.id.match(/\d+/),10);
         this.edit_rect = this.rects[this.edit_index];
+        this.svg.classList.add("hide-cursor");
     
     
         let box = getRelCoords(this.edit_rect.svg, this.svg);
@@ -218,6 +221,7 @@ class rectangle_controller {
         this.edit_rect.group.setAttribute("onmouseover", "select_rect(this)");
         this.svg.removeAttribute("onmousemove");
         this.svg.removeAttribute("onmouseup");
+        this.svg.classList.remove("hide-cursor");
         this.edit_rect = null;
         this.edit_index = null;
     }
@@ -231,6 +235,7 @@ class rectangle_controller {
         this.svg.setAttribute("onmousemove", "rect_control.move(event)");
         this.svg.setAttribute("onmouseup", "rect_control.end_move(event)");
         this.rects[this.move_index].group.removeAttribute('onmouseover');
+        this.svg.classList.add("hide-cursor");
 
         this.rects[this.move_index].deselect();
     }
@@ -282,6 +287,7 @@ class rectangle_controller {
         this.svg.removeAttribute("onmousemove");
         this.svg.removeAttribute("onmouseup");
         this.rects[this.move_index].group.setAttribute("onmouseover", "select_rect(this)");
+        this.svg.classList.remove("hide-cursor");
         this.move_index = null;
     }
 
@@ -321,5 +327,13 @@ class rectangle_controller {
             pos.y = this.svg.clientHeight;
         
         return pos;
+    }
+
+    set_colors(col) {
+        this.rects.forEach(rect => rect.set_color(col));
+    }
+
+    set_rect_color(ind, col) {
+        this.rects[ind].set_color(col);
     }
 }

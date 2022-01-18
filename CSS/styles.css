@@ -88,6 +88,10 @@ p {
     margin-top: 2.5%;
 }
 
+.hide-cursor {
+    cursor: none;
+}
+
 #svg_cont {
     
     top: 0;
