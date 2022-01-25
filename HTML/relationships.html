@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Project Name" - Relationship Visualizer</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+    <link rel="stylesheet" href="../CSS/rel_styles.css">
+</head>
+<body>
+
+    <div id="title-bar" class="flex-container">
+        <h1 class="main-title">Relationship Visualizer</h1>
+        <button class="nav-btn" onclick="window.location.href='../index.html'">Home</button>
+        <button class="nav-btn" onclick="window.location.href='../HTML/instructions.html'">Instructions</button>
+        <button class="nav-btn">About</button>
+    </div>
+    <div class="flex-container user-panel">
+        <div id='rel-panel'>
+            <svg id="container" width="500" height="500" stroke=solid></svg>
+            <div>
+                <label for="m-slider">M</label>
+                <input id="m-slider" type="range" min="2" max="10" value="3">
+                <label for="n-slider">N</label>
+                <input id="n-slider" type="range" min="2" max="10" value="3">
+                <label for="con-slider">connections</label>
+                <input id="con-slider" type="range" min="1" max="100" value="50">
+                <button onclick="draw_graph()">Generate</button>
+            </div>
+        </div>
+        <table id='rel-tab'>
+
+        </table>
+    </div>
+
+    <script src="../src/relationship.js"></script>
+</body>
+</html>

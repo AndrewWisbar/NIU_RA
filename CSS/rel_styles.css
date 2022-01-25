@@ -1,0 +1,20 @@
+/* table {
+
+}
+
+tr {
+
+} */
+
+th {
+    min-width: 10ch;
+    height: 5ch;
+    justify-content: center;
+    border: black;
+    background-color: gray;
+}
+
+td {
+    text-align: center;
+    border: black;
+}

@@ -5,6 +5,7 @@ class rectangle_controller {
         this.preview = preview_canv;
         this.svgns = svgns
         this.rects = [];
+        this.start_state = [];
 
         this.corners = [];
         for(var i = 0; i < 4; i++) {
@@ -58,6 +59,13 @@ class rectangle_controller {
         let heightAdj = oldHeight / this.img.clientHeight;
     
         this.rects.forEach(rect => rect.resize(widthAdj, heightAdj));
+
+        this.start_state.forEach(obj => {
+            obj.bbox[0] = obj.bbox[0] / widthAdj;
+            obj.bbox[1] = obj.bbox[1] / heightAdj;
+            obj.bbox[2] = obj.bbox[2] / widthAdj;
+            obj.bbox[3] = obj.bbox[3] / heightAdj;
+        })
         write_links();
     }
 
@@ -97,40 +105,7 @@ class rectangle_controller {
     }
 
     gotDetection(results) {    
-        for(let i = 0; i < results.length; i++) {
-            let obj = results[i];
-            let new_rect = document.createElementNS(svgns, "rect");
-            let new_group = document.createElementNS(svgns, 'svg');
-            new_group.setAttribute('id', "group_" + this.rects.length)
-            new_rect.setAttribute('id', 'rect_' + this.rects.length);
-    
-            this.svg.appendChild(new_group);
-            new_group.appendChild(new_rect);
-            new_rect.setAttribute("fill", colorPicker.value);
-            new_rect.setAttribute("stroke-width", 2);
-            new_rect.setAttribute("stroke", colorPicker.value);
-            new_rect.setAttribute("fill-opacity", 0);
-            new_rect.addEventListener('dragenter', function(e) {
-                e.preventDefault();
-                e.target.classList.add('dragging');
-            });
-        
-            new_rect.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                e.target.classList.remove('dragging');
-            });
-    
-            
-            new_rect.setAttribute("x", obj.bbox[0]);
-            new_rect.setAttribute("y", obj.bbox[1]);
-            new_rect.setAttribute("width", obj.bbox[2]);
-            new_rect.setAttribute("height", obj.bbox[3]);
-    
-            new_rect.classList.add("selection");
-
-    
-            this.rects.push(new rectangle(0, 0, 0, 0, new_rect, new_group, obj.class,));
-        }
+        results.forEach(obj => this.create_from_obj(obj));
     }
 
     delete_rect(index) {
@@ -335,5 +310,51 @@ class rectangle_controller {
 
     set_rect_color(ind, col) {
         this.rects[ind].set_color(col);
+    }
+
+    reset_state() {
+        this.start_state.forEach(obj => this.create_from_obj(obj));
+    }
+
+    create_from_obj(obj) {
+
+        if(obj_classes.indexOf(obj.class) == -1) {
+            obj_classes.push(obj.class);
+        } 
+
+        let color = color_codes[obj_classes.indexOf(obj.class) % color_codes.length]
+        this.start_state.push({"class": obj.class, "bbox": obj.bbox});
+        let new_rect = document.createElementNS(svgns, "rect");
+        let new_group = document.createElementNS(svgns, 'svg');
+        new_group.setAttribute('id', "group_" + this.rects.length)
+        new_rect.setAttribute('id', 'rect_' + this.rects.length);
+
+        this.svg.appendChild(new_group);
+        new_group.appendChild(new_rect);
+        new_rect.setAttribute("fill", color);
+        new_rect.setAttribute("stroke-width", 2);
+        new_rect.setAttribute("stroke", color);
+        new_rect.setAttribute("fill-opacity", 0);
+        new_rect.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+            e.target.classList.add('dragging');
+        });
+
+        new_rect.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.target.classList.remove('dragging');
+        });
+
+        
+        new_rect.setAttribute("x", obj.bbox[0]);
+        new_rect.setAttribute("y", obj.bbox[1]);
+        new_rect.setAttribute("width", obj.bbox[2]);
+        new_rect.setAttribute("height", obj.bbox[3]);
+
+        new_rect.classList.add("selection");
+
+
+        this.rects.push(new rectangle(0, 0, 0, 0, new_rect, new_group, obj.class,));
+
     }
 }

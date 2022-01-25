@@ -13,6 +13,20 @@ const rect_stroke = 2;
 
 let rect_control = new rectangle_controller(svg_cont, svgns, base_img, pre_canvas);
 
+const color_codes = [
+    // "#2D2D2A",
+    "#FF3333",
+    "#FF8E72",
+    "#F9DB6D",
+    "#D6E681",
+    "#C9EABC",
+    "#BCEDF6",
+    "#F7BFB4",
+    "#B493A6"
+]
+
+let obj_classes = [];
+
 svg_cont.onload = function() {
     let img_box = base_img.getBoundingClientRect();
     svg_cont.setAttribute("width", img_box.width);
@@ -79,7 +93,7 @@ function reset_image() {
     removeAllChildren(svg_cont);
     removeAllChildren(line_cont);
 
-    regions.splice(0, regions.length);
+    rect_control.reset_state();
     links.splice(0, links.length);
     pre_ctx.clearRect(0, 0, pre_canvas.width, pre_canvas.height);
     write_links();
