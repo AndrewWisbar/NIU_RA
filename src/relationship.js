@@ -196,7 +196,9 @@ class Node {
             let egde_color = `rgba(${edge.weight < .5 ? 255 : 255 - 255 * 2 * (edge.weight - .5)}, ${edge.weight > .5 ? 255 : 255 * 2 * (edge.weight)}, 0, 1)`;
             cell.style.backgroundColor = egde_color
             edge.svg.setAttribute("stroke", egde_color)
-            edge.other(this).svg.setAttribute("fill", egde_color)
+            let other_node = edge.other(this)
+            other_node.svg.setAttribute("fill", egde_color);
+            other_node.svg.setAttribute("r", 4 + other_node.r * edge.weight + 'px')
         })
     }
 
@@ -208,7 +210,9 @@ class Node {
 
             cell.style.backgroundColor = `rgba(255, 255, 255, 1)`
             edge.svg.setAttribute("stroke", `rgba(0, 0, 0, 1)`)
-            edge.other(this).svg.setAttribute("fill", `rgba(150, 150, 150, 1)`)
+            let other_node = edge.other(this)
+            other_node.svg.setAttribute("fill", `rgba(150, 150, 150, 1)`)
+            other_node.svg.setAttribute("r", other_node.r)
         })
     }
 
@@ -269,15 +273,15 @@ function shuffle(array) {
   return array;
 }
 
-let g = new Graph();
-
 function select_node(node) {
+    document.getElementById("h_" + node.id).style.backgroundColor = SELECT_COL;
     node.setAttribute("stroke", 'rgb(0, 0, 0)');
     g.show_connections(node.id);
     node.classList.add("selected");
 }
 
 function deselect_node(node) {
+    document.getElementById("h_" + node.id).style.backgroundColor = 'rgb(128, 128, 128)';
     node.classList.remove("selected")
     let index = parseInt(node.id.match(/\d+/),10);
     g.end_show(node.id);
@@ -326,3 +330,7 @@ function draw_graph() {
     g.generate();
     g.render();
 }
+
+let g = new Graph();
+
+draw_graph();
