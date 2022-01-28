@@ -1,7 +1,9 @@
-const marker_size = 8;
+const MARK_SIZE = 8;
 
+/**
+ * A region of an image selected as containing an object or group of objects 
+ */
 class rectangle {
-
     constructor(left, up, right, low, rect, group, name) {
         this.adj = base_img.naturalWidth / base_img.width;
         this.bounds = [left * this.adj, up * this.adj, right * this.adj, low * this.adj];
@@ -28,23 +30,31 @@ class rectangle {
             this.name = this.id;
     }
 
+    /**
+     * Set method for the name of this rectangle
+     * @param {string} name the string to set this rectangle's name to
+     */
     rename(name) {
         this.name = name;
     }
-    // called after a user selects a portion of the image
+    
+    /**
+     * Display to the user the region of the image that this rectangle 
+     *     represents
+     */
     check() {
         //if the width of the selection is greater
-        if((this.bounds[2] - this.bounds[0]) > (this.bounds[3] - this.bounds[1])) {
+        if((this.bounds[2] - this.bounds[0]) 
+            > (this.bounds[3] - this.bounds[1])) {
             pre_canvas.width = 1000;
 
             //set the height of the canvas to the appropriate size
-            pre_canvas.height = pre_canvas.width * ((this.bounds[3] - this.bounds[1]) / (this.bounds[2] - this.bounds[0]));
+            pre_canvas.height = pre_canvas.width * 
+            ((this.bounds[3] - this.bounds[1]) / 
+            (this.bounds[2] - this.bounds[0]));
+
         } else {
             pre_canvas.height = 1000;
-
-            //get the ratio of height/width
-
-            //set the width of the canvas based on the ratio
         }
 
         //draw the image
@@ -55,12 +65,24 @@ class rectangle {
             pre_canvas.height);
     }
 
+    /**
+     * Update the region that this rectangle represents
+     * @param {number} left The left boundary of the region
+     * @param {number} up the top boundary of the region
+     * @param {number} right the right boundary
+     * @param {number} low the bottom boundary
+     */
     update(left, up, right, low) {
         this.bounds = [left * this.adj, up * this.adj, right * this.adj, low * this.adj];
         this.unadjusted = [left, up, right, low];
         this.check();
     }
 
+    /**
+     * Update this rectangle's boundaries based on a SVG rectangle
+     * @param {HTMLElement} rect The html element that should represent this
+     *     Rectangle
+     */
     rectUpdate(rect) {
         let box = getRelCoords(rect.svg, svg_cont);
         this.bounds = [box.left * this.adj, box.top * this.adj, box.right * this.adj, box.bottom * this.adj];
@@ -70,19 +92,25 @@ class rectangle {
         this.id = rect.id;
     }
 
+    /**
+     * Update the aspect ratio of this rectangle
+     */
     adjUpdate() {
         this.adj = base_img.naturalWidth / base_img.width;
         for(let i = 0; i < this.bounds.length; i++)
             this.bounds[i] = this.unadjusted[i] * this.adj;
     }
 
+    /**
+     * Place the corners used for editing the rectangle
+     */
     set_corners() {
         let box = getRelCoords(this.svg, svg_cont);
 
         if(!this.tl_crn) {
             this.tl_crn = document.createElementNS(svgns, 'rect');
-            this.tl_crn.setAttribute("x",  box.left - marker_size/2);
-            this.tl_crn.setAttribute("y", box.top - marker_size/2);
+            this.tl_crn.setAttribute("x",  box.left - MARK_SIZE/2);
+            this.tl_crn.setAttribute("y", box.top - MARK_SIZE/2);
             this.tl_crn.setAttribute('id', this.id + '_tl');
             this.tl_crn.classList.add("corner");
             this.tl_crn.setAttribute('onmousedown', "begin_edit(event, 'tl')");
@@ -91,8 +119,8 @@ class rectangle {
 
         if(!this.tr_crn) {
             this.tr_crn = document.createElementNS(svgns, 'rect');
-            this.tr_crn.setAttribute("x", box.right - marker_size/2);
-            this.tr_crn.setAttribute("y",  box.top - marker_size/2);
+            this.tr_crn.setAttribute("x", box.right - MARK_SIZE/2);
+            this.tr_crn.setAttribute("y",  box.top - MARK_SIZE/2);
             this.tr_crn.setAttribute('id', this.id + '_tr');
             this.tr_crn.classList.add("corner");
             this.tr_crn.setAttribute('onmousedown', "begin_edit(event, 'tr')");
@@ -101,8 +129,8 @@ class rectangle {
 
         if(!this.br_crn) {
             this.bl_crn = document.createElementNS(svgns, 'rect');
-            this.bl_crn.setAttribute("x", (box.left) - marker_size/2);
-            this.bl_crn.setAttribute("y", (box.bottom) - marker_size/2);
+            this.bl_crn.setAttribute("x", (box.left) - MARK_SIZE/2);
+            this.bl_crn.setAttribute("y", (box.bottom) - MARK_SIZE/2);
             this.bl_crn.setAttribute('id', this.id + '_bl');
             this.bl_crn.classList.add("corner");
             this.bl_crn.setAttribute('onmousedown', "begin_edit(event, 'bl')");
@@ -111,8 +139,8 @@ class rectangle {
 
         if(!this.br_crn) {
             this.br_crn = document.createElementNS(svgns, 'rect');
-            this.br_crn.setAttribute("x", (box.right) - marker_size/2);
-            this.br_crn.setAttribute("y", (box.bottom) - marker_size/2);
+            this.br_crn.setAttribute("x", (box.right) - MARK_SIZE/2);
+            this.br_crn.setAttribute("y", (box.bottom) - MARK_SIZE/2);
             this.br_crn.setAttribute('id', this.id + '_br');
             this.br_crn.classList.add("corner");
             this.br_crn.setAttribute('onmousedown', "begin_edit(event, 'br')");
@@ -121,8 +149,8 @@ class rectangle {
 
         if(!this.mid) {
             this.mid = document.createElementNS(svgns, 'rect');
-            this.mid.setAttribute("x", (box.left + box.right) / 2 - marker_size/2);
-            this.mid.setAttribute("y", (box.top + box.bottom) / 2 - marker_size/2);
+            this.mid.setAttribute("x", (box.left + box.right) / 2 - MARK_SIZE/2);
+            this.mid.setAttribute("y", (box.top + box.bottom) / 2 - MARK_SIZE/2);
             this.mid.setAttribute('onmousedown', "begin_move(event)");
             this.mid.setAttribute('id', this.id + '_mid');
             this.mid.classList.add("center");
@@ -140,9 +168,13 @@ class rectangle {
         }
     }
 
+    /**
+     * Set the common attributes for all of the markers of this rectangle
+     * @param {HTMLElement} marker The marker element being set up 
+     */
     make_marker(marker) {
-        marker.setAttribute('width', marker_size);
-        marker.setAttribute('height', marker_size);
+        marker.setAttribute('width', MARK_SIZE);
+        marker.setAttribute('height', MARK_SIZE);
         marker.setAttribute('fill', 'var(--highlight)');
         marker.setAttribute('fill-opacity', 1);
         marker.setAttribute('display', 'block');
@@ -150,6 +182,9 @@ class rectangle {
         this.group.appendChild(marker);
     }
 
+    /**
+     * The mouse has left the rectangle, so remove all the editing controls
+     */
     deselect() {
         if(this.isSelected) {
             let temp = this.tl_crn;
@@ -181,11 +216,17 @@ class rectangle {
         }
     }
 
+    /**
+     * highlight this rectangle for the user
+     */
     select() {
         this.svg.classList.add('selected');
         this.check();
     }
 
+    /**
+     * Delete the rectangle this object represents
+     */
     delete() {
         console.log(this);
         let rect = this.svg;
@@ -200,6 +241,10 @@ class rectangle {
 
     }
 
+    /**
+     * Change the index of this rectangle and the ID's of the svg elements
+     * @param {number} ind the new index for this rectangle 
+     */
     update_index(ind) {
         if(this.isSelected) {
             this.deselect();
@@ -208,7 +253,11 @@ class rectangle {
         this.svg.setAttribute('id', "rect_" + ind);
     }
 
-
+    /**
+     * Change the size of this rectangle
+     * @param {float} wAdj Factor to change width by 
+     * @param {float} hAdj Factor to change height by
+     */
     resize(wAdj, hAdj) {
         let oldX = parseFloat(this.svg.getAttribute("x"));
         let oldY = parseFloat(this.svg.getAttribute("y"));
@@ -229,6 +278,10 @@ class rectangle {
         }
     }
 
+    /**
+     * Change the color of this rectangles svg element
+     * @param {Color} col the color to set this rectangle to 
+     */
     set_color(col) {
         this.svg.setAttribute("fill", col);
         this.svg.setAttribute("stroke", col);
