@@ -8,26 +8,26 @@ class rectangle_controller {
         this.start_state = [];
 
         this.corners = [];
-        for(var i = 0; i < 4; i++) {
+        for (var i = 0; i < 4; i++) {
             this.corners.push(document.getElementById("corner_" + i));
         }
 
         this.corners.push(document.getElementById("center"));
 
         //Points used to draw selection rectangle
-        this.anchor_point = {x: 0, y: 0};
-        this.top_left_point = {x: 0, y: 0};
-        this.bottom_right_point = {x: 0, y: 0};
+        this.anchor_point = { x: 0, y: 0 };
+        this.top_left_point = { x: 0, y: 0 };
+        this.bottom_right_point = { x: 0, y: 0 };
 
         this.active_rect;
 
-        this.move_anchor = {x: 0, y: 0};
-        this.move_start = {x: 0, y: 0};
-        this.move_offset = {x: 0, y: 0};
+        this.move_anchor = { x: 0, y: 0 };
+        this.move_start = { x: 0, y: 0 };
+        this.move_offset = { x: 0, y: 0 };
 
-        this.edit_anchor = {x: 0, y: 0};
-        this.edit_tlp = {x: 0, y: 0};
-        this.edit_brp = {x: 0, y: 0};
+        this.edit_anchor = { x: 0, y: 0 };
+        this.edit_tlp = { x: 0, y: 0 };
+        this.edit_brp = { x: 0, y: 0 };
 
         this.move_index;
 
@@ -44,7 +44,7 @@ class rectangle_controller {
     }
 
     update_children() {
-        for(let i = 0; i < this.rects.length; i++) {
+        for (let i = 0; i < this.rects.length; i++) {
             this.rects[i].update_index(i);
         }
     }
@@ -53,11 +53,11 @@ class rectangle_controller {
     resizeSVG() {
         let oldWidth = this.svg.clientWidth;
         let oldHeight = this.svg.clientHeight;
-        this.svg.setAttribute("height",this.img.clientHeight);
+        this.svg.setAttribute("height", this.img.clientHeight);
         this.svg.setAttribute("width", this.img.clientWidth);
         let widthAdj = oldWidth / this.img.clientWidth;
         let heightAdj = oldHeight / this.img.clientHeight;
-    
+
         this.rects.forEach(rect => rect.resize(widthAdj, heightAdj));
 
         this.start_state.forEach(obj => {
@@ -71,9 +71,9 @@ class rectangle_controller {
 
 
     select_rect(selected) {
-        let index = parseInt(selected.id.match(/\d+/),10);
-        
-        for(var i = 0; i < this.rects.length; i++) {
+        let index = parseInt(selected.id.match(/\d+/), 10);
+
+        for (var i = 0; i < this.rects.length; i++) {
             this.rects[i].deselect();
         }
 
@@ -93,18 +93,18 @@ class rectangle_controller {
         rect.setAttribute("id", rect_id);
         rect.setAttribute('ondrop', "drop_handler(event)");
         rect.setAttribute('ondragover', "dragover_handler(event)");
-        rect.addEventListener('dragenter', function(e) {
+        rect.addEventListener('dragenter', function (e) {
             e.preventDefault();
             e.target.classList.add('dragging');
         });
 
-        rect.addEventListener('dragleave', function(e) {
+        rect.addEventListener('dragleave', function (e) {
             e.preventDefault();
             e.target.classList.remove('dragging');
         });
     }
 
-    gotDetection(results) {    
+    gotDetection(results) {
         results.forEach(obj => this.create_from_obj(obj));
     }
 
@@ -115,7 +115,7 @@ class rectangle_controller {
 
     begin_draw(e) {
         this.anchor_point = this.getBoundedPos(e);
-        this.top_left_point = {x: this.anchor_point.x, y: this.anchor_point.y};
+        this.top_left_point = { x: this.anchor_point.x, y: this.anchor_point.y };
         this.active_rect = document.createElementNS(svgns, "rect");
         this.createRect(this.svg.childElementCount, this.active_rect);
         this.svg.appendChild(this.active_rect);
@@ -126,13 +126,17 @@ class rectangle_controller {
 
     draw(e) {
         let pos = this.getBoundedPos(e);
-       
-        this.find_points(pos, this.anchor_point, this.top_left_point, this.bottom_right_point);
-        
+
+        this.find_points(pos, this.anchor_point, 
+                        this.top_left_point, this.bottom_right_point);
+
         this.active_rect.setAttribute('x', this.top_left_point.x);
         this.active_rect.setAttribute('y', this.top_left_point.y);
-        this.active_rect.setAttribute('width', this.bottom_right_point.x - this.top_left_point.x);
-        this.active_rect.setAttribute('height', this.bottom_right_point.y - this.top_left_point.y);
+        let w = this.bottom_right_point.x - this.top_left_point.x;
+        let h = this.bottom_right_point.y - this.top_left_point.y;
+        this.active_rect.setAttribute('width', w);
+        this.active_rect.setAttribute('height', h);
+        
     }
 
     end_draw(e) {
@@ -148,42 +152,42 @@ class rectangle_controller {
     }
 
     begin_edit(e, corner) {
-        this.edit_index = parseInt(e.target.id.match(/\d+/),10);
+        this.edit_index = parseInt(e.target.id.match(/\d+/), 10);
         this.edit_rect = this.rects[this.edit_index];
         this.svg.classList.add("hide-cursor");
-    
-    
+
+
         let box = getRelCoords(this.edit_rect.svg, this.svg);
-        
-        if(corner == "tl") {
-            this.edit_anchor = {"x": box.right, "y": box.bottom};
-            
+
+        if (corner == "tl") {
+            this.edit_anchor = { "x": box.right, "y": box.bottom };
+
         }
-        else if(corner == "tr") {
-            this.edit_anchor = {"x": box.left, "y": box.bottom};
-            
+        else if (corner == "tr") {
+            this.edit_anchor = { "x": box.left, "y": box.bottom };
+
         }
-        else if(corner == "bl") {
-            this.edit_anchor = {"x": box.right, "y": box.top};
+        else if (corner == "bl") {
+            this.edit_anchor = { "x": box.right, "y": box.top };
         }
         else {
-            this.edit_anchor = {"x": box.left, "y": box.top};
+            this.edit_anchor = { "x": box.left, "y": box.top };
         }
-        this.edit_tlp = {x: box.left, y: box.top};
-        this.edit_brp = {x: box.right, y: box.bottom};
+        this.edit_tlp = { x: box.left, y: box.top };
+        this.edit_brp = { x: box.right, y: box.bottom };
 
         this.svg.setAttribute("onmousemove", "rect_control.edit(event)");
         this.svg.setAttribute("onmouseup", "rect_control.end_edit(event)");
 
         this.edit_rect.group.removeAttribute('onmouseover');
         this.edit_rect.deselect();
-    }   
+    }
 
     edit(e) {
         let pos = this.getBoundedPos(e);
 
         this.find_points(pos, this.edit_anchor, this.edit_tlp, this.edit_brp);
-        
+
         this.edit_rect.svg.setAttribute("x", this.edit_tlp.x);
         this.edit_rect.svg.setAttribute("width", this.edit_brp.x - this.edit_tlp.x);
         this.edit_rect.svg.setAttribute("y", this.edit_tlp.y);
@@ -191,7 +195,7 @@ class rectangle_controller {
         this.edit_rect.rectUpdate(this.edit_rect);
         this.edit_rect.check();
     }
-    
+
     end_edit() {
         this.edit_rect.group.setAttribute("onmouseover", "select_rect(this)");
         this.svg.removeAttribute("onmousemove");
@@ -200,12 +204,14 @@ class rectangle_controller {
         this.edit_rect = null;
         this.edit_index = null;
     }
-    
+
     begin_move(e) {
-        this.move_index = parseInt(e.target.id.match(/\d+/),10);
+        this.move_index = parseInt(e.target.id.match(/\d+/), 10);
         let rect = this.rects[this.move_index].svg;
-        this.move_start = {x: parseFloat(rect.getAttribute('x')),
-                           y: parseFloat(rect.getAttribute('y'))}
+        this.move_start = {
+            x: parseFloat(rect.getAttribute('x')),
+            y: parseFloat(rect.getAttribute('y'))
+        }
         this.move_anchor = getMousePos(this.svg, e);
         this.svg.setAttribute("onmousemove", "rect_control.move(event)");
         this.svg.setAttribute("onmouseup", "rect_control.end_move(event)");
@@ -214,30 +220,30 @@ class rectangle_controller {
 
         this.rects[this.move_index].deselect();
     }
-    
+
     move(e) {
 
         let rect = this.rects[this.move_index];
         let pos = getMousePos(this.svg, e)
-        let rect_h = rect.svg.getAttribute("height")/2;
-        let rect_w = rect.svg.getAttribute("width")/2;+.0
+        let rect_h = rect.svg.getAttribute("height") / 2;
+        let rect_w = rect.svg.getAttribute("width") / 2; +.0
 
         // make sure the bounds of the rect dont leave the svg area
-        if(pos.x > this.svg.getAttribute('width') - rect_w)
+        if (pos.x > this.svg.getAttribute('width') - rect_w)
             pos.x = this.svg.getAttribute('width') - rect_w;
-        else if(pos.x < rect_w) 
+        else if (pos.x < rect_w)
             pos.x = rect_w;
 
-        if(pos.y > this.svg.getAttribute('height') - rect_h)
+        if (pos.y > this.svg.getAttribute('height') - rect_h)
             pos.y = this.svg.getAttribute('height') - rect_h;
-        else if(pos.y < rect_h) 
+        else if (pos.y < rect_h)
             pos.y = rect_h;
 
         let diffx = 0, diffy = 0;
 
         // if the shift key is pressed make the change in only the largest dimension
-        if(e.shiftKey) {
-            if(Math.abs(pos.x - this.move_anchor.x) >= Math.abs(pos.y - this.move_anchor.y))
+        if (e.shiftKey) {
+            if (Math.abs(pos.x - this.move_anchor.x) >= Math.abs(pos.y - this.move_anchor.y))
                 diffx = pos.x - this.move_anchor.x;
             else
                 diffy = pos.y - this.move_anchor.y;
@@ -267,14 +273,14 @@ class rectangle_controller {
     }
 
     find_points(pos, anchor, tlp, brp) {
-        if(pos.x < anchor.x) {
+        if (pos.x < anchor.x) {
             brp.x = anchor.x;
             tlp.x = pos.x;
         }
         else
             brp.x = pos.x;
 
-        if(pos.y < anchor.y) {
+        if (pos.y < anchor.y) {
             brp.y = anchor.y;
             tlp.y = pos.y;
         }
@@ -283,8 +289,8 @@ class rectangle_controller {
     }
 
     deselect() {
-        for(let i = 0; i < this.rects.length; i++) {
-            if(this.rects[i].isSelected) {
+        for (let i = 0; i < this.rects.length; i++) {
+            if (this.rects[i].isSelected) {
                 this.rects[i].deselect();
             }
         }
@@ -292,15 +298,15 @@ class rectangle_controller {
 
     getBoundedPos(e) {
         let pos = getMousePos(this.svg, e);
-        if(pos.x < 0)
+        if (pos.x < 0)
             pos.x = 0;
-        if(pos.x > this.svg.clientWidth)
+        if (pos.x > this.svg.clientWidth)
             pos.x = this.svg.clientWidth;
-        if(pos.y < 0)
+        if (pos.y < 0)
             pos.y = 0;
-        if(pos.y > this.svg.clientHeight)
+        if (pos.y > this.svg.clientHeight)
             pos.y = this.svg.clientHeight;
-        
+
         return pos;
     }
 
@@ -318,12 +324,12 @@ class rectangle_controller {
 
     create_from_obj(obj) {
 
-        if(obj_classes.indexOf(obj.class) == -1) {
+        if (obj_classes.indexOf(obj.class) == -1) {
             obj_classes.push(obj.class);
-        } 
+        }
 
         let color = color_codes[obj_classes.indexOf(obj.class) % color_codes.length]
-        this.start_state.push({"class": obj.class, "bbox": obj.bbox});
+        this.start_state.push({ "class": obj.class, "bbox": obj.bbox });
         let new_rect = document.createElementNS(svgns, "rect");
         let new_group = document.createElementNS(svgns, 'svg');
         new_group.setAttribute('id', "group_" + this.rects.length)
@@ -335,17 +341,17 @@ class rectangle_controller {
         new_rect.setAttribute("stroke-width", 2);
         new_rect.setAttribute("stroke", color);
         new_rect.setAttribute("fill-opacity", 0);
-        new_rect.addEventListener('dragenter', function(e) {
+        new_rect.addEventListener('dragenter', function (e) {
             e.preventDefault();
             e.target.classList.add('dragging');
         });
 
-        new_rect.addEventListener('dragleave', function(e) {
+        new_rect.addEventListener('dragleave', function (e) {
             e.preventDefault();
             e.target.classList.remove('dragging');
         });
 
-        
+
         new_rect.setAttribute("x", obj.bbox[0]);
         new_rect.setAttribute("y", obj.bbox[1]);
         new_rect.setAttribute("width", obj.bbox[2]);
