@@ -178,7 +178,6 @@ function end_trace() {
 }
 
 function trace(event) {
-    console.log("OK")
     let l = []; // array to hold the links we're interested in
     let len = links[tracing].end.y - links[tracing].start.y;
     let t = (event.clientY - links[tracing].start.y) / len;

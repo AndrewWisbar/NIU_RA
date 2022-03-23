@@ -9,6 +9,8 @@ tr {
 th {
     width: 7ch;
     height: 5ch;
+    max-height: 7ch;
+    max-width: 5ch;
     justify-content: center;
     border: black;
     background-color: gray;

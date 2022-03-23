@@ -21,7 +21,7 @@
         <div id="top-cont">
             <div id="graph-controls">
                 <h3>Controls</h3>
-                <label for="g-slider">Node Groups</label>
+                <label for="g-slider">Layers</label>
                 <input class="control" type="number" id="g-slider" min="2" max="5" value="2" onchange="update_groups(this.value)"><br>
                 <div id="group-controls"></div>
                 <label for="type-sel">Selection Highlighting Type</label> <br>
@@ -42,7 +42,12 @@
         </div>
     </div>
 
-    <script src="../src/relationship.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="../settings.js"></script>
+    <script src="../src/relationships/classes/controller.js"></script>
+    <script src="../src/relationships/classes/view.js"></script>
+    <script src="../src/relationships/classes/data.js"></script>
+    <script src="../src/relationships/events/events.js"></script>
 </body>
 
 </html>

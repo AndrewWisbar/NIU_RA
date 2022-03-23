@@ -42,8 +42,7 @@ const colorPicker = document.querySelector('input[type="color"]');
 
 
 
-let img_num = 8;
-let img_ind = Math.floor(Math.random() * img_num);
+let img_ind = Math.floor(Math.random() * NUM_IMAGES);
 let img_path = 'images/img000' + img_ind + '.jpg';
 base_img.setAttribute('src', img_path);
 
