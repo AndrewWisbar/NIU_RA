@@ -21,7 +21,10 @@ const LAYER_COLS = [            // Unique colors for each layer of nodes
                                 "#3E92CC"
 ]
 
-const NODE_SIZE = 0.25 // the size of the node relative to its vertical spacing
+const NODE_SIZE =               0.25 // the size of the node relative to its vertical spacing
+
+const CELL_W =                  24;
+const CELL_H =                  24;
 
 
 /*******************************************************************************

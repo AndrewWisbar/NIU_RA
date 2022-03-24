@@ -4,6 +4,11 @@
 class View {
     constructor() {
         this.container = document.getElementById('container');
+        this.tableSVG = document.getElementById("table-svg");
+        this.tableG = document.createElementNS(svgns, "g");
+        this.tableSVG.setAttribute("width", this.container.clientWidth)
+        this.tableSVG.setAttribute("height", this.container.clientHeight)
+        this.tableSVG.appendChild(this.tableG);
 
         this.contWidth = this.container.clientWidth;
         this.contHeight = this.container.clientHeight;
@@ -41,6 +46,8 @@ class View {
         this.createNodes(layers);
         this.drawEdges(edges);
         this.drawNodes(layers);
+
+        this.createTable(layers, edges);
     }
 
     /**
@@ -112,6 +119,79 @@ class View {
                 
             }
         }    
+    }
+
+    createTable(layers, edges) {
+
+        while(this.tableG.firstChild) {
+            this.tableG.removeChild(this.tableG.lastChild);
+        }
+        this.tableSVG.appendChild(this.tableG);
+        let org = {x: 0, y: 0};
+
+        for(let i = 0; i < layers.length - 1; i++) {
+            this.drawTable(layers, i, org);
+            (i%2) ? org.y += CELL_H * (parseInt(layers[i]) + 1) : org.x += CELL_W * (parseInt(layers[i]) + 1);
+        }
+        let table_width = parseInt(layers[0]);
+        if(layers.length >= 3 && layers.length != 5) {
+            table_width += parseInt(layers[2]);
+        }
+        else if(layers.length == 5) {
+            let l2 = parseInt(layers[2])
+            let l4 = parseInt(layers[4])
+            table_width += (l2 > l4 - parseInt(layers[1]) * Math.SQRT2) ? l2 : l4  
+        }
+        table_width *= CELL_W;
+
+        let str = `translate(0, ${table_width})\nrotate(-45, 0, 0)`
+        this.tableG.setAttribute("transform", str)
+    }
+
+    drawTable(layers, layer_ind, org) {
+        let layer1, layer2, color1, color2;
+        if(layer_ind%2) {
+            layer1 = parseInt(layers[layer_ind + 1]);
+            layer2 = parseInt(layers[layer_ind]);
+            color1 = LAYER_COLS[layer_ind + 1];
+            color2 = LAYER_COLS[layer_ind];
+        }
+        else
+        {
+            layer1 = parseInt(layers[layer_ind]);
+            layer2 = parseInt(layers[layer_ind + 1]);
+            color1 = LAYER_COLS[layer_ind];
+            color2 = LAYER_COLS[layer_ind + 1];
+
+        }
+
+
+        for(let j = 0; j < layer2 + 1; j++) {
+            for(let i = 0; i < layer1 + 1; i++) {
+                let entry = document.createElementNS(svgns, "rect");
+                this.tableG.appendChild(entry);
+                entry.setAttribute("x", org.x + (i * CELL_W));
+                entry.setAttribute("y", org.y + (j * CELL_H));
+                entry.setAttribute("width", CELL_W);
+                entry.setAttribute("height", CELL_H);
+                entry.setAttribute("stroke", "black")
+                if(i == 0 && j ==0) {
+                    entry.setAttribute("fill", NODE_COL);
+                }
+                else if(i == 0) {
+                    entry.setAttribute("fill", color2+"7F")
+                    entry.setAttribute("stroke", color2)
+                }
+                else if(j == 0) {
+                    entry.setAttribute("fill", color1+"7F")
+                    entry.setAttribute("stroke", color1)
+                }
+                else {
+                    entry.setAttribute("fill", NODE_COL)
+                }
+                
+            }
+        }
     }
 
     getNode(id) {
