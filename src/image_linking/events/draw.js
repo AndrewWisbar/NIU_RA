@@ -7,8 +7,6 @@ const col_string = "#00FFFF";
 const pre_canvas = document.querySelector('.preview-canvas');
 const pre_ctx = pre_canvas.getContext('2d');
 
-const svgns = "http://www.w3.org/2000/svg";
-
 const rect_stroke = 2;
 
 let rect_control = new rectangle_controller(svg_cont, svgns, base_img, pre_canvas);

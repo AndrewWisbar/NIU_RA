@@ -130,7 +130,7 @@ class View {
         let org = {x: 0, y: 0};
 
         for(let i = 0; i < layers.length - 1; i++) {
-            this.drawTable(layers, i, org);
+            this.drawTable(layers, i, edges[i], org);
             (i%2) ? org.y += CELL_H * (parseInt(layers[i]) + 1) : org.x += CELL_W * (parseInt(layers[i]) + 1);
         }
         let table_width = parseInt(layers[0]);
@@ -148,20 +148,24 @@ class View {
         this.tableG.setAttribute("transform", str)
     }
 
-    drawTable(layers, layer_ind, org) {
-        let layer1, layer2, color1, color2;
+    drawTable(layers, layer_ind, edges, org) {
+        let layer1, l1ind, l2ind, layer2, color1, color2;
         if(layer_ind%2) {
-            layer1 = parseInt(layers[layer_ind + 1]);
-            layer2 = parseInt(layers[layer_ind]);
-            color1 = LAYER_COLS[layer_ind + 1];
-            color2 = LAYER_COLS[layer_ind];
+            l1ind = layer_ind + 1;
+            l2ind = layer_ind;
+            layer1 = parseInt(layers[l1ind]);
+            layer2 = parseInt(layers[l2ind]);
+            color1 = LAYER_COLS[l1ind];
+            color2 = LAYER_COLS[l2ind];
         }
         else
         {
-            layer1 = parseInt(layers[layer_ind]);
-            layer2 = parseInt(layers[layer_ind + 1]);
-            color1 = LAYER_COLS[layer_ind];
-            color2 = LAYER_COLS[layer_ind + 1];
+            l1ind = layer_ind;
+            l2ind = layer_ind + 1;
+            layer1 = parseInt(layers[l1ind]);
+            layer2 = parseInt(layers[l2ind]);
+            color1 = LAYER_COLS[l1ind];
+            color2 = LAYER_COLS[l2ind];
 
         }
 
@@ -181,15 +185,30 @@ class View {
                 else if(i == 0) {
                     entry.setAttribute("fill", color2+"7F")
                     entry.setAttribute("stroke", color2)
+                    entry.setAttribute("id", `l${l2ind}n${j-1}_tab`)
+                    entry.setAttribute("onmouseover", "selectTableNode(this)");
+                    entry.setAttribute("onmouseout", "deselectTableNode(this)");
                 }
                 else if(j == 0) {
                     entry.setAttribute("fill", color1+"7F")
                     entry.setAttribute("stroke", color1)
+                    entry.setAttribute("id", `l${l1ind}n${i-1}_tab`)
+                    entry.setAttribute("onmouseover", "selectTableNode(this)");
+                    entry.setAttribute("onmouseout", "deselectTableNode(this)");
                 }
                 else {
                     entry.setAttribute("fill", NODE_COL)
+                    if(l1ind < l2ind) {
+                        entry.setAttribute("id", `l${l1ind}n${i-1}l${l2ind}n${j-1}_tab`)
+                        if(edges[i-1][j-1] == 0)
+                            entry.setAttribute("fill", "black")
+                    }
+                    else { 
+                        entry.setAttribute("id", `l${l2ind}n${j-1}l${l1ind}n${i-1}_tab`)
+                        if(edges[j-1][i-1] == 0)
+                            entry.setAttribute("fill", "black")
+                    }
                 }
-                
             }
         }
     }
@@ -318,10 +337,16 @@ class View {
 
     select() {
         this.svg.setAttribute("fill", LAYER_COLS[this.layer]);
+        let tab = document.getElementById(this.id + "_tab");
+        tab.setAttribute("fill", LAYER_COLS[this.layer]);
+        tab.setAttribute("stroke", "black");
     }
 
     deselect() {
         this.svg.setAttribute("fill", NODE_COL)
+        let tab = document.getElementById(this.id + "_tab");
+        tab.setAttribute("fill", LAYER_COLS[this.layer] + "7F");
+        tab.setAttribute("stroke", LAYER_COLS[this.layer]);
     }
 
 
@@ -331,6 +356,7 @@ class Edge {
     constructor(node1, node2, weight, container) {
         this.node1 = node1.id;
         this.node2 = node2.id;
+        this.id = this.node1 + this.node2;
         
         this.x1 = node1.x;
         this.y1 = node1.y;
@@ -347,6 +373,7 @@ class Edge {
         this.svg.setAttribute("y1", this.y1);
         this.svg.setAttribute("x2", this.x2);
         this.svg.setAttribute("y2", this.y2);
+        this.svg.setAttribute("id", this.id);
         this.setColor("black")
     }
 
@@ -365,10 +392,23 @@ class Edge {
         return (id == this.node1) ? this.node2 : this.node1;
     }
 
+    getGreyScale() {
+        return  `rgba(${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, 
+                ${(1 - this.weight) * 255}, 1)`;
+    }
+
+    getColMap() {
+        return `rgba(${this.weight < .5 ? 255 : 255 - 255 * 2 * (this.weight - .5)}, 
+                ${this.weight >= .5 ? 255 : 255 * 2 * (this.weight)}, 0, 1)`;
+    }
+
     setGreyScale() {
         let col = `rgba(${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, 1)`;
         this.svg.setAttribute("stroke-width", 5)
         this.setColor(col);
+        let tab = document.getElementById(this.id + "_tab");
+        if(tab)
+            tab.setAttribute("fill", col);
     }
 
     setColMap() {
@@ -377,20 +417,32 @@ class Edge {
 
         this.svg.setAttribute("stroke-width", 5);
         this.setColor(col);
+        let tab = document.getElementById(this.id + "_tab");
+        if(tab)
+            tab.setAttribute("fill", col);
     }
 
     setSize() {
         this.svg.setAttribute("stroke-width", (this.weight * this.weight * 8 + 1) + "px")
+        let tab = document.getElementById(this.id + "_tab");
+        if(tab)
+            tab.setAttribute("fill", this.getColMap());
     }
 
     setDash() {
         this.svg.setAttribute("stroke-dasharray", 14 * (1 - this.weight) + 1);
         this.svg.setAttribute("stroke-width", 5);
+        let tab = document.getElementById(this.id + "_tab");
+        if(tab)
+            tab.setAttribute("fill", this.getColMap());
     }
 
     reset() {
         this.setColor("rgba(0,0,0,1)")
         this.svg.setAttribute("stroke-width", 1);
         this.svg.removeAttribute("stroke-dasharray")
+        let tab = document.getElementById(this.id + "_tab");
+        if(tab)
+            tab.setAttribute("fill", NODE_COL);
     }
 }

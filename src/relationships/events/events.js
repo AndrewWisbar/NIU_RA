@@ -35,3 +35,11 @@ function idToIndex(id) {
     let nums = id.match(/\d/g);
     return {"l": nums[0], "n": nums[1]};
 }
+
+function selectTableNode(tab) {
+    controller.selectNode(tab.id.replace("_tab", ""));
+}
+
+function deselectTableNode(tab) {
+    controller.deselectNode(tab.id.replace("_tab", ""));
+}
