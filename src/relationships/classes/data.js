@@ -55,8 +55,8 @@ class Data {
         }
 
         let shuffled = shuffle(potEdges);
-
-        for(let i = 0; i < Math.round(shuffled.length * percent); i++)
+        let numEdges = Math.max(1,  Math.round(shuffled.length * percent));
+        for(let i = 0; i < numEdges; i++)
             arr[shuffled[i].i][shuffled[i].j] = Math.random();
 
         return arr;
@@ -90,7 +90,7 @@ class Data {
                         substr += j;
                     }
                 }
-                substr += " \n";
+                substr += "\n";
                 dataString += substr;
             }
 
@@ -106,7 +106,17 @@ class Data {
 
     }
 
+    /**
+     * Recieve one set of output from LCM and parse it
+     * @param {String} data 
+     */
     storeData(data) {
+        let lines = data.split(/\r?\n/);
+        lines.splice(lines.length - 1, 1);
+        console.log(lines)
+        for(let l = 0; l < lines.length; l += 2) {
+            let node_inds1 = strToNumArr(lines[l])
+        }
         this.maxSets.push(data)
     }
 

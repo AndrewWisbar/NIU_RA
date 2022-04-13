@@ -133,16 +133,20 @@ class View {
             this.drawTable(layers, i, edges[i], org);
             (i%2) ? org.y += CELL_H * (parseInt(layers[i]) + 1) : org.x += CELL_W * (parseInt(layers[i]) + 1);
         }
-        let table_width = parseInt(layers[0]);
+        let table_width = parseInt(layers[0]) + 1;
         if(layers.length >= 3 && layers.length != 5) {
-            table_width += parseInt(layers[2]);
+            table_width += parseInt(layers[2]) + 1;
         }
         else if(layers.length == 5) {
-            let l2 = parseInt(layers[2])
-            let l4 = parseInt(layers[4])
-            table_width += (l2 > l4 - parseInt(layers[1]) * Math.SQRT2) ? l2 : l4  
+            table_width = Math.max(parseInt(layers[0]) + parseInt(layers[2]) + 2,
+                                  ((parseInt(layers[0]) + 1) - 
+                                  (parseInt(layers[1]) + 1)) + 
+                                  parseInt(layers[2]) + parseInt(layers[4]) + 2);
         }
+        console.log(table_width)
         table_width *= CELL_W;
+        table_width *= 0.5;
+        table_width *= Math.SQRT2;
 
         let str = `translate(0, ${table_width})\nrotate(-45, 0, 0)`
         this.tableG.setAttribute("transform", str)
