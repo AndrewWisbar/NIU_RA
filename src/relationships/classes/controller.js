@@ -82,11 +82,12 @@ class Controller {
     }
 
     render() {
-        
         this.data.update(this.getGroupSizes(), this.getPercents());
-        //this.data.log();
+        if(DEBUG)
+            this.data.log();
         this.data.send();
-        this.view.renderGraph(this.data.getLayers(), this.data.getEdges());
+        this.data.fillInterfaces();
+        this.view.renderGraph(this.data.getLayers(), this.data.getInterfaces());
     }
 
     selectNode(id) {

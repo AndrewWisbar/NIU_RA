@@ -18,6 +18,7 @@ class View {
 
         this.layers = [];
         this.edges = {}; // given a node id(lXnY) get an array of connected edges
+        this.cliques = [];
     }
 
     /**
@@ -29,14 +30,15 @@ class View {
      * 
      * @param {Array} layers an array representing the number of nodes in each
      *     layer
-     * @param {*} edges a three dimensional array of all the connections in the
-     *     graph 
+     * @param {Array} inter an array of edge interface objects
+     *  
      */
-    renderGraph(layers, edges) {
+    renderGraph(layers, inter) {
 
         // Clear Graph Container
         this.layers = [];
         this.edges = {};
+        this.cliques = [];
         let cont = document.getElementById("container");
         while (cont.firstChild) {
             cont.removeChild(cont.lastChild);
@@ -44,10 +46,10 @@ class View {
 
         this.drawLayerBackgrounds(layers);
         this.createNodes(layers);
-        this.drawEdges(edges);
+        this.drawEdges(inter);
+        this.drawCliques(inter, layers)
         this.drawNodes(layers);
-
-        this.createTable(layers, edges);
+        this.createTable(layers, inter);
     }
 
     /**
@@ -89,17 +91,22 @@ class View {
         } 
     }
 
-    drawEdges(edges) {
+    drawEdges(interfaces) {
         //for each layer
-        for(let l = 0; l < edges.length; l++) {
+        for(let l = 0; l < interfaces.length; l++) {
+
+            let edges = interfaces[l].e;
+            
             // for each node in the layer
-            for(let i = 0; i < edges[l].length; i++) {
+            for(let i = 0; i < edges.length; i++) {
                 //for each connection to another node
-                for(let j = 0; j < edges[l][i].length; j++) {
-                    if(edges[l][i][j] > 0) {
+                for(let j = 0; j < edges[i].length; j++) {
+                    if(edges[i][j].w > 0) {
                         let pos1 = this.layers[l][i];
                         let pos2 = this.layers[l+1][j];
-                        let e = new Edge(pos1, pos2, edges[l][i][j], this.container);
+
+
+                        let e = new Edge(pos1, pos2, edges[i][j].w, edges[i][j].inClique, this.container);
                         if(!(("l" + l + "n" + i) in this.edges)) {
                             this.edges["l" + l + "n" + i] = [];
                             this.edges["l" + l + "n" + i].push(e);
@@ -118,10 +125,15 @@ class View {
                 }
                 
             }
-        }    
+        }   
     }
 
-    createTable(layers, edges) {
+    /**
+     * Create the multidimensional SVG table
+     * @param {Array} layers An array of integers representing the number of nodes in each layer of the graph 
+     * @param {*} interfaces An array of objects representing the connections between two layers of the graph
+     */
+    createTable(layers, interfaces) {
 
         while(this.tableG.firstChild) {
             this.tableG.removeChild(this.tableG.lastChild);
@@ -130,7 +142,7 @@ class View {
         let org = {x: 0, y: 0};
 
         for(let i = 0; i < layers.length - 1; i++) {
-            this.drawTable(layers, i, edges[i], org);
+            this.drawTable(layers, i, interfaces[i].e, org);
             (i%2) ? org.y += CELL_H * (parseInt(layers[i]) + 1) : org.x += CELL_W * (parseInt(layers[i]) + 1);
         }
         let table_width = parseInt(layers[0]) + 1;
@@ -143,7 +155,6 @@ class View {
                                   (parseInt(layers[1]) + 1)) + 
                                   parseInt(layers[2]) + parseInt(layers[4]) + 2);
         }
-        console.log(table_width)
         table_width *= CELL_W;
         table_width *= 0.5;
         table_width *= Math.SQRT2;
@@ -152,6 +163,13 @@ class View {
         this.tableG.setAttribute("transform", str)
     }
 
+    /**
+     * Draw an individual 2d matrix as a component of the overall table
+     * @param {Array} layers an array representing the number of nodes in each layer of the graph
+     * @param {Int} layer_ind the index of the first layer we will draw
+     * @param {Array} edges an array of objects representing edges in the table
+     * @param {Object} org the origin point of this individual matrix
+     */
     drawTable(layers, layer_ind, edges, org) {
         let layer1, l1ind, l2ind, layer2, color1, color2;
         if(layer_ind%2) {
@@ -173,49 +191,89 @@ class View {
 
         }
 
-
+        // Create and color the indivudual boxes
         for(let j = 0; j < layer2 + 1; j++) {
             for(let i = 0; i < layer1 + 1; i++) {
-                let entry = document.createElementNS(svgns, "rect");
-                this.tableG.appendChild(entry);
-                entry.setAttribute("x", org.x + (i * CELL_W));
-                entry.setAttribute("y", org.y + (j * CELL_H));
-                entry.setAttribute("width", CELL_W);
-                entry.setAttribute("height", CELL_H);
-                entry.setAttribute("stroke", "black")
-                if(i == 0 && j ==0) {
-                    entry.setAttribute("fill", NODE_COL);
-                }
-                else if(i == 0) {
-                    entry.setAttribute("fill", color2+"7F")
-                    entry.setAttribute("stroke", color2)
-                    entry.setAttribute("id", `l${l2ind}n${j-1}_tab`)
-                    entry.setAttribute("onmouseover", "selectTableNode(this)");
-                    entry.setAttribute("onmouseout", "deselectTableNode(this)");
-                }
-                else if(j == 0) {
-                    entry.setAttribute("fill", color1+"7F")
-                    entry.setAttribute("stroke", color1)
-                    entry.setAttribute("id", `l${l1ind}n${i-1}_tab`)
-                    entry.setAttribute("onmouseover", "selectTableNode(this)");
-                    entry.setAttribute("onmouseout", "deselectTableNode(this)");
-                }
-                else {
-                    entry.setAttribute("fill", NODE_COL)
-                    if(l1ind < l2ind) {
-                        entry.setAttribute("id", `l${l1ind}n${i-1}l${l2ind}n${j-1}_tab`)
-                        if(edges[i-1][j-1] == 0)
-                            entry.setAttribute("fill", "black")
+                if(i != 0 || j != 0) {
+                    let entry = document.createElementNS(svgns, "rect");
+                    this.tableG.appendChild(entry);
+                    entry.setAttribute("x", org.x + (i * CELL_W));
+                    entry.setAttribute("y", org.y + (j * CELL_H));
+                    entry.setAttribute("width", CELL_W);
+                    entry.setAttribute("height", CELL_H);
+                    entry.setAttribute("stroke", "black")
+
+                    if(i == 0) {
+                        entry.setAttribute("fill", color2+"7F")
+                        entry.setAttribute("stroke", color2)
+                        entry.setAttribute("id", `l${l2ind}n${j-1}_tab`)
+                        entry.setAttribute("onmouseover", "selectTableNode(this)");
+                        entry.setAttribute("onmouseout", "deselectTableNode(this)");
                     }
-                    else { 
-                        entry.setAttribute("id", `l${l2ind}n${j-1}l${l1ind}n${i-1}_tab`)
-                        if(edges[j-1][i-1] == 0)
-                            entry.setAttribute("fill", "black")
+                    else if(j == 0) {
+                        entry.setAttribute("fill", color1+"7F")
+                        entry.setAttribute("stroke", color1)
+                        entry.setAttribute("id", `l${l1ind}n${i-1}_tab`)
+                        entry.setAttribute("onmouseover", "selectTableNode(this)");
+                        entry.setAttribute("onmouseout", "deselectTableNode(this)");
+                    }
+                    else {
+                        entry.setAttribute("fill", NODE_COL)
+                        if(l1ind < l2ind) {
+                            entry.setAttribute("id", `l${l1ind}n${i-1}l${l2ind}n${j-1}_tab`)
+                            if(edges[i-1][j-1].w == 0)
+                                entry.setAttribute("fill", "black")
+                        }
+                        else { 
+                            entry.setAttribute("id", `l${l2ind}n${j-1}l${l1ind}n${i-1}_tab`)
+                            if(edges[j-1][i-1].w == 0)
+                                entry.setAttribute("fill", "black")
+                        }
                     }
                 }
             }
         }
     }
+
+    /**\
+     * 
+     */
+    drawCliques(interfaces, layers) {
+        for(let i = 0; i < interfaces.length; i++) {
+            let arr = [];
+            for(let c = 0; c < interfaces[i].num_cliques; c++) {
+                let clique = interfaces[i].cliques[c];
+                let leftNodes = [];
+                let rightNodes = [];
+                for(let n = 0; n < clique[0].length; n++)
+                    leftNodes.push(this.layers[i][clique[0][n]]);
+
+                for(let n = 0; n < clique[1].length; n++)
+                    rightNodes.push(this.layers[i+1][clique[1][n]]);
+
+                arr.push(new Clique(leftNodes, rightNodes))
+            }
+
+            // Sort array of cliques by ideal height
+            arr.sort(function(a, b) {
+                return a.idealCenter.y - b.idealCenter.y;
+            })
+
+            let height = ((layers[i] > layers[i+1]) ? layers[i] : layers[i + 1]) * this.ySpace;
+            let cliqueSpace  = height / interfaces[i].num_cliques;
+            
+            for(let c = 0; c < interfaces[i].num_cliques; c++) {
+                if(interfaces[i].num_cliques == 1)
+                    arr[c].setCenter(arr[c].idealCenter.y, this.container)
+                else
+                    arr[c].setCenter((cliqueSpace * c) + (cliqueSpace / 2), this.container)
+            }
+
+            this.cliques.push(arr)
+        }
+
+        console.log(this.cliques);
+     }
 
     getNode(id) {
         let nums = idToIndex(id);
@@ -357,11 +415,12 @@ class View {
 }
 
 class Edge {
-    constructor(node1, node2, weight, container) {
+    constructor(node1, node2, weight, clique_num, container) {
         this.node1 = node1.id;
         this.node2 = node2.id;
         this.id = this.node1 + this.node2;
-        
+        this.clique = clique_num;
+
         this.x1 = node1.x;
         this.y1 = node1.y;
         this.x2 = node2.x;
@@ -372,6 +431,9 @@ class Edge {
 
     draw(cont) {
         this.svg = document.createElementNS(svgns, "line");
+        if(this.clique != -1)
+            this.svg.setAttribute("opacity", 0);
+
         cont.appendChild(this.svg);
         this.svg.setAttribute("x1", this.x1);
         this.svg.setAttribute("y1", this.y1);
@@ -448,5 +510,85 @@ class Edge {
         let tab = document.getElementById(this.id + "_tab");
         if(tab)
             tab.setAttribute("fill", NODE_COL);
+    }
+}
+
+class Clique {
+    constructor(left, right) {
+        this.leftNodes = left;
+        this.rightNodes = right;
+        this.idealCenter;
+        this.svg = null;
+        this.finalCenter;
+
+        let leftSum = 0, rightSum = 0;
+        this.leftNodes.forEach(node =>{
+            leftSum += node.y;
+        });
+
+        this.rightNodes.forEach(node =>{
+            rightSum += node.y;
+        });
+
+        let leftAvg = leftSum / this.leftNodes.length;
+        let rightAvg = rightSum / this.rightNodes.length;
+
+        this.idealCenter = {"x": (this.leftNodes[0].x + this.rightNodes[0].x) / 2, 
+                            "y": (leftAvg + rightAvg) / 2};
+        // Does this clique cause us to draw more or less edges?
+        this.good = (this.leftNodes.length + this.rightNodes.length < this.leftNodes.length * this.rightNodes.length)
+    }
+
+    setCenter(yPos, cont) {
+        this.finalCenter = {x: this.idealCenter.x, y: yPos};
+        this.draw(cont);
+    }
+
+    draw(cont) {
+        
+        this.svg = document.createElementNS(svgns, "rect");
+
+        this.svg.setAttribute("x", this.finalCenter.x - (CLIQUE_W / 2))
+        this.svg.setAttribute("y", this.finalCenter.y - (CLIQUE_H / 2))
+        this.svg.setAttribute("width", CLIQUE_W);
+        this.svg.setAttribute("height", CLIQUE_H);
+        this.svg.setAttribute("rx", CLIQUE_R);
+        this.svg.setAttribute("ry", CLIQUE_R);
+        this.svg.setAttribute("fill", "#7b9ead")
+        this.svg.setAttribute("stroke", "black")
+        
+        this.leftNodes.forEach(node => {
+            var new_path = d3.path();
+            new_path.moveTo(node.x, node.y);
+            new_path.bezierCurveTo( ((this.finalCenter.x - node.x) / 2) + node.x, 
+                                    node.y,
+                                    ((this.finalCenter.x - node.x) / 2) + node.x,
+                                    this.finalCenter.y,
+                                    this.finalCenter.x,
+                                    this.finalCenter.y);
+
+            let path = document.createElementNS(svgns, "path");
+            path.setAttribute("stroke", "black")
+            path.setAttribute("d", new_path);
+            cont.appendChild(path)
+        })
+
+        this.rightNodes.forEach(node => {
+            var new_path = d3.path();
+            new_path.moveTo(node.x, node.y);
+            new_path.bezierCurveTo( ((node.x - this.finalCenter.x) / 2) + this.finalCenter.x, 
+                                    node.y,
+                                    ((node.x - this.finalCenter.x) / 2) + this.finalCenter.x,
+                                    this.finalCenter.y,
+                                    this.finalCenter.x,
+                                    this.finalCenter.y);
+
+            let path = document.createElementNS(svgns, "path");
+            path.setAttribute("stroke", "black")
+            path.setAttribute("d", new_path);
+            cont.appendChild(path)
+        })
+        cont.appendChild(this.svg)
+
     }
 }

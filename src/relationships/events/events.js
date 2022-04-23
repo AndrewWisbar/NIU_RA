@@ -26,7 +26,6 @@ function deselect_node(node) {
 }
 
 function catchData(data) {
-    console.log(data)
     controller.storeData(data)
 }
 
@@ -38,23 +37,3 @@ function deselectTableNode(tab) {
     controller.deselectNode(tab.id.replace("_tab", ""));
 }
 
-/**
- * Convert a string of integers to a sorted array of integers
- * @param {String} str
- * @return {Array} a sorted array of integers 
- */
-function strToNumArr(str) {
-    let nums = str.match(/\d+/g);
-    for(let i = 0; i < nums.length; i++)
-        nums[i] = parseInt(nums[i], 10)
-    nums.sort(function(a, b) {
-        return a - b;
-    })
-
-    return nums;
-}
-
-function idToIndex(id) {
-    let nums = id.match(/\d/g);
-    return {"l": nums[0], "n": nums[1]};
-}

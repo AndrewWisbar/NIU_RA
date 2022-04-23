@@ -4,7 +4,7 @@ if(strlen($_GET["data"]) > 0) {
 
     $output=null;
     $exit=null;
-    exec("lcm MqI in.data 4 out.data", $output, $exit);
+    exec("lcm MqI in.data 2 out.data", $output, $exit);
 
     if($exit == 0)
         $out = file_get_contents("out.data");

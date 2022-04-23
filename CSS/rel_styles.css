@@ -28,7 +28,7 @@ body {
 #main-container {
     position: absolute;
     min-height: 964px;
-    height: fit-content;
+    height: 90%;
     left: 40px;
     right: 40px;
     top: 130px;
@@ -49,15 +49,17 @@ body {
 }
 
 #table-cont {
-    display: grid;
     position: absolute;
-    min-height: 430px;
+    height: 58%;
     left: 33px;
     right: 33px;
     top: 504px;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: fit-content(120px);
     background: #EAEAEA;
+}
+
+#table-svg {
+    width: 100%;
+    height: 100%;
 }
 
 #graph-controls {
