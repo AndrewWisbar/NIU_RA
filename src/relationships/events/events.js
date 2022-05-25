@@ -37,3 +37,10 @@ function deselectTableNode(tab) {
     controller.deselectNode(tab.id.replace("_tab", ""));
 }
 
+function selectClique(id) {
+    controller.selectClique(id);
+}
+
+function deselectClique(id) {
+    controller.deselectClique(id);
+}

@@ -1,5 +1,5 @@
 /**
- * Generate and manage the data used by the graph
+ * Generate and manage the data needed by the graph
  */
 class Data {
     constructor(numLayers, layerSizes, percents) {
@@ -16,24 +16,50 @@ class Data {
         this.update(layerSizes, percents)
     }
 
+    /**
+     * Get the edges in the graph
+     * @returns the array of edges in the graph
+     */
     getEdges() {
         return this.edges;
     }
 
+    /**
+     * Get the number of nodes in each layer of the graph
+     * @returns an array representing the number of nodes in each layer of the graph
+     */
     getLayers() {
         return this.layers;
     }
 
+    /**
+     * Get the LayerInterface objects for each adjacent set of layers
+     * @returns an array of interface objects
+     */
     getInterfaces() {
         return this.interfaces;
     }
 
+    /**
+     * Update the number of nodes in each layer, and percentage of present edges 
+     *  in each LayerInterface
+     * @param {Array<Integer>} layerSizes array of integers, representing the 
+     *  number of nodes in each layer
+     * @param {Array<Float32>} edgePercents array of percentages of edges 
+     *  present between each layer respectively
+     */
     update(layerSizes, edgePercents) {
         this.layers = layerSizes;
         this.edges = this.generateEdges(layerSizes, edgePercents);
 
     }
 
+    /**
+     * Generate the edges for each set of adjacent layers in the graph
+     * @param {Array<int>} layerSizes number of nodes in each layer
+     * @param {Array<Float>} percents the percentage of edges to generate for each set of adjacent layers
+     * @returns 
+     */
     generateEdges(layerSizes, percents) {
         let arr = new Array(layerSizes.length - 1)
         for(let i = 0; i < percents.length; i++) {
@@ -43,6 +69,14 @@ class Data {
         return arr;
     }
 
+    /**
+     * Create an array representing the weight of each edge
+     * @param {Integer} nodes1 The number of nodes in the first layer
+     * @param {Integer} nodes2 The number of nodes in the second layer 
+     * @param {Float} percent the percentage of edges that should have a 
+     *  non-zero weight
+     * @returns An array of floats representing the weight of each edge
+     */
     createEdgeArr(nodes1, nodes2, percent) {
         let arr = new Array(nodes1);
         for(let i = 0; i < nodes1; i++) {
@@ -62,11 +96,16 @@ class Data {
         let shuffled = shuffle(potEdges);
         let numEdges = Math.max(1,  Math.round(shuffled.length * percent));
         for(let i = 0; i < numEdges; i++)
-            arr[shuffled[i].i][shuffled[i].j] = Math.random();
+            arr[shuffled[i].i][shuffled[i].j] = Math.random(); // Assign weight
 
         return arr;
     }
 
+    /**
+     * Get a specific set of edges from the graph
+     * @param {Integer} ind index of the array to return 
+     * @returns an array of edges or "false"
+     */
     getEdgeSet(ind) {
         if(ind < 0 || ind > this.edges.length - 1)
             return false;
@@ -74,6 +113,11 @@ class Data {
         return this.edges[ind];    
     }
 
+    /**
+     * Get the number of nodes in a layer of the graph
+     * @param {Integer} ind index of the layer to check
+     * @returns the number of nodes in the layer or "false"
+     */
     getNumNodes(ind) {
         if(ind < 0 || ind > this.layers.length - 1)
             return false;
@@ -81,6 +125,9 @@ class Data {
         return this.layers[ind];   
     }
 
+    /**
+     * Send data to the server to be processed by LCM program
+     */
     send() {
         // turn data into string
         this.maxSets = [];
@@ -99,13 +146,14 @@ class Data {
                 dataString += substr;
             }
 
+            // send the data to a php script
             $.ajax({
                 type: "GET",
                 url: "../PHP/process_data.php",
                 data: {data: dataString},
-                async: false,
+                async: false, // for simplicity we aren't using async for now
                 dataType: "html",
-                success: catchData // this seems clunky and not ideal
+                success: catchData
             })
         }
 
@@ -128,6 +176,10 @@ class Data {
         this.maxSets.push(arr);
     }
 
+    /**
+     * Create the LayerInterface objects that represent the connections in the 
+     *  graph
+     */
     fillInterfaces() {
         this.interfaces = [];
         
@@ -138,7 +190,9 @@ class Data {
 
     }
 
-
+    /**
+     * Log debug info to the console.
+     */
     log() {
         console.log("~~~~~~~~~~~~~~");
         console.log("Data Log")
@@ -151,47 +205,3 @@ class Data {
         console.log(this.interfaces)
     }
 }
-
-
-/**
- * An object representing the connection between two layers
- */
-class LayerInterface {
-    constructor(layerA, layerB, layerInd, cliques, edges) {
-        this.la = cloneArray(layerA);
-        this.lb = cloneArray(layerB);
-        this.cliques = cloneArray(cliques);
-        this.num_cliques = this.cliques.length;
-        this.e = this.convertEdges(edges);
-        this.laInd = layerInd;
-        this.lbInd = layerInd + 1;
-        this.filterEdges();
-    }
-
-    /**
-     * Convert Edges from a list of weights, to a list of objects
-     * @param {Array} edges a two dimensional array of edge weights 
-     * @returns a two dimentional array of objects
-     */
-    convertEdges(edges) {
-        let arr = new Array(edges.length);
-        for(let i = 0; i < edges.length; i++) {
-            arr[i] = new Array(edges[i].length);
-            for(let j = 0; j < edges[i].length; j++) {
-                arr[i][j] = {"w": edges[i][j], "inClique": -1}
-            }
-        }
-        return arr;
-    }
-    /**
-     * Mark any edges that are included in a clique
-     */
-    filterEdges() {
-        for(let c = 0; c < this.cliques.length; c++) {
-            let clique = this.cliques[c]
-            for(let i = 0; i < clique[0].length; i++)
-                for(let j = 0; j < clique[1].length; j++)
-                    this.e[clique[0][i]][clique[1][j]].inClique = c;
-        }
-    }
-};

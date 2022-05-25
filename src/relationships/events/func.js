@@ -15,7 +15,7 @@
 }
 
 function idToIndex(id) {
-    let nums = id.match(/\d/g);
+    let nums = id.match(/\d+/g);
     return {"l": nums[0], "n": nums[1]};
 }
 

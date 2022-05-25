@@ -102,11 +102,11 @@ class View {
                 //for each connection to another node
                 for(let j = 0; j < edges[i].length; j++) {
                     if(edges[i][j].w > 0) {
-                        let pos1 = this.layers[l][i];
-                        let pos2 = this.layers[l+1][j];
+                        let node1 = this.layers[l][i];
+                        let node2 = this.layers[l+1][j];
 
 
-                        let e = new Edge(pos1, pos2, edges[i][j].w, edges[i][j].inClique, this.container);
+                        let e = new Edge(node1, node2, edges[i][j].w, edges[i][j].inClique, this.container);
                         if(!(("l" + l + "n" + i) in this.edges)) {
                             this.edges["l" + l + "n" + i] = [];
                             this.edges["l" + l + "n" + i].push(e);
@@ -240,7 +240,7 @@ class View {
      */
     drawCliques(interfaces, layers) {
         for(let i = 0; i < interfaces.length; i++) {
-            let arr = [];
+            let arr = new Array(interfaces[i].num_cliques);
             for(let c = 0; c < interfaces[i].num_cliques; c++) {
                 let clique = interfaces[i].cliques[c];
                 let leftNodes = [];
@@ -251,28 +251,23 @@ class View {
                 for(let n = 0; n < clique[1].length; n++)
                     rightNodes.push(this.layers[i+1][clique[1][n]]);
 
-                arr.push(new Clique(leftNodes, rightNodes))
+                arr[c] = new Clique(leftNodes, rightNodes, i, c)
             }
-
             // Sort array of cliques by ideal height
             arr.sort(function(a, b) {
                 return a.idealCenter.y - b.idealCenter.y;
             })
-
             let height = ((layers[i] > layers[i+1]) ? layers[i] : layers[i + 1]) * this.ySpace;
             let cliqueSpace  = height / interfaces[i].num_cliques;
             
-            for(let c = 0; c < interfaces[i].num_cliques; c++) {
-                if(interfaces[i].num_cliques == 1)
-                    arr[c].setCenter(arr[c].idealCenter.y, this.container)
-                else
-                    arr[c].setCenter((cliqueSpace * c) + (cliqueSpace / 2), this.container)
+            for(let c = 0; c < arr.length; c++) {
+                arr[c].setCenter((cliqueSpace * c) + (cliqueSpace / 2), this.container);
+                arr[c].setID(c);
             }
 
             this.cliques.push(arr)
         }
 
-        console.log(this.cliques);
      }
 
     getNode(id) {
@@ -280,29 +275,31 @@ class View {
         return this.layers[nums.l][nums.n];
     }
 
-    select(id, type) {
+    select(id, type, clique) {
         let node = this.getNode(id);
         node.select();
         let edges = this.edges[id];
         if(edges)
             edges.forEach(edge => {
-                switch(type) {
-                    default:
-                    case "def":
-                        edge.setColMap();
-                        break;
+                if(clique == null || edge.cliques.includes(clique)) {
+                    switch(type) {
+                        default:
+                        case "def":
+                            edge.setColMap();
+                            break;
 
-                    case "gry":
-                        edge.setGreyScale();
-                        break;
-                    
-                    case "sze":
-                        edge.setSize();
-                        break;
-                    
-                    case "dsh":
-                        edge.setDash();
-                        break;
+                        case "gry":
+                            edge.setGreyScale();
+                            break;
+
+                        case "sze":
+                            edge.setSize();
+                            break;
+
+                        case "dsh":
+                            edge.setDash();
+                            break;
+                    }
                 }
                 
             });
@@ -318,277 +315,69 @@ class View {
             });
     }
 
-    recursiveSelect(id, type) {
-        let node = this.getNode(id);
-        node.select();
-        let edges = this.edges[id];
-        if(edges)
-            edges.forEach(edge => {
-                switch(type) {
-                    default:
-                    case "def":
-                        edge.setColMap();
-                        break;
-
-                    case "gry":
-                        edge.setGreyScale();
-                        break;
-                    
-                    case "sze":
-                        edge.setSize();
-                        break;
-                    
-                    case "dsh":
-                        edge.setDash();
-                        break;
-                }
-                this.recursiveSelect(edge.getOtherID(id), type)
-            });
-    }
-}
-
-
-/**
- * Represtntative of a single node in a graph
- */
- class Node {
-    constructor(x, y, r, layer, number) {
-        this.x = x;
-        this.y = y;
-        this.r = r;
-
-        this.svg = null;
-
-        this.layer = layer;
-        this.number = number;
-        this.id = "l" + layer + "n" + number;
-    }
-
-    /**
-     * Draw a representation of this node to show to the user
-     * @param {HTMLElement} cont the SVG container the node is to be drawn in
-     */
-    draw(cont) {
-        this.svg = document.createElementNS(svgns, "circle");
-        cont.appendChild(this.svg);
-        this.svg.setAttribute("cx", this.x);
-        this.svg.setAttribute("cy", this.y);
-        this.svg.setAttribute('r', this.r);
-        this.svg.setAttribute('id', this.id);
-        this.svg.setAttribute("fill", NODE_COL);
-        this.svg.setAttribute("stroke", 'rgb(0, 0, 0)');
-        this.svg.setAttribute("onmouseover", "select_node(this)");
-        this.svg.setAttribute("onmouseout", "deselect_node(this)");
-    }
-
-    /**
-     * Get method for the physical screen location of this node
-     * @returns object representing the position of the node on the screen
-     */
-    getPos() {
-        return { x: this.x, y: this.y };
-    }
-
-    /**
-     * Get method for graph position of this node
-     * @returns representing the position of the node in the graph
-     */
-    getGraphPos() {
-        return {l: this.layer, n: this.number}    
-    }
-
-    select() {
-        this.svg.setAttribute("fill", LAYER_COLS[this.layer]);
-        let tab = document.getElementById(this.id + "_tab");
-        tab.setAttribute("fill", LAYER_COLS[this.layer]);
-        tab.setAttribute("stroke", "black");
-    }
-
-    deselect() {
-        this.svg.setAttribute("fill", NODE_COL)
-        let tab = document.getElementById(this.id + "_tab");
-        tab.setAttribute("fill", LAYER_COLS[this.layer] + "7F");
-        tab.setAttribute("stroke", LAYER_COLS[this.layer]);
-    }
-
-
-}
-
-class Edge {
-    constructor(node1, node2, weight, clique_num, container) {
-        this.node1 = node1.id;
-        this.node2 = node2.id;
-        this.id = this.node1 + this.node2;
-        this.clique = clique_num;
-
-        this.x1 = node1.x;
-        this.y1 = node1.y;
-        this.x2 = node2.x;
-        this.y2 = node2.y;
-        this.weight = weight;
-        this.draw(container);
-    }
-
-    draw(cont) {
-        this.svg = document.createElementNS(svgns, "line");
-        if(this.clique != -1)
-            this.svg.setAttribute("opacity", 0);
-
-        cont.appendChild(this.svg);
-        this.svg.setAttribute("x1", this.x1);
-        this.svg.setAttribute("y1", this.y1);
-        this.svg.setAttribute("x2", this.x2);
-        this.svg.setAttribute("y2", this.y2);
-        this.svg.setAttribute("id", this.id);
-        this.setColor("black")
-    }
-
-    setColor(col) {
-        this.svg.setAttribute("stroke", col);
-    }
-
-    getWeight() {
-        return this.weight;
-    }
-
-    getOtherID(id) {
-        if(id != this.node1 && id != this.node2)
-            return false;
-        
-        return (id == this.node1) ? this.node2 : this.node1;
-    }
-
-    getGreyScale() {
-        return  `rgba(${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, 
-                ${(1 - this.weight) * 255}, 1)`;
-    }
-
-    getColMap() {
-        return `rgba(${this.weight < .5 ? 255 : 255 - 255 * 2 * (this.weight - .5)}, 
-                ${this.weight >= .5 ? 255 : 255 * 2 * (this.weight)}, 0, 1)`;
-    }
-
-    setGreyScale() {
-        let col = `rgba(${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, 1)`;
-        this.svg.setAttribute("stroke-width", 5)
-        this.setColor(col);
-        let tab = document.getElementById(this.id + "_tab");
-        if(tab)
-            tab.setAttribute("fill", col);
-    }
-
-    setColMap() {
-        let col =  `rgba(${this.weight < .5 ? 255 : 255 - 255 * 2 * (this.weight - .5)}, 
-                   ${this.weight >= .5 ? 255 : 255 * 2 * (this.weight)}, 0, 1)`;
-
-        this.svg.setAttribute("stroke-width", 5);
-        this.setColor(col);
-        let tab = document.getElementById(this.id + "_tab");
-        if(tab)
-            tab.setAttribute("fill", col);
-    }
-
-    setSize() {
-        this.svg.setAttribute("stroke-width", (this.weight * this.weight * 8 + 1) + "px")
-        let tab = document.getElementById(this.id + "_tab");
-        if(tab)
-            tab.setAttribute("fill", this.getColMap());
-    }
-
-    setDash() {
-        this.svg.setAttribute("stroke-dasharray", 14 * (1 - this.weight) + 1);
-        this.svg.setAttribute("stroke-width", 5);
-        let tab = document.getElementById(this.id + "_tab");
-        if(tab)
-            tab.setAttribute("fill", this.getColMap());
-    }
-
-    reset() {
-        this.setColor("rgba(0,0,0,1)")
-        this.svg.setAttribute("stroke-width", 1);
-        this.svg.removeAttribute("stroke-dasharray")
-        let tab = document.getElementById(this.id + "_tab");
-        if(tab)
-            tab.setAttribute("fill", NODE_COL);
-    }
-}
-
-class Clique {
-    constructor(left, right) {
-        this.leftNodes = left;
-        this.rightNodes = right;
-        this.idealCenter;
-        this.svg = null;
-        this.finalCenter;
-
-        let leftSum = 0, rightSum = 0;
-        this.leftNodes.forEach(node =>{
-            leftSum += node.y;
-        });
-
-        this.rightNodes.forEach(node =>{
-            rightSum += node.y;
-        });
-
-        let leftAvg = leftSum / this.leftNodes.length;
-        let rightAvg = rightSum / this.rightNodes.length;
-
-        this.idealCenter = {"x": (this.leftNodes[0].x + this.rightNodes[0].x) / 2, 
-                            "y": (leftAvg + rightAvg) / 2};
-        // Does this clique cause us to draw more or less edges?
-        this.good = (this.leftNodes.length + this.rightNodes.length < this.leftNodes.length * this.rightNodes.length)
-    }
-
-    setCenter(yPos, cont) {
-        this.finalCenter = {x: this.idealCenter.x, y: yPos};
-        this.draw(cont);
-    }
-
-    draw(cont) {
-        
-        this.svg = document.createElementNS(svgns, "rect");
-
-        this.svg.setAttribute("x", this.finalCenter.x - (CLIQUE_W / 2))
-        this.svg.setAttribute("y", this.finalCenter.y - (CLIQUE_H / 2))
-        this.svg.setAttribute("width", CLIQUE_W);
-        this.svg.setAttribute("height", CLIQUE_H);
-        this.svg.setAttribute("rx", CLIQUE_R);
-        this.svg.setAttribute("ry", CLIQUE_R);
-        this.svg.setAttribute("fill", "#7b9ead")
-        this.svg.setAttribute("stroke", "black")
-        
-        this.leftNodes.forEach(node => {
-            var new_path = d3.path();
-            new_path.moveTo(node.x, node.y);
-            new_path.bezierCurveTo( ((this.finalCenter.x - node.x) / 2) + node.x, 
-                                    node.y,
-                                    ((this.finalCenter.x - node.x) / 2) + node.x,
-                                    this.finalCenter.y,
-                                    this.finalCenter.x,
-                                    this.finalCenter.y);
-
-            let path = document.createElementNS(svgns, "path");
-            path.setAttribute("stroke", "black")
-            path.setAttribute("d", new_path);
-            cont.appendChild(path)
+    selectClique(id, type) {
+        const inds = idToIndex(id);
+        let clique = this.cliques[inds.l][inds.n];
+        clique.select();
+        clique.leftNodes.forEach(node => {
+            node.select();
+        })
+        clique.rightNodes.forEach(node => {
+            node.select();
         })
 
-        this.rightNodes.forEach(node => {
-            var new_path = d3.path();
-            new_path.moveTo(node.x, node.y);
-            new_path.bezierCurveTo( ((node.x - this.finalCenter.x) / 2) + this.finalCenter.x, 
-                                    node.y,
-                                    ((node.x - this.finalCenter.x) / 2) + this.finalCenter.x,
-                                    this.finalCenter.y,
-                                    this.finalCenter.x,
-                                    this.finalCenter.y);
-
-            let path = document.createElementNS(svgns, "path");
-            path.setAttribute("stroke", "black")
-            path.setAttribute("d", new_path);
-            cont.appendChild(path)
+        // Mark each edge in the clique on the table
+        clique.leftNodes.forEach(lNode => {
+            clique.rightNodes.forEach(rNode => {
+                this.edges[lNode.id].forEach(e => {
+                    if(this.edges[rNode.id].includes(e)) {
+                        switch(type) {
+                            default:
+                            case "def":
+                                e.setColMap();
+                                break;
+    
+                            case "gry":
+                                e.setGreyScale();
+                                break;
+    
+                            case "sze":
+                                e.setSize();
+                                break;
+    
+                            case "dsh":
+                                e.setDash();
+                                break;
+                        }
+                    }
+                })
+            })
         })
-        cont.appendChild(this.svg)
+
+        
+
+    }
+
+    deselectClique(id) {
+        const inds = idToIndex(id);
+        let clique = this.cliques[inds.l][inds.n];
+        clique.deselect();
+        clique.leftNodes.forEach(node => {
+            node.deselect();
+        })
+        clique.rightNodes.forEach(node => {
+            node.deselect();
+        })
+
+        clique.leftNodes.forEach(lNode => {
+            clique.rightNodes.forEach(rNode => {
+                this.edges[lNode.id].forEach(e => {
+                    if(this.edges[rNode.id].includes(e)) {
+                        e.reset();
+                    }
+                })
+            })
+        })
 
     }
 }

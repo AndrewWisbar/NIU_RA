@@ -1,3 +1,6 @@
+/**
+ * The Object through which user interaction with the app is handled
+ */
 class Controller {
     constructor(numGroups) {
         this.slide_div = document.getElementById("group-controls");
@@ -14,6 +17,10 @@ class Controller {
 
     }
 
+    /**
+     * Handler for the user changing the number of layers in the graph
+     * @param {Number} num the number of layers 
+     */
     updateGroups(num) {
         this.node_sliders = [];
         this.perc_sliders = [];
@@ -81,6 +88,9 @@ class Controller {
         return arr;
     }
 
+    /**
+     * Create the data for, and render the graph, based on user controls
+     */
     render() {
         this.data.update(this.getGroupSizes(), this.getPercents());
         if(DEBUG)
@@ -90,6 +100,10 @@ class Controller {
         this.view.renderGraph(this.data.getLayers(), this.data.getInterfaces());
     }
 
+    /**
+     * Highlight a specific node for user
+     * @param {String} id the id of the SVG selected by the user 
+     */
     selectNode(id) {
         if(!this.recursive_check.checked)
             this.view.select(id, this.highlight_select.value);
@@ -97,11 +111,35 @@ class Controller {
             this.view.recursiveSelect(id, this.highlight_select.value)
     }
 
+    /**
+     * Return a highlighted node to its original state
+     * @param {String} id the id of the node to reset
+     */
     deselectNode(id) {
         this.view.deselect(id);
     }
 
+    /**
+     * Pass the data recieved from an AJAX call back down to the data object
+     * @param {Object} data the data sent back by the AJAX request
+     */
     storeData(data) {
         this.data.storeData(data);
+    }
+
+    /**
+     * Visually Highlight a clique selected by the user
+     * @param {String} id the ID of the SVG element representing the clique
+     */
+    selectClique(id) {
+        this.view.selectClique(id, this.highlight_select.value);
+    }
+
+    /**
+     * Visually Reset a clique that was previously selected by the user
+     * @param {String} id the ID of the SVG element representing the clique 
+     */
+    deselectClique(id) {
+        this.view.deselectClique(id, this.highlight_select.value);
     }
 }

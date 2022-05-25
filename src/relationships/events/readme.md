@@ -5,4 +5,4 @@ This folder contains scripts that define functions that are not members of any c
 Contains event handlers primarily covering user interactions with the webpage
 
 ## func.js
-Contains general functions that are useful in many contexts, for example, cloning arrays.
+Contains general functions that are useful in many contexts, for example, cloning arrays
