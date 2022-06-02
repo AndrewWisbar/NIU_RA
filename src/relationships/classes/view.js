@@ -16,9 +16,12 @@ class View {
         this.xSpace = this.contWidth / 5;
         this.ySpace = this.contHeight / GROUP_MAX;
 
-        this.layers = [];
+        this.layers = []; // Hold the nodes contained in each layer
+        this.layerGroups = []; // hold SVG groups for each layer of nodes
         this.edges = {}; // given a node id(lXnY) get an array of connected edges
-        this.cliques = [];
+        this.cliques = []; // hold all the cliques in the graph
+
+        this.cliqueView = true;
     }
 
     /**
@@ -57,15 +60,23 @@ class View {
      * @param {Array} layers array of the size of each layer of nodes 
      */
     drawLayerBackgrounds(layers) {
+        this.layerGroups = new Array(layers.length);
         for(let i = 0; i < layers.length; i++) {
+            let g = document.createElementNS(svgns, "g");
+            g.setAttribute("id", `g_l${i}`)
+            g.setAttribute("draggable", true);
+            g.setAttribute("ondragstart", "dragColumn(event)")
             let rect = document.createElementNS(svgns, "rect");
-            this.container.appendChild(rect);
+            rect.setAttribute("draggable", true)
             rect.setAttribute("x", this.xSpace * i + (this.xSpace * (NODE_SIZE + NODE_SIZE/2)));
             rect.setAttribute("y", 0);
             rect.setAttribute("width", this.xSpace * NODE_SIZE);
             rect.setAttribute("height", this.ySpace * layers[i]);
             rect.setAttribute("fill", LAYER_COLS[i]);
             rect.setAttribute("opacity", 0.25)
+            
+            g.appendChild(rect);
+            this.layerGroups[i] = g;
         }
     }
 
@@ -86,7 +97,8 @@ class View {
     drawNodes(layers) {
         for(let i = 0; i < layers.length; i++) {
             for(let j = 0; j < layers[i]; j++) {
-                this.layers[i][j].draw(this.container);
+                this.layers[i][j].draw(this.layerGroups[i]);
+                this.container.appendChild(this.layerGroups[i])
             }
         } 
     }
@@ -245,13 +257,29 @@ class View {
                 let clique = interfaces[i].cliques[c];
                 let leftNodes = [];
                 let rightNodes = [];
-                for(let n = 0; n < clique[0].length; n++)
-                    leftNodes.push(this.layers[i][clique[0][n]]);
+                let edges = {};
+                for(let n = 0; n < clique[0].length; n++) {
+                    let tempArr = [];
+                    let node = this.layers[i][clique[0][n]];
+                    this.edges[node.id].forEach(edge => {
+                        if(edge.cliques.includes(c) && edge.leftNode == node)
+                            tempArr.push(edge);
+                    })
+                    leftNodes.push(node);
+                    edges[node.id] = tempArr;
+                }
 
-                for(let n = 0; n < clique[1].length; n++)
-                    rightNodes.push(this.layers[i+1][clique[1][n]]);
-
-                arr[c] = new Clique(leftNodes, rightNodes, i, c)
+                for(let n = 0; n < clique[1].length; n++) {
+                    let tempArr = [];
+                    let node = this.layers[i+1][clique[1][n]];
+                    this.edges[node.id].forEach(edge => {
+                        if(edge.cliques.includes(c) && edge.rightNode == node)
+                            tempArr.push(edge);
+                    })
+                    rightNodes.push(node);
+                    edges[node.id] = tempArr;
+                }
+                arr[c] = new Clique(leftNodes, rightNodes, i, c, edges)
             }
             // Sort array of cliques by ideal height
             arr.sort(function(a, b) {
@@ -275,44 +303,56 @@ class View {
         return this.layers[nums.l][nums.n];
     }
 
-    select(id, type, clique) {
+    selectNode(id, type, clique) {
         let node = this.getNode(id);
         node.select();
         let edges = this.edges[id];
-        if(edges)
-            edges.forEach(edge => {
-                if(clique == null || edge.cliques.includes(clique)) {
-                    switch(type) {
-                        default:
-                        case "def":
-                            edge.setColMap();
-                            break;
-
-                        case "gry":
-                            edge.setGreyScale();
-                            break;
-
-                        case "sze":
-                            edge.setSize();
-                            break;
-
-                        case "dsh":
-                            edge.setDash();
-                            break;
-                    }
+        if(!edges)
+            return;
+        if(node.layer < this.cliques.length)
+            this.cliques[node.layer].forEach(c => {
+                if(c.leftNodes.includes(node)) {
+                    c.highlightNode(node.id);
                 }
-                
-            });
+            })
+        if(node.layer - 1 >= 0)
+            this.cliques[node.layer - 1].forEach(c => {
+                if(c.rightNodes.includes(node)) {
+                    c.highlightNode(node.id);
+                }
+            })
+
+        edges.forEach(edge => {
+            if(clique == null || edge.cliques.includes(clique)) {
+                edge.highlight(type)
+                this.getNode(edge.getOtherID(id)).select();
+            }
+            
+        });
     }
 
-    deselect(id) {
+    deselectNode(id) {
         let node = this.getNode(id);
         node.deselect();
         let edges = this.edges[id];
         if(edges)
             edges.forEach(edge => {
                 edge.reset();
+                this.getNode(edge.getOtherID(id)).deselect();
             });
+        
+        if(node.layer < this.cliques.length)
+            this.cliques[node.layer].forEach(c => {
+                if(c.leftNodes.includes(node)) {
+                    c.deselect();
+                }
+            })
+        if(node.layer - 1 >= 0)
+            this.cliques[node.layer - 1].forEach(c => {
+                if(c.rightNodes.includes(node)) {
+                    c.deselect();
+                }
+            })
     }
 
     selectClique(id, type) {
@@ -331,31 +371,11 @@ class View {
             clique.rightNodes.forEach(rNode => {
                 this.edges[lNode.id].forEach(e => {
                     if(this.edges[rNode.id].includes(e)) {
-                        switch(type) {
-                            default:
-                            case "def":
-                                e.setColMap();
-                                break;
-    
-                            case "gry":
-                                e.setGreyScale();
-                                break;
-    
-                            case "sze":
-                                e.setSize();
-                                break;
-    
-                            case "dsh":
-                                e.setDash();
-                                break;
-                        }
+                        e.highlight(type);
                     }
                 })
             })
         })
-
-        
-
     }
 
     deselectClique(id) {
@@ -379,5 +399,38 @@ class View {
             })
         })
 
+    }
+
+    toggleView() {
+        if(this.cliqueView) {
+            this.cliques.forEach(cliqueSet => {
+                cliqueSet.forEach(clique => {
+                    clique.hide();
+                })
+            })
+
+            for(let key in this.edges) {
+                this.edges[key].forEach(edge => {
+                    edge.show();
+                });
+            }
+            this.cliqueView = false;
+        }
+        else {
+            this.cliques.forEach(cliqueSet => {
+                cliqueSet.forEach(clique => {
+                    clique.show();
+                })
+            })
+
+            for(let key in this.edges) {
+                this.edges[key].forEach(edge => {
+                    if(edge.cliques.length != 0)
+                        edge.hide();
+                })
+                
+            }
+            this.cliqueView = true;
+        }
     }
 }

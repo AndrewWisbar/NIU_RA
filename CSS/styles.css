@@ -140,7 +140,7 @@ p {
 
 path {
     /* stroke: var(--light-acc); */
-    stroke-width: 2;
+    /* stroke-width: 2; */
     fill: none;
 }
 

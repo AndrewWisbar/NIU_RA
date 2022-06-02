@@ -17,6 +17,10 @@ class Controller {
 
     }
 
+    toggleView() {
+        this.view.toggleView();
+    }
+
     /**
      * Handler for the user changing the number of layers in the graph
      * @param {Number} num the number of layers 
@@ -106,7 +110,7 @@ class Controller {
      */
     selectNode(id) {
         if(!this.recursive_check.checked)
-            this.view.select(id, this.highlight_select.value);
+            this.view.selectNode(id, this.highlight_select.value);
         else
             this.view.recursiveSelect(id, this.highlight_select.value)
     }
@@ -116,7 +120,7 @@ class Controller {
      * @param {String} id the id of the node to reset
      */
     deselectNode(id) {
-        this.view.deselect(id);
+        this.view.deselectNode(id);
     }
 
     /**

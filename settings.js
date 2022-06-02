@@ -5,7 +5,7 @@ const svgns = "http://www.w3.org/2000/svg"; // namespace for svg elements
  * Relationship Constants
  */
 
-const DEBUG =                    false;
+const DEBUG =                    false; // print debug messages during certain methods
 
 //The color used to highlight whatever element the user is inspecting
 const SEL_COL =                 'rgb(235, 150, 235)'     // Previously used for highlighting nodes

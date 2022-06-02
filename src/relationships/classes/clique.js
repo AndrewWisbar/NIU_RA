@@ -2,16 +2,25 @@
  * A collection of nodes and edges which form a densely connected sub-graph
  */
 class Clique {
-    constructor(left, right, layer, num) {
-        this.leftNodes = left;
-        this.rightNodes = right;
-        this.idealCenter = null;
-        this.svg = null;
-        this.finalCenter = null;
+    constructor(left, right, layer, num, edges) {
         this.layer = layer;
         this.num = num;
+        
         this.id = 'UNSET';
-        this.edges = {};
+        
+        this.showing = true;
+
+        this.leftNodes = left;
+        this.rightNodes = right;
+        
+        this.idealCenter = null;
+        this.finalCenter = null;
+        
+        this.svg = null;
+        
+        this.leftPaths = {};
+        this.rightPaths = {};
+        this.edges = edges;
 
         let leftSum = 0, rightSum = 0;
         this.leftNodes.forEach(node =>{
@@ -83,9 +92,12 @@ class Clique {
                                     this.finalCenter.y);
 
             let path = document.createElementNS(svgns, "path");
-            path.setAttribute("stroke", "black")
+            path.setAttribute("stroke", "black");
+            path.setAttribute("stroke-width", `${(this.rightNodes.length - 1) * 
+                                                 (this.rightNodes.length - 1) * 
+                                                 0.07 + 2}px`)
             path.setAttribute("d", new_path);
-            this.edges[node.id] = path;
+            this.leftPaths[node.id] = path;
             cont.appendChild(path)
         })
 
@@ -102,19 +114,73 @@ class Clique {
             let path = document.createElementNS(svgns, "path");
             path.setAttribute("stroke", "black")
             path.setAttribute("d", new_path);
-            this.edges[node.id] = path;
+            path.setAttribute("stroke-width", `${(this.leftNodes.length - 1) * 
+                                                 (this.leftNodes.length - 1) * 
+                                                 0.07 + 2}px`)
+            this.rightPaths[node.id] = path;
             cont.appendChild(path)
         })
-        cont.appendChild(this.svg)
+        cont.appendChild(this.svg);
+    }
+
+    highlightNode(node) {
+        if(!(node in this.leftPaths) && !(node in this.rightPaths))
+            return false; 
+
+        let avWeight = 0;
+        let nodeOnLeft = node in this.leftPaths;
+        this.edges[node].forEach(edge => {
+            let w = edge.weight;
+            avWeight += w;
+
+            if(nodeOnLeft) {
+                this.rightPaths[edge.getOtherID(node)].setAttribute("stroke", edge.getColMap())
+            }
+            else {
+                this.leftPaths[edge.getOtherID(node)].setAttribute("stroke", edge.getColMap())
+            }
+        })
+        avWeight /= this.edges[node].length;
+        let col =  `rgba(${avWeight < .5 ? 255 : 255 - 255 * 2 * (avWeight - .5)}, 
+                    ${avWeight >= .5 ? 255 : 255 * 2 * (avWeight)}, 0, 1)`;
+        if(nodeOnLeft)
+            this.leftPaths[node].setAttribute("stroke", col);
+        else
+            this.rightPaths[node].setAttribute("stroke", col)
 
     }
 
     /**
-     * Highlight this clique 
+     * Highlight this clique visually
      */
     select() {
-        this.svg.setAttribute("fill", "red")
 
+        if(DEBUG)
+            this.log();
+
+        
+        this.svg.setAttribute("fill", "red")
+        for(let id in this.leftPaths) {
+            let weight = 0;
+            this.edges[id].forEach(edge => {
+                weight += edge.weight;
+            })
+            weight /= this.rightNodes.length;
+            let col =  `rgba(${weight < .5 ? 255 : 255 - 255 * 2 * (weight - .5)}, 
+                   ${weight >= .5 ? 255 : 255 * 2 * (weight)}, 0, 1)`;
+            this.leftPaths[id].setAttribute("stroke", col)
+        }
+
+        for(let id in this.rightPaths) {
+            let weight = 0;
+            this.edges[id].forEach(edge => {
+                weight += edge.weight;
+            })
+            weight /= this.leftNodes.length;
+            let col =  `rgba(${weight < .5 ? 255 : 255 - 255 * 2 * (weight - .5)}, 
+                   ${weight >= .5 ? 255 : 255 * 2 * (weight)}, 0, 1)`;
+            this.rightPaths[id].setAttribute("stroke", col)
+        }
     }
 
     /**
@@ -122,5 +188,50 @@ class Clique {
      */
     deselect() {
         this.svg.setAttribute("fill", "#7b9ead")
+        for(let id in this.leftPaths) {
+            this.leftPaths[id].setAttribute("stroke", "#000000")
+        }
+        for(let id in this.rightPaths) {
+            this.rightPaths[id].setAttribute("stroke", "#000000")
+        }
+    }
+
+    hide() {
+        this.svg.setAttribute("opacity", "0");
+        this.svg.removeAttribute("onmouseover")
+        this.svg.removeAttribute("onmouseout")
+        this.leftNodes.forEach(node => {
+            this.leftPaths[node.id].setAttribute("opacity", "0")
+        })
+
+        this.rightNodes.forEach(node => {
+            this.rightPaths[node.id].setAttribute("opacity", "0")
+        })
+        this.showing = false;
+    }
+
+    show() {
+        this.svg.setAttribute("opacity", "1");
+        this.svg.setAttribute("onmouseover", "selectClique(this.id)")
+        this.svg.setAttribute("onmouseout", "deselectClique(this.id)")
+        this.leftNodes.forEach(node => {
+            this.leftPaths[node.id].setAttribute("opacity", "1")
+        })
+
+        this.rightNodes.forEach(node => {
+            this.rightPaths[node.id].setAttribute("opacity", "1")
+        })
+        this.showing = true;
+    }
+
+    log() {
+        console.log('~~~~~~~~~~~~~~')
+        console.log(`Clique id: ${this.id}`)
+        console.log(`Attached Edges: `)
+        console.log(this.edges)
+        console.log(`Left Side Nodes: `)
+        console.log(this.leftNodes)
+        console.log(`Right Side Nodes: `)
+        console.log(this.rightNodes);
     }
 }

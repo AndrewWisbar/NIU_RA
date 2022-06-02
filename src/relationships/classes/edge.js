@@ -7,7 +7,7 @@ class Edge {
         this.rightNode = node2;
         this.id = this.leftNode.id + this.rightNode.id;
         this.cliques = cliques;
-
+        this.isHighlighted = false;
         this.x1 = node1.x;
         this.y1 = node1.y;
         this.x2 = node2.x;
@@ -33,7 +33,28 @@ class Edge {
         this.svg.setAttribute("id", this.id);
         this.setColor("black")
     }
+    
+    highlight(type) {
+        switch(type) {
+            default:
+            case "def":
+                this.setColMap();
+                break;
 
+            case "gry":
+                this.setGreyScale();
+                break;
+
+            case "sze":
+                this.setSize();
+                break;
+
+            case "dsh":
+                this.setDash();
+                break;
+        }
+        this.isHighlighted = true;
+    }
     /**
      * Set the color of the SVG element to a specific color
      * @param {String} col a string representing a color incoding 
@@ -56,10 +77,10 @@ class Edge {
      * @returns the ID of the other node or false
      */
     getOtherID(id) {
-        if(id != this.node1 && id != this.node2)
+        if(id != this.leftNode.id && id != this.rightNode.id)
             return false;
         
-        return (id == this.node1) ? this.node2 : this.node1;
+        return (id == this.leftNode.id) ? this.rightNode.id : this.leftNode.id;
     }
 
     /**
@@ -135,7 +156,16 @@ class Edge {
         this.svg.setAttribute("stroke-width", 1);
         this.svg.removeAttribute("stroke-dasharray")
         let tab = document.getElementById(this.id + "_tab");
+        this.isHighlighted = false;
         if(tab)
             tab.setAttribute("fill", NODE_COL);
+    }
+
+    show() {
+        this.svg.setAttribute("opacity", "100")
+    }
+
+    hide() {
+        this.svg.setAttribute("opacity", "0")
     }
 }

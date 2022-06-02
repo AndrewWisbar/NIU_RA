@@ -44,3 +44,7 @@ function selectClique(id) {
 function deselectClique(id) {
     controller.deselectClique(id);
 }
+
+function toggle_view() {
+    controller.toggleView();
+}
