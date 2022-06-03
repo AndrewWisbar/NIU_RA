@@ -120,7 +120,10 @@ class Controller {
      * @param {String} id the id of the node to reset
      */
     deselectNode(id) {
-        this.view.deselectNode(id);
+        if(!this.recursive_check.checked)
+            this.view.deselectNode(id);
+        else
+            this.view.recursiveDeselect(id, this.highlight_select.value)
     }
 
     /**

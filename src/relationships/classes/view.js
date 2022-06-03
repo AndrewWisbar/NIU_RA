@@ -331,6 +331,100 @@ class View {
         });
     }
 
+    recursiveSelect(id, type, propagation) {
+        let node = this.getNode(id);
+        node.select();
+        let edges = this.edges[id];
+        if(!edges)
+            return;
+
+        if(node.layer < this.cliques.length)
+            this.cliques[node.layer].forEach(c => {
+                if(c.leftNodes.includes(node) && (propagation == undefined || propagation == "right")) {
+                    c.highlightNode(node.id);
+                }
+            })
+        if(node.layer - 1 >= 0)
+            this.cliques[node.layer - 1].forEach(c => {
+                if(c.rightNodes.includes(node) && (propagation == undefined || propagation == "left")) {
+                    c.highlightNode(node.id);
+                }
+            })
+        
+        edges.forEach(edge => {
+            if(propagation == undefined) {
+                if (node == edge.leftNode)
+                    this.recursiveSelect(edge.rightNode.id, type, "right")
+        
+                if (node == edge.rightNode)
+                    this.recursiveSelect(edge.leftNode.id, type, "left")
+                edge.highlight(type);
+                this.getNode(edge.getOtherID(id)).select();
+            }
+            else if (propagation == "right") {
+                if (node == edge.leftNode) {
+                    this.recursiveSelect(edge.rightNode.id, type, "right")
+                    edge.highlight(type);
+                    this.getNode(edge.getOtherID(id)).select();
+                }
+            }
+            else if (propagation == "left") {
+                if(node == edge.rightNode) {
+                    this.recursiveSelect(edge.leftNode.id, type, "left")    
+                    edge.highlight(type);
+                    this.getNode(edge.getOtherID(id)).select(); 
+                }
+            }
+        })
+    }
+
+    recursiveDeselect(id, type, propagation) {
+        let node = this.getNode(id);
+        node.deselect();
+        let edges = this.edges[id];
+        if(!edges)
+            return;
+
+        if(node.layer < this.cliques.length)
+            this.cliques[node.layer].forEach(c => {
+                if(c.leftNodes.includes(node)) {
+                    c.deselect();
+                }
+            })
+        if(node.layer - 1 >= 0)
+            this.cliques[node.layer - 1].forEach(c => {
+                if(c.rightNodes.includes(node)) {
+                    c.deselect();
+                }
+            })
+
+        edges.forEach(edge => {
+            if(propagation == undefined) {
+                if (node == edge.leftNode)
+                    this.recursiveDeselect(edge.rightNode.id, type, "right")
+        
+                if (node == edge.rightNode)
+                    this.recursiveDeselect(edge.leftNode.id, type, "left")
+                edge.reset();
+                this.getNode(edge.getOtherID(id)).deselect();
+            }
+            else if (propagation == "right") {
+                if (node == edge.leftNode) {
+                    this.recursiveDeselect(edge.rightNode.id, type, "right")
+                    edge.reset();
+                    this.getNode(edge.getOtherID(id)).deselect();
+                }
+            }
+            else if (propagation == "left") {
+                if(node == edge.rightNode) {
+                    this.recursiveDeselect(edge.leftNode.id, type, "left")    
+                    edge.reset();
+                    this.getNode(edge.getOtherID(id)).deselect(); 
+                }
+            }
+        })
+    }
+
     deselectNode(id) {
         let node = this.getNode(id);
         node.deselect();
