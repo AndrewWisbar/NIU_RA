@@ -26,6 +26,14 @@ class Controller {
      * @param {Number} num the number of layers 
      */
     updateGroups(num) {
+        let oldNodeVals = [];
+        let oldPercVals = [];
+        this.node_sliders.forEach(slider => {
+            oldNodeVals.push(slider.value);
+        })
+        this.perc_sliders.forEach(slider => {
+            oldPercVals.push(slider.value);
+        })
         this.node_sliders = [];
         this.perc_sliders = [];
         this.slide_div.innerHTML = "";
@@ -38,8 +46,11 @@ class Controller {
             slider.setAttribute("min", GROUP_MIN);
             slider.setAttribute("max", GROUP_MAX);
             slider.setAttribute("id", "slider_" + i);
-            slider.setAttribute("value", 3);
-
+            if(i < oldNodeVals.length)
+                slider.setAttribute("value", oldNodeVals[i]);
+            else
+                slider.setAttribute("value", 3);
+            
             this.slide_div.appendChild(label)
             this.slide_div.appendChild(slider);
             this.slide_div.appendChild(document.createElement("br"))
@@ -57,7 +68,10 @@ class Controller {
             slider.setAttribute("min", 1);
             slider.setAttribute("max", 100);
             slider.setAttribute("id", "con_" + (i - 1) + "_" + i);
-            slider.setAttribute("value", 100);
+            if(i < oldPercVals.length)
+                slider.setAttribute("value", oldPercVals[i]);
+            else
+                slider.setAttribute("value", 100);
             slider.setAttribute("oninput", `change_label(this, ${i - 1}, ${i})`)
             this.perc_sliders.push(slider)
             this.slide_div.appendChild(label)
@@ -148,5 +162,27 @@ class Controller {
      */
     deselectClique(id) {
         this.view.deselectClique(id, this.highlight_select.value);
+    }
+
+    startDragColumn(event) {
+        document.addEventListener(onmousemove, dragColumn);
+        document.addEventListener(onmouseup, endDragColumn);
+        this.view.startDragColumn(ind);
+    }
+
+    zoom(dY) {
+        this.view.zoom(dY);
+    }
+
+    startPan(e) {
+        this.view.startPan(e.clientX, e.clientY);
+    }
+
+    pan(e) {
+        this.view.pan(e.clientX, e.clientY);
+    }
+
+    endPan() {
+        this.view.endPan();
     }
 }

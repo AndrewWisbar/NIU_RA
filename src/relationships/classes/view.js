@@ -4,6 +4,15 @@
 class View {
     constructor() {
         this.container = document.getElementById('container');
+        this.viewMin_x = 0;
+        this.viewMin_y = 0;
+        this.viewWidth = this.container.clientWidth;
+        this.viewHeight = this.container.clientHeight;
+
+        this.container.setAttribute("viewBox", `${this.viewMin_x} ${this.viewMin_y} ${this.viewWidth} ${this.viewHeight}`)
+        this.container.onwheel = zoom;
+        this.container.onmousedown = startPan;
+
         this.tableSVG = document.getElementById("table-svg");
         this.tableG = document.createElementNS(svgns, "g");
         this.tableSVG.setAttribute("width", this.container.clientWidth)
@@ -64,10 +73,8 @@ class View {
         for(let i = 0; i < layers.length; i++) {
             let g = document.createElementNS(svgns, "g");
             g.setAttribute("id", `g_l${i}`)
-            g.setAttribute("draggable", true);
-            g.setAttribute("ondragstart", "dragColumn(event)")
+            g.setAttribute("onmousedown", `startDragColumn(${i})`)
             let rect = document.createElementNS(svgns, "rect");
-            rect.setAttribute("draggable", true)
             rect.setAttribute("x", this.xSpace * i + (this.xSpace * (NODE_SIZE + NODE_SIZE/2)));
             rect.setAttribute("y", 0);
             rect.setAttribute("width", this.xSpace * NODE_SIZE);
@@ -526,5 +533,51 @@ class View {
             }
             this.cliqueView = true;
         }
+    }
+
+    startDragColumn(ind) {
+        /*
+            Visual response
+        */
+    }
+
+    zoom(dY) {
+        let oldWidth = this.viewWidth;
+        let oldHeight = this.viewHeight;
+        if(this.viewHeight + dY * ZOOM_AMT > 0)
+            this.viewHeight += dY * ZOOM_AMT;
+        
+        if(this.viewWidth + dY * ZOOM_AMT > 0)    
+            this.viewWidth += dY * ZOOM_AMT;
+        
+        this.viewMin_x += (oldWidth - this.viewWidth)/2
+        this.viewMin_y += (oldHeight - this.viewHeight)/2
+
+        this.container.setAttribute("viewBox", `${this.viewMin_x} ${this.viewMin_y} ${this.viewWidth} ${this.viewHeight}`)
+    }
+    
+    startPan(x, y) {
+        this.container.onmousemove = pan;
+        this.container.onmouseup = endPan;
+        this.panX = x;
+        this.panY = y;
+
+        console.log({"x": x, "y": y})
+    }
+
+    pan(x, y) {
+        let offsetX = this.panX - x;
+        let offsetY = this.panY - y;
+        this.viewMin_x += offsetX;
+        this.viewMin_y += offsetY;
+
+        this.container.setAttribute("viewBox", `${this.viewMin_x} ${this.viewMin_y} ${this.viewWidth} ${this.viewHeight}`)
+        this.panX = x;
+        this.panY = y;
+    }
+
+    endPan() {
+        this.container.onmousemove = null;
+        this.container.onmouseup = null;
     }
 }

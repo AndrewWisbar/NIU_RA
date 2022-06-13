@@ -30,6 +30,9 @@ const CELL_H =                  24;
 const CLIQUE_W =                40;
 const CLIQUE_H =                12;
 const CLIQUE_R =                6;
+const DFLT_LAYER_SIZE =         3;
+
+const ZOOM_AMT =                0.25;
 
 /*******************************************************************************
  * Image Linking Constants

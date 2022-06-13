@@ -36,6 +36,8 @@ class Clique {
 
         this.idealCenter = {"x": (this.leftNodes[0].x + this.rightNodes[0].x) / 2, 
                             "y": (leftAvg + rightAvg) / 2};
+
+                            
         // Does this clique cause us to draw more or less edges?
         this.good = (this.leftNodes.length + this.rightNodes.length < this.leftNodes.length * this.rightNodes.length)
     }

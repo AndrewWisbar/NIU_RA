@@ -29,7 +29,7 @@ class Data {
      * @returns an array representing the number of nodes in each layer of the graph
      */
     getLayers() {
-        return this.layers;
+        return cloneArray(this.layers);
     }
 
     /**

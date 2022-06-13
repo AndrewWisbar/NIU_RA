@@ -48,3 +48,35 @@ function deselectClique(id) {
 function toggle_view() {
     controller.toggleView();
 }
+
+function startDragColumn(e) {
+    document.addEventListener("mousemove", dragColumn);
+    document.addEventListener("mouseup", endDragColumn);
+    //controller.startDragColumn(ind)
+}
+
+function dragColumn(e) {
+    console.log(e)
+}
+
+function endDragColumn(e) {
+    document.removeEventListener("mousemove", dragColumn);
+    document.removeEventListener("mouseup", endDragColumn)
+    console.log(`end`)
+}
+
+function zoom(e) {
+    controller.zoom(e.deltaY);
+}
+
+function startPan(e) {
+    controller.startPan(e)
+}
+
+function pan(e) {
+    controller.pan(e);
+}
+
+function endPan() {
+    controller.endPan();
+}
