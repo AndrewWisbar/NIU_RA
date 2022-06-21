@@ -52,7 +52,7 @@ function toggle_view() {
 function startDragColumn(e) {
     document.addEventListener("mousemove", dragColumn);
     document.addEventListener("mouseup", endDragColumn);
-    //controller.startDragColumn(ind)
+    controller.startDragColumn(e.target)
 }
 
 function dragColumn(e) {
@@ -66,17 +66,18 @@ function endDragColumn(e) {
 }
 
 function zoom(e) {
-    controller.zoom(e.deltaY);
+    controller.zoom(e);
 }
 
 function startPan(e) {
-    controller.startPan(e)
+    if(e.target.id == "container" || e.target.id == "table-svg")
+        controller.startPan(e)
 }
 
 function pan(e) {
     controller.pan(e);
 }
 
-function endPan() {
-    controller.endPan();
+function endPan(e) {
+    controller.endPan(e.target);
 }

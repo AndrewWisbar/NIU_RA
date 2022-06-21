@@ -37,7 +37,7 @@ class Clique {
         this.idealCenter = {"x": (this.leftNodes[0].x + this.rightNodes[0].x) / 2, 
                             "y": (leftAvg + rightAvg) / 2};
 
-                            
+
         // Does this clique cause us to draw more or less edges?
         this.good = (this.leftNodes.length + this.rightNodes.length < this.leftNodes.length * this.rightNodes.length)
     }
@@ -69,7 +69,7 @@ class Clique {
     draw(cont) {
         
         this.svg = document.createElementNS(svgns, "rect");
-
+        this.svg.classList.add("graph_el");
         this.svg.setAttribute("x", this.finalCenter.x - (CLIQUE_W / 2))
         this.svg.setAttribute("y", this.finalCenter.y - (CLIQUE_H / 2))
         this.svg.setAttribute("width", CLIQUE_W);
@@ -168,8 +168,7 @@ class Clique {
                 weight += edge.weight;
             })
             weight /= this.rightNodes.length;
-            let col =  `rgba(${weight < .5 ? 255 : 255 - 255 * 2 * (weight - .5)}, 
-                   ${weight >= .5 ? 255 : 255 * 2 * (weight)}, 0, 1)`;
+            let col =  ColorMapper.getColor(weight);
             this.leftPaths[id].setAttribute("stroke", col)
         }
 
@@ -179,8 +178,7 @@ class Clique {
                 weight += edge.weight;
             })
             weight /= this.leftNodes.length;
-            let col =  `rgba(${weight < .5 ? 255 : 255 - 255 * 2 * (weight - .5)}, 
-                   ${weight >= .5 ? 255 : 255 * 2 * (weight)}, 0, 1)`;
+            let col =  ColorMapper.getColor(weight);
             this.rightPaths[id].setAttribute("stroke", col)
         }
     }

@@ -165,24 +165,25 @@ class Controller {
     }
 
     startDragColumn(event) {
+        console.log(event)
         document.addEventListener(onmousemove, dragColumn);
         document.addEventListener(onmouseup, endDragColumn);
-        this.view.startDragColumn(ind);
+        this.view.startDragColumn();
     }
 
-    zoom(dY) {
-        this.view.zoom(dY);
+    zoom(e) {
+        this.view.zoom(e.deltaY, e.path);
     }
 
     startPan(e) {
-        this.view.startPan(e.clientX, e.clientY);
+        this.view.startPan(e.clientX, e.clientY, e.target);
     }
 
     pan(e) {
-        this.view.pan(e.clientX, e.clientY);
+        this.view.pan(e.clientX, e.clientY, e.path);
     }
 
-    endPan() {
-        this.view.endPan();
+    endPan(target) {
+        this.view.endPan(target);
     }
 }

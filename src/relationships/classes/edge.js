@@ -88,8 +88,7 @@ class Edge {
      * @returns a string representing a color encoding
      */
     getGreyScale() {
-        return  `rgba(${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, 
-                ${(1 - this.weight) * 255}, 1)`;
+        return  ColorMapper.getGreyScale(this.weight);
     }
 
     /**
@@ -97,15 +96,14 @@ class Edge {
      * @returns a string representing a color encoding
      */
     getColMap() {
-        return `rgba(${this.weight < .5 ? 255 : 255 - 255 * 2 * (this.weight - .5)}, 
-                ${this.weight >= .5 ? 255 : 255 * 2 * (this.weight)}, 0, 1)`;
+        return ColorMapper.getColor(this.weight);
     }
 
     /**
      * Set the color of this edge in greyscale
      */
     setGreyScale() {
-        let col = `rgba(${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, ${(1 - this.weight) * 255}, 1)`;
+        let col = ColorMapper.getGreyScale(this.weight);
         this.svg.setAttribute("stroke-width", 5)
         this.setColor(col);
         let tab = document.getElementById(this.id + "_tab");
@@ -117,8 +115,7 @@ class Edge {
      * Set the color of this edge for default highlighting
      */
     setColMap() {
-        let col =  `rgba(${this.weight < .5 ? 255 : 255 - 255 * 2 * (this.weight - .5)}, 
-                   ${this.weight >= .5 ? 255 : 255 * 2 * (this.weight)}, 0, 1)`;
+        let col =  ColorMapper.getColor(this.weight);
 
         this.svg.setAttribute("stroke-width", 5);
         this.setColor(col);

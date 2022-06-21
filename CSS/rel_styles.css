@@ -1,10 +1,21 @@
-/* table {
-
+:root {
+    --main-dark: #7b9ead;
+    --mid: #e8e8e8;
+    --light: #ffffff;
+    --dark-acc: #54724a;
+    --light-acc: #9fc891;
+    --off-white:  #ffffff;
+    --light-text: #FFFFFF;
+    --dark-text: #000000;
+    --highlight: #6bff8c;
+    --shadow: #ababab;
 }
 
-tr {
-
-} */
+path {
+    /* stroke: var(--light-acc); */
+    /* stroke-width: 2; */
+    fill: none;
+}
 
 th {
     width: 7ch;
@@ -25,50 +36,96 @@ body {
     background-color: #EDEDED;
 }
 
+.flex-container { 
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+#title-bar {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0px;
+    background-color: var(--main-dark);
+    color: var(--light-text);
+    height: 90px;
+}
+
+.main-title {
+    padding-top: 1rem;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+    width: 90%;
+    font-size: 48px;
+    margin: 0;
+}
+
+.nav-btn {
+    /* width: 5%; */
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background-color: var(--main-dark);
+    font-size: 16px;
+    border: none;
+    color: var(--light-text);
+    transition-duration: 0.25s;
+}
+
+.nav-btn:hover {
+    background-color: var(--mid);
+    font-size: 20px;
+    color: var(--dark-text);
+    transition-duration: 0.25s;
+}
+
 #main-container {
-    position: absolute;
-    min-height: 964px;
-    height: 90%;
-    left: 40px;
-    right: 40px;
-    top: 130px;
-    
+    height: calc(100vh - 120px);
+    padding-bottom: 10px;
+    left: 10px;
+    right: 10px;
+    display:flex;
     background: #FFFFFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+#vis-cont {
+    width: 90%;
+}
+
 #top-cont {
-    position: absolute;
-    height: 450px;
+    height: 60%;
     left: 33px;
     right: 33px;
-    top: 24px;
     
     background: #EAEAEA;
     display: flex;
 }
 
 #table-cont {
-    position: absolute;
-    height: 58%;
+    height: 50%;
     left: 33px;
     right: 33px;
-    top: 504px;
+    top: 60%;
     background: #EAEAEA;
+    cursor:move;
 }
 
 #table-svg {
+    scroll-behavior: contain;
+    background: #FFFFFF;
+    border: 1px solid black;
     width: 100%;
     height: 100%;
 }
 
 #graph-controls {
-    position: absolute;
     padding-left: 12px;
-    width: 318px;
-    height: 432px;
+    width: 15%;
+    min-width: 270px;
+    height: 100%;
     left: 11px;
-    top: 8px;
+    top: 2.5%;
     
     background: #DCDCDC;
     border: 1px solid #000000;
@@ -76,11 +133,10 @@ body {
 }
 
 #graph-cont {
-    position: absolute;
-    height: 432px;
+    height: 50%;
     left: 341px;
     right: 18px;
-    top: calc(50% - 432px/2 - 1px);
+    top: 2.5%;
     
     background: #FFFFFF;
 }
@@ -88,6 +144,7 @@ body {
 #container {
     width: 100%;
     height: 100%;
+    cursor:move;
 }
 
 #group-controls {
@@ -96,4 +153,16 @@ body {
 
 .control {
     margin-bottom: 5px;
+}
+
+.layer {
+    cursor: grab;
+}
+
+.graph_el {
+    cursor: auto;
+}
+
+.table_cell {
+    cursor:auto;
 }

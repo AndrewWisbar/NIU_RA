@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>"Project Name" - Relationship Visualizer</title>
     <link rel="stylesheet" href="../CSS/rel_styles.css">
-    <link rel="stylesheet" href="../CSS/styles.css">
 </head>
 
 <body>
@@ -18,40 +17,43 @@
         <button class="nav-btn">About</button>
     </div>
     <div id="main-container">
-        <div id="top-cont">
-            <div id="graph-controls">
-                <h3>Controls</h3>
-                <label for="g-slider">Layers</label>
-                <input class="control" type="number" id="g-slider" min="2" max="5" value="2" onchange="update_groups(this.value)"><br>
-                <div id="group-controls"></div>
-                <label for="type-sel">Selection Highlighting Type</label> <br>
-                <select class="control" onchange="color_table(this.value)" name="Edge Visualization Type" id="type-sel">
-                    <option value="def">Default</option>
-                    <option value="gry">Greyscale Coloring</option>
-                    <option value="sze">Size Based</option>
-                    <option value="dsh">Dashed Edges</option>
-                </select> 
-                <input name="recursive" id="recursive" type="checkbox"><label for="recursive">Recursive?</label><br>
-                <button onclick="draw_graph()">Generate</button>
-                <button onclick="toggle_view()">Toggle Cliques</button>
-            </div>
+        <div id="graph-controls">
+            <h3>Controls</h3>
+            <label for="g-slider">Layers</label>
+            <input class="control" type="number" id="g-slider" min="2" max="5" value="2" onchange="update_groups(this.value)"><br>
+            <div id="group-controls"></div>
+            <label for="type-sel">Selection Highlighting Type</label> <br>
+            <select class="control" onchange="color_table(this.value)" name="Edge Visualization Type" id="type-sel">
+                <option value="def">Default</option>
+                <option value="gry">Greyscale Coloring</option>
+                <option value="sze">Size Based</option>
+                <option value="dsh">Dashed Edges</option>
+            </select> 
+            <input name="recursive" id="recursive" type="checkbox"><label for="recursive">Recursive?</label><br>
+            <button onclick="draw_graph()">Generate</button>
+            <button onclick="toggle_view()">Toggle Cliques</button>
+        </div>
+        <div id="vis-cont">
             <div id="graph-cont">
                 <svg id="container"></svg>
             </div>
+            <div id="table-cont">
+                <svg id="table-svg"> 
+    
+                </svg>
+            </div>
         </div>
-        <div id="table-cont">
-            <svg id="table-svg"> 
 
-            </svg>
-        </div>
     </div>
 
     <script src="../lib/d3.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../src/relationships/events/func.js"></script>
     <script src="../settings.js"></script>
+    <script src="../src/relationships/classes/colormap.js"></script>
     <script src="../src/relationships/classes/controller.js"></script>
     <script src="../src/relationships/classes/clique.js"></script>
+    <script src="../src/relationships/classes/table.js"></script>
     <script src="../src/relationships/classes/layerinterface.js"></script>
     <script src="../src/relationships/classes/edge.js"></script>
     <script src="../src/relationships/classes/node.js"></script>

@@ -24,6 +24,7 @@
         this.svg = document.createElementNS(svgns, "circle");
         cont.appendChild(this.svg);
         this.svg.setAttribute("cx", this.x);
+        this.svg.classList.add("graph_el");
         this.svg.setAttribute("cy", this.y);
         this.svg.setAttribute('r', this.r);
         this.svg.setAttribute('id', this.id);

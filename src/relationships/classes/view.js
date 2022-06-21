@@ -4,20 +4,22 @@
 class View {
     constructor() {
         this.container = document.getElementById('container');
-        this.viewMin_x = 0;
-        this.viewMin_y = 0;
-        this.viewWidth = this.container.clientWidth;
-        this.viewHeight = this.container.clientHeight;
-
-        this.container.setAttribute("viewBox", `${this.viewMin_x} ${this.viewMin_y} ${this.viewWidth} ${this.viewHeight}`)
+        this.vbGraph = {"min_x": 0, "min_y": 0, "width": this.container.clientWidth, "height": this.container.clientHeight};
+        this.setViewBox(this.container, this.vbGraph);
+        
         this.container.onwheel = zoom;
         this.container.onmousedown = startPan;
 
         this.tableSVG = document.getElementById("table-svg");
+        this.tableSVG.onwheel = zoom;
+        this.tableSVG.onmousedown = startPan;
+        this.vbTable = {"min_x": 0, "min_y": 0, "width": this.tableSVG.clientWidth, "height": this.tableSVG.clientHeight};
+
         this.tableG = document.createElementNS(svgns, "g");
         this.tableSVG.setAttribute("width", this.container.clientWidth)
         this.tableSVG.setAttribute("height", this.container.clientHeight)
         this.tableSVG.appendChild(this.tableG);
+        this.tables = [];
 
         this.contWidth = this.container.clientWidth;
         this.contHeight = this.container.clientHeight;
@@ -73,8 +75,10 @@ class View {
         for(let i = 0; i < layers.length; i++) {
             let g = document.createElementNS(svgns, "g");
             g.setAttribute("id", `g_l${i}`)
-            g.setAttribute("onmousedown", `startDragColumn(${i})`)
             let rect = document.createElementNS(svgns, "rect");
+            rect.onmousedown = startDragColumn;
+            rect.id = `layer_${i}`
+            rect.classList.add("layer")
             rect.setAttribute("x", this.xSpace * i + (this.xSpace * (NODE_SIZE + NODE_SIZE/2)));
             rect.setAttribute("y", 0);
             rect.setAttribute("width", this.xSpace * NODE_SIZE);
@@ -153,7 +157,9 @@ class View {
      * @param {*} interfaces An array of objects representing the connections between two layers of the graph
      */
     createTable(layers, interfaces) {
-
+        let drawnFlags = new Array(layers.length);
+        for(let i = 0; i < layers.length; i++)
+            drawnFlags[i] = 1;
         while(this.tableG.firstChild) {
             this.tableG.removeChild(this.tableG.lastChild);
         }
@@ -161,8 +167,24 @@ class View {
         let org = {x: 0, y: 0};
 
         for(let i = 0; i < layers.length - 1; i++) {
-            this.drawTable(layers, i, interfaces[i].e, org);
-            (i%2) ? org.y += CELL_H * (parseInt(layers[i]) + 1) : org.x += CELL_W * (parseInt(layers[i]) + 1);
+            this.drawTable(layers, i, interfaces[i].e, org, drawnFlags);
+            let offset = {x:0, y:0};
+
+            if(i%2) {
+                offset.y += (parseInt(layers[i]) + 1);
+                if(i%4)
+                    offset.x -= 1;
+            }
+            else {
+                offset.x += (parseInt(layers[i]) + 1);
+                if(i%3)
+                    offset.y -= 1;
+            }
+            
+            org.x += CELL_W * offset.x;
+            org.y += CELL_H * offset.y;
+            drawnFlags[i] = 0;
+            drawnFlags[i + 1] = 0;
         }
         let table_width = parseInt(layers[0]) + 1;
         if(layers.length >= 3 && layers.length != 5) {
@@ -189,8 +211,10 @@ class View {
      * @param {Array} edges an array of objects representing edges in the table
      * @param {Object} org the origin point of this individual matrix
      */
-    drawTable(layers, layer_ind, edges, org) {
+    drawTable(layers, layer_ind, edges, org, drawnFlags) {
         let layer1, l1ind, l2ind, layer2, color1, color2;
+        
+        // for every other layer, the layer on the top vs. on the side needs to be swapped
         if(layer_ind%2) {
             l1ind = layer_ind + 1;
             l2ind = layer_ind;
@@ -210,48 +234,15 @@ class View {
 
         }
 
+        let l = [this.layers[l1ind], this.layers[l2ind]];
+        
+        let flags = [0, 0];
+        if(drawnFlags[l1ind])
+            flags[0] = 1;
+        if(drawnFlags[l2ind])
+            flags[1] = 1;
         // Create and color the indivudual boxes
-        for(let j = 0; j < layer2 + 1; j++) {
-            for(let i = 0; i < layer1 + 1; i++) {
-                if(i != 0 || j != 0) {
-                    let entry = document.createElementNS(svgns, "rect");
-                    this.tableG.appendChild(entry);
-                    entry.setAttribute("x", org.x + (i * CELL_W));
-                    entry.setAttribute("y", org.y + (j * CELL_H));
-                    entry.setAttribute("width", CELL_W);
-                    entry.setAttribute("height", CELL_H);
-                    entry.setAttribute("stroke", "black")
-
-                    if(i == 0) {
-                        entry.setAttribute("fill", color2+"7F")
-                        entry.setAttribute("stroke", color2)
-                        entry.setAttribute("id", `l${l2ind}n${j-1}_tab`)
-                        entry.setAttribute("onmouseover", "selectTableNode(this)");
-                        entry.setAttribute("onmouseout", "deselectTableNode(this)");
-                    }
-                    else if(j == 0) {
-                        entry.setAttribute("fill", color1+"7F")
-                        entry.setAttribute("stroke", color1)
-                        entry.setAttribute("id", `l${l1ind}n${i-1}_tab`)
-                        entry.setAttribute("onmouseover", "selectTableNode(this)");
-                        entry.setAttribute("onmouseout", "deselectTableNode(this)");
-                    }
-                    else {
-                        entry.setAttribute("fill", NODE_COL)
-                        if(l1ind < l2ind) {
-                            entry.setAttribute("id", `l${l1ind}n${i-1}l${l2ind}n${j-1}_tab`)
-                            if(edges[i-1][j-1].w == 0)
-                                entry.setAttribute("fill", "black")
-                        }
-                        else { 
-                            entry.setAttribute("id", `l${l2ind}n${j-1}l${l1ind}n${i-1}_tab`)
-                            if(edges[j-1][i-1].w == 0)
-                                entry.setAttribute("fill", "black")
-                        }
-                    }
-                }
-            }
-        }
+        this.tables.push(new Table(l, edges, org, flags, [color1, color2], l1ind, this.tableG, layer_ind%2))
     }
 
     /**\
@@ -536,48 +527,71 @@ class View {
     }
 
     startDragColumn(ind) {
-        /*
-            Visual response
-        */
+        this.container.mousemove = null;
+        this.container.mouesup = null;
     }
 
-    zoom(dY) {
-        let oldWidth = this.viewWidth;
-        let oldHeight = this.viewHeight;
-        if(this.viewHeight + dY * ZOOM_AMT > 0)
-            this.viewHeight += dY * ZOOM_AMT;
-        
-        if(this.viewWidth + dY * ZOOM_AMT > 0)    
-            this.viewWidth += dY * ZOOM_AMT;
-        
-        this.viewMin_x += (oldWidth - this.viewWidth)/2
-        this.viewMin_y += (oldHeight - this.viewHeight)/2
+    zoom(dY, path) {
+        let viewBox;
+        let target;
+        if(path.includes(this.tableSVG)) {
+            viewBox = this.vbTable;
+            target = this.tableSVG;
+        }
+        if(path.includes(this.container)) {
+            viewBox = this.vbGraph;
+            target = this.container;
+        }
 
-        this.container.setAttribute("viewBox", `${this.viewMin_x} ${this.viewMin_y} ${this.viewWidth} ${this.viewHeight}`)
+        let oldWidth = viewBox.width;
+        let oldHeight = viewBox.height;
+        if(viewBox.height + dY * ZOOM_AMT > 0)
+            viewBox.height += dY * ZOOM_AMT;
+        
+        if(viewBox.width + dY * ZOOM_AMT > 0)    
+            viewBox.width += dY * ZOOM_AMT;
+        
+        viewBox.min_x += (oldWidth - viewBox.width)/2
+        viewBox.min_y += (oldHeight - viewBox.height)/2
+        this.setViewBox(target, viewBox)
     }
     
-    startPan(x, y) {
-        this.container.onmousemove = pan;
-        this.container.onmouseup = endPan;
-        this.panX = x;
-        this.panY = y;
-
-        console.log({"x": x, "y": y})
+    startPan(x, y, target) {
+        target.onmousemove = pan;
+        target.onmouseup = endPan;
+        this.panPos = {"x": x, "y": y};
     }
 
-    pan(x, y) {
-        let offsetX = this.panX - x;
-        let offsetY = this.panY - y;
-        this.viewMin_x += offsetX;
-        this.viewMin_y += offsetY;
+    pan(x, y, path) {
 
-        this.container.setAttribute("viewBox", `${this.viewMin_x} ${this.viewMin_y} ${this.viewWidth} ${this.viewHeight}`)
-        this.panX = x;
-        this.panY = y;
+        let viewBox, target;
+        if(path.includes(this.tableSVG)) {
+            viewBox = this.vbTable;
+            target = this.tableSVG;
+        }
+        if(path.includes(this.container)) {
+            viewBox = this.vbGraph;
+            target = this.container;
+        }
+        // Get amount mouse has moved
+        let offset = {"x": this.panPos.x - x, "y": this.panPos.y - y}
+        // Update the object member
+        viewBox.min_x += offset.x;
+        viewBox.min_y += offset.y;
+
+        // update the element
+        this.setViewBox(target, viewBox)
+        
+        // Reset pan
+        this.panPos =  {"x": x, "y": y};
     }
 
-    endPan() {
-        this.container.onmousemove = null;
-        this.container.onmouseup = null;
+    endPan(target) {
+        target.onmousemove = null;
+        target.onmouseup = null;
+    }
+
+    setViewBox(ele, vb) {
+        ele.setAttribute("viewBox", `${vb.min_x} ${vb.min_y} ${vb.width} ${vb.height}`)
     }
 }
