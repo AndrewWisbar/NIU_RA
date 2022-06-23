@@ -14,7 +14,17 @@ function update_groups(value) {
 
 function change_label(slider, val1, val2) {
     let label = slider.labels
-    label[0].innerHTML = `Connections Group ${val1} to ${val2} (${slider.value}%)`
+    label[0].innerHTML = `Connections Layer ${val1} to ${val2} (${slider.value}%)`
+}
+
+function change_lcm_label(slider, val1, val2) {
+    let label = slider.labels
+    label[0].innerHTML = `LCM Parameter${val1} to ${val2} (${slider.value})`
+}
+
+
+function change_LCM(num, val) {
+    controller.updateLCM(num, val)
 }
 
 function select_node(node) {
@@ -79,5 +89,5 @@ function pan(e) {
 }
 
 function endPan(e) {
-    controller.endPan(e.target);
+    controller.endPan(e.path);
 }

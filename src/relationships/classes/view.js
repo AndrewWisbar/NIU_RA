@@ -310,13 +310,13 @@ class View {
         if(node.layer < this.cliques.length)
             this.cliques[node.layer].forEach(c => {
                 if(c.leftNodes.includes(node)) {
-                    c.highlightNode(node.id);
+                    c.highlightNode(node.id, type);
                 }
             })
         if(node.layer - 1 >= 0)
             this.cliques[node.layer - 1].forEach(c => {
                 if(c.rightNodes.includes(node)) {
-                    c.highlightNode(node.id);
+                    c.highlightNode(node.id, type);
                 }
             })
 
@@ -339,13 +339,13 @@ class View {
         if(node.layer < this.cliques.length)
             this.cliques[node.layer].forEach(c => {
                 if(c.leftNodes.includes(node) && (propagation == undefined || propagation == "right")) {
-                    c.highlightNode(node.id);
+                    c.highlightNode(node.id, type);
                 }
             })
         if(node.layer - 1 >= 0)
             this.cliques[node.layer - 1].forEach(c => {
                 if(c.rightNodes.includes(node) && (propagation == undefined || propagation == "left")) {
-                    c.highlightNode(node.id);
+                    c.highlightNode(node.id, type);
                 }
             })
         
@@ -450,7 +450,7 @@ class View {
     selectClique(id, type) {
         const inds = idToIndex(id);
         let clique = this.cliques[inds.l][inds.n];
-        clique.select();
+        clique.select(type);
         clique.leftNodes.forEach(node => {
             node.select();
         })
@@ -586,9 +586,12 @@ class View {
         this.panPos =  {"x": x, "y": y};
     }
 
-    endPan(target) {
-        target.onmousemove = null;
-        target.onmouseup = null;
+    endPan(path) {
+        this.tableSVG.onmousemove = null;
+        this.tableSVG.onmouseup = null;
+
+        this.container.onmousemove = null;
+        this.container.onmouseup = null;
     }
 
     setViewBox(ele, vb) {

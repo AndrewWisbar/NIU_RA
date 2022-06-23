@@ -1,11 +1,10 @@
 <?php
 if(strlen($_GET["data"]) > 0) {
     file_put_contents("in.data", $_GET["data"]);
-
     $output=null;
     $exit=null;
-    exec("lcm MqI in.data 2 out.data", $output, $exit);
-
+    $exec_str = "lcm MqI in.data " . $_GET["param"] . " out.data";
+    exec($exec_str, $output, $exit);
     if($exit == 0)
         $out = file_get_contents("out.data");
     else

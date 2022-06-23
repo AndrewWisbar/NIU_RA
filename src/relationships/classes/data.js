@@ -2,9 +2,10 @@
  * Generate and manage the data needed by the graph
  */
 class Data {
-    constructor(numLayers, layerSizes, percents) {
+    constructor(numLayers, layerSizes, percents, lcm_params) {
         this.layers = new Array(numLayers);
         this.edges = new Array(numLayers - 1);
+        this.lcm_params = new Array(numLayers - 1);
         this.maxSets = [];
         this.interfaces = [];
         for(let g = 0; g < this.layers.length; g++) 
@@ -13,7 +14,7 @@ class Data {
         for(let e = 0; e < this.edges.length; e++)
             this.edges[e] = [];
 
-        this.update(layerSizes, percents)
+        this.update(layerSizes, percents, lcm_params)
     }
 
     /**
@@ -48,10 +49,10 @@ class Data {
      * @param {Array<Float32>} edgePercents array of percentages of edges 
      *  present between each layer respectively
      */
-    update(layerSizes, edgePercents) {
+    update(layerSizes, edgePercents, lcm_params) {
         this.layers = layerSizes;
         this.edges = this.generateEdges(layerSizes, edgePercents);
-
+        this.lcm_params = lcm_params;
     }
 
     /**
@@ -150,7 +151,7 @@ class Data {
             $.ajax({
                 type: "GET",
                 url: "../PHP/process_data.php",
-                data: {data: dataString},
+                data: {data: dataString, param: this.lcm_params[l]},
                 async: false, // for simplicity we aren't using async for now
                 dataType: "html",
                 success: catchData

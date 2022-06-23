@@ -128,7 +128,7 @@ class Edge {
      * Set the size of this edge based on the weight
      */
     setSize() {
-        this.svg.setAttribute("stroke-width", (this.weight * this.weight * 8 + 1) + "px")
+        this.svg.setAttribute("stroke-width", ColorMapper.getSize(this.weight))
         let tab = document.getElementById(this.id + "_tab");
         if(tab)
             tab.setAttribute("fill", this.getColMap());
@@ -138,7 +138,7 @@ class Edge {
      * Set the dash array of this edge based on the weight
      */
     setDash() {
-        this.svg.setAttribute("stroke-dasharray", 14 * (1 - this.weight) + 1);
+        this.svg.setAttribute("stroke-dasharray", ColorMapper.getDashArray(this.weight));
         this.svg.setAttribute("stroke-width", 5);
         let tab = document.getElementById(this.id + "_tab");
         if(tab)

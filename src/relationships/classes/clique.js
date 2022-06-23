@@ -40,6 +40,10 @@ class Clique {
 
         // Does this clique cause us to draw more or less edges?
         this.good = (this.leftNodes.length + this.rightNodes.length < this.leftNodes.length * this.rightNodes.length)
+
+        if(DEBUG) {
+            this.log();
+        }
     }
 
     /**
@@ -125,7 +129,7 @@ class Clique {
         cont.appendChild(this.svg);
     }
 
-    highlightNode(node) {
+    highlightNode(node, type) {
         if(!(node in this.leftPaths) && !(node in this.rightPaths))
             return false; 
 
@@ -135,27 +139,23 @@ class Clique {
             let w = edge.weight;
             avWeight += w;
 
-            if(nodeOnLeft) {
-                this.rightPaths[edge.getOtherID(node)].setAttribute("stroke", edge.getColMap())
-            }
-            else {
-                this.leftPaths[edge.getOtherID(node)].setAttribute("stroke", edge.getColMap())
-            }
+            if(nodeOnLeft)
+                this.highlightPath(this.rightPaths[edge.getOtherID(node)], type, w);
+            else
+                this.highlightPath(this.leftPaths[edge.getOtherID(node)], type, w);
         })
         avWeight /= this.edges[node].length;
-        let col =  `rgba(${avWeight < .5 ? 255 : 255 - 255 * 2 * (avWeight - .5)}, 
-                    ${avWeight >= .5 ? 255 : 255 * 2 * (avWeight)}, 0, 1)`;
         if(nodeOnLeft)
-            this.leftPaths[node].setAttribute("stroke", col);
+            this.highlightPath(this.leftPaths[node], type, avWeight)
         else
-            this.rightPaths[node].setAttribute("stroke", col)
+            this.highlightPath(this.rightPaths[node], type, avWeight)
 
     }
 
     /**
      * Highlight this clique visually
      */
-    select() {
+    select(type) {
 
         if(DEBUG)
             this.log();
@@ -168,8 +168,7 @@ class Clique {
                 weight += edge.weight;
             })
             weight /= this.rightNodes.length;
-            let col =  ColorMapper.getColor(weight);
-            this.leftPaths[id].setAttribute("stroke", col)
+            this.highlightPath(this.leftPaths[id], type, weight)
         }
 
         for(let id in this.rightPaths) {
@@ -178,8 +177,7 @@ class Clique {
                 weight += edge.weight;
             })
             weight /= this.leftNodes.length;
-            let col =  ColorMapper.getColor(weight);
-            this.rightPaths[id].setAttribute("stroke", col)
+            this.highlightPath(this.rightPaths[id], type, weight)
         }
     }
 
@@ -190,9 +188,17 @@ class Clique {
         this.svg.setAttribute("fill", "#7b9ead")
         for(let id in this.leftPaths) {
             this.leftPaths[id].setAttribute("stroke", "#000000")
+            this.leftPaths[id].removeAttribute("stroke-dasharray");
+            this.leftPaths[id].setAttribute("stroke-width", `${(this.rightNodes.length - 1) * 
+                                                             (this.rightNodes.length - 1) * 
+                                                             0.07 + 2}px`)
         }
         for(let id in this.rightPaths) {
             this.rightPaths[id].setAttribute("stroke", "#000000")
+            this.rightPaths[id].removeAttribute("stroke-dasharray");
+            this.rightPaths[id].setAttribute("stroke-width", `${(this.leftNodes.length - 1) * 
+                                                             (this.leftNodes.length - 1) * 
+                                                             0.07 + 2}px`)
         }
     }
 
@@ -222,6 +228,26 @@ class Clique {
             this.rightPaths[node.id].setAttribute("opacity", "1")
         })
         this.showing = true;
+    }
+
+    highlightPath(path, type, weight) {
+        switch(type) {
+            default:
+            case "def":
+                path.setAttribute("stroke", ColorMapper.getColor(weight))
+                break;
+
+            case "gry":
+                path.setAttribute("stroke", ColorMapper.getGreyScale(weight))
+                break;
+            case "dsh":
+                path.setAttribute("stroke-dasharray", ColorMapper.getDashArray(weight));
+                break;
+
+            case "sze":
+                path.setAttribute("stroke-width", ColorMapper.getSize(weight));
+                break;
+        }
     }
 
     log() {

@@ -1,6 +1,6 @@
 class ColorMapper {
     constructor() {
-
+        
     }
 
     static getColor(weight) {
@@ -11,5 +11,13 @@ class ColorMapper {
     static getGreyScale(weight) {
         return `rgba(${(1 - weight) * 255}, ${(1 - weight) * 255}, 
                      ${(1 - weight) * 255}, 1)`;
+    }
+
+    static getSize(weight) {
+        return `${weight * weight * 8 + 1}px`
+    }
+
+    static getDashArray(weight) {
+        return `${14 * (1 - weight) + 1}`;
     }
 }

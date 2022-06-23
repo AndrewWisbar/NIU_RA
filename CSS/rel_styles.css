@@ -115,8 +115,10 @@ body {
     scroll-behavior: contain;
     background: #FFFFFF;
     border: 1px solid black;
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100%;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 #graph-controls {
@@ -142,9 +144,12 @@ body {
 }
 
 #container {
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100%;
     cursor:move;
+    margin-left: 5px;
+    margin-right: 5px;
+    border: 1px solid #000000;
 }
 
 #group-controls {
