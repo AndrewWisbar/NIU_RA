@@ -43,8 +43,8 @@ class Table {
                     entry.classList.add("table_cell")
 
                     if(i == 0 && this.headerFlags[1]) {
-                        entry.setAttribute("fill", this.colors[1]+"7F")
-                        entry.setAttribute("stroke", this.colors[1])
+                        entry.setAttribute("fill", ColorMapper.getLayerColor(this.id + 1, 127))
+                        entry.setAttribute("stroke", ColorMapper.getLayerColor(this.id+1))
                         entry.setAttribute("id", `l${this.id + 1}n${index.j}_tab`)
                         if(this.selectFlag) {
                             entry.setAttribute("onmouseover", "selectTableNode(this)");
@@ -52,16 +52,16 @@ class Table {
                         }
                     }
                     else if(j == 0 && this.headerFlags[0]) {
-                        entry.setAttribute("fill", this.colors[0]+"7F")
-                        entry.setAttribute("stroke", this.colors[0])
-                        entry.setAttribute("id", `l${this.id}n${index.i}_tab`)
+                        entry.setAttribute("fill", ColorMapper.getLayerColor(this.id, 127))
+                        entry.setAttribute("stroke", ColorMapper.getLayerColor(this.id))
+                        entry.id = `l${this.id}n${index.i}_tab`;
                         if(this.selectFlag) {
                             entry.setAttribute("onmouseover", "selectTableNode(this)");
                             entry.setAttribute("onmouseout", "deselectTableNode(this)");
                         }
                     }
                     else {
-                        entry.setAttribute("fill", NODE_COL)
+                        entry.setAttribute("fill", ColorMapper.nodeColor)
                         if(!this.flip) {
                             entry.setAttribute("id", `l${this.id}n${index.i}l${this.id+1}n${index.j}_tab`)
                             if(this.entryData[index.i][index.j].w == 0)

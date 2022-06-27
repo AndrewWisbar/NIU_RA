@@ -19,6 +19,7 @@
      * @returns a two dimentional array of objects
      */
     convertEdges(edges) {
+        console.log(edges)
         let arr = new Array(edges.length);
         for(let i = 0; i < edges.length; i++) {
             arr[i] = new Array(edges[i].length);

@@ -50,3 +50,9 @@ function idToIndex(id) {
 function cloneArray(arr) {
     return JSON.parse(JSON.stringify(arr));
 }
+
+function clearElementChildren(ele) {
+    while (ele.firstChild) {
+        ele.removeChild(ele.lastChild);
+    }
+}

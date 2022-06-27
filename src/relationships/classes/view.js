@@ -35,6 +35,21 @@ class View {
         this.cliqueView = true;
     }
 
+    displayLoading() {
+        clearElementChildren(this.container);
+        clearElementChildren(this.tableSVG);
+        let text = document.createElementNS(svgns, "text");
+        text.innerHTML = "Loading ...";
+        text.style.font = "bold 30px sans-serif";
+
+        text.setAttribute("x", (this.container.clientWidth / 2) - (text.clientWidth / 2))
+        text.setAttribute("y", (this.container.clientHeight / 2) - (text.clientHeight / 2))
+        this.container.appendChild(text);
+        
+        this.container.parentElement.style.display = 'none';
+        this.container.parentElement.style.display = 'block';
+    }
+
     /**
      * Store and render the information sent to this object
      * 
@@ -53,10 +68,7 @@ class View {
         this.layers = [];
         this.edges = {};
         this.cliques = [];
-        let cont = document.getElementById("container");
-        while (cont.firstChild) {
-            cont.removeChild(cont.lastChild);
-        }
+        clearElementChildren(this.container);
 
         this.drawLayerBackgrounds(layers);
         this.createNodes(layers);
@@ -74,7 +86,7 @@ class View {
         this.layerGroups = new Array(layers.length);
         for(let i = 0; i < layers.length; i++) {
             let g = document.createElementNS(svgns, "g");
-            g.setAttribute("id", `g_l${i}`)
+            g.id =  `g_l${i}`;
             let rect = document.createElementNS(svgns, "rect");
             rect.onmousedown = startDragColumn;
             rect.id = `layer_${i}`
@@ -83,8 +95,7 @@ class View {
             rect.setAttribute("y", 0);
             rect.setAttribute("width", this.xSpace * NODE_SIZE);
             rect.setAttribute("height", this.ySpace * layers[i]);
-            rect.setAttribute("fill", LAYER_COLS[i]);
-            rect.setAttribute("opacity", 0.25)
+            rect.setAttribute("fill", ColorMapper.getLayerColor(i, 64));
             
             g.appendChild(rect);
             this.layerGroups[i] = g;
@@ -164,28 +175,30 @@ class View {
             this.tableG.removeChild(this.tableG.lastChild);
         }
         this.tableSVG.appendChild(this.tableG);
+        
         let org = {x: 0, y: 0};
-
         for(let i = 0; i < layers.length - 1; i++) {
             this.drawTable(layers, i, interfaces[i].e, org, drawnFlags);
+            
+            // Determine the next origin point
             let offset = {x:0, y:0};
-
-            if(i%2) {
+            if(i%2) { // if the index is odd, move the origin vertically
                 offset.y += (parseInt(layers[i]) + 1);
-                if(i%4)
+                if(i%4) // only every fourth layer will have a vertical header 
                     offset.x -= 1;
             }
-            else {
+            else { // if the index is even, move the origin horizontally
                 offset.x += (parseInt(layers[i]) + 1);
-                if(i%3)
+                if(i > 0) // for all layers other than zero, offset header row
                     offset.y -= 1;
             }
-            
             org.x += CELL_W * offset.x;
             org.y += CELL_H * offset.y;
             drawnFlags[i] = 0;
             drawnFlags[i + 1] = 0;
         }
+
+
         let table_width = parseInt(layers[0]) + 1;
         if(layers.length >= 3 && layers.length != 5) {
             table_width += parseInt(layers[2]) + 1;
@@ -220,8 +233,8 @@ class View {
             l2ind = layer_ind;
             layer1 = parseInt(layers[l1ind]);
             layer2 = parseInt(layers[l2ind]);
-            color1 = LAYER_COLS[l1ind];
-            color2 = LAYER_COLS[l2ind];
+            color1 = ColorMapper.getLayerColor(l1ind);
+            color2 = ColorMapper.getLayerColor(l2ind);
         }
         else
         {
@@ -229,8 +242,8 @@ class View {
             l2ind = layer_ind + 1;
             layer1 = parseInt(layers[l1ind]);
             layer2 = parseInt(layers[l2ind]);
-            color1 = LAYER_COLS[l1ind];
-            color2 = LAYER_COLS[l2ind];
+            color1 = ColorMapper.getLayerColor(l1ind);
+            color2 = ColorMapper.getLayerColor(l2ind);
 
         }
 
@@ -352,10 +365,10 @@ class View {
         edges.forEach(edge => {
             if(propagation == undefined) {
                 if (node == edge.leftNode)
-                    this.recursiveSelect(edge.rightNode.id, type, "right")
+                    this.recursiveSelect(edge.rightNode.id, type, "right", edge.weight)
         
                 if (node == edge.rightNode)
-                    this.recursiveSelect(edge.leftNode.id, type, "left")
+                    this.recursiveSelect(edge.leftNode.id, type, "left", edge.weight)
                 edge.highlight(type);
                 this.getNode(edge.getOtherID(id)).select();
             }

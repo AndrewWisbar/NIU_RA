@@ -14,15 +14,7 @@ const BW_CUTOFF =               0.725;  // Weight threshold for disiding white o
 
 const GROUP_MIN =               2;   // Minimum number of nodes in a layer
 const GROUP_MAX =               10;  // Maximum number of nodes in a layer
-
-const LAYER_COLS = [            // Unique colors for each layer of nodes
-                                "#9553A2",
-                                "#DA4E8B",
-                                "#DB7C6B",
-                                "#8FB34D",
-                                "#3E92CC"
-]
-
+const MAX_GROUPS =              8;
 const NODE_SIZE =               0.25 // the size of the node relative to its vertical spacing
 
 const CELL_W =                  24;

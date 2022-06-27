@@ -2,17 +2,26 @@
  * Generate and manage the data needed by the graph
  */
 class Data {
+
+    #layers;
+    #edges;
+    #lcm_params;
     constructor(numLayers, layerSizes, percents, lcm_params) {
-        this.layers = new Array(numLayers);
-        this.edges = new Array(numLayers - 1);
-        this.lcm_params = new Array(numLayers - 1);
+
+        this.#layers = new Array(numLayers);
+        this.layerOrder = new Array(numLayers);
+        for(let i = 0; i < this.layerOrder.length; i++)
+            this.layerOrder[i] = i;
+        console.log(this.layerOrder)
+        this.#edges = new Array(numLayers - 1);
+        this.#lcm_params = new Array(numLayers - 1);
         this.maxSets = [];
         this.interfaces = [];
-        for(let g = 0; g < this.layers.length; g++) 
-            this.layers[g] = layerSizes[g];
+        for(let g = 0; g < this.#layers.length; g++) 
+            this.#layers[g] = layerSizes[g];
 
-        for(let e = 0; e < this.edges.length; e++)
-            this.edges[e] = [];
+        for(let e = 0; e < this.#edges.length; e++)
+            this.#edges[e] = [];
 
         this.update(layerSizes, percents, lcm_params)
     }
@@ -22,7 +31,7 @@ class Data {
      * @returns the array of edges in the graph
      */
     getEdges() {
-        return this.edges;
+        return this.#edges;
     }
 
     /**
@@ -30,7 +39,7 @@ class Data {
      * @returns an array representing the number of nodes in each layer of the graph
      */
     getLayers() {
-        return cloneArray(this.layers);
+        return cloneArray(this.#layers);
     }
 
     /**
@@ -50,9 +59,18 @@ class Data {
      *  present between each layer respectively
      */
     update(layerSizes, edgePercents, lcm_params) {
-        this.layers = layerSizes;
-        this.edges = this.generateEdges(layerSizes, edgePercents);
-        this.lcm_params = lcm_params;
+        this.#layers = layerSizes;
+        this.#edges = this.generateEdges(layerSizes, edgePercents);
+        this.#lcm_params = lcm_params;
+    }
+
+    generate(layerSizes, edgePercents, lcm_params) {
+        this.layerOrder = new Array(layerSizes.length)
+        for(let i = 0; i < layerSizes.length; i++) {
+            this.layerOrder[i] = i;
+        }
+        this.update(layerSizes, edgePercents, lcm_params);
+        this.#send();
     }
 
     /**
@@ -62,11 +80,17 @@ class Data {
      * @returns 
      */
     generateEdges(layerSizes, percents) {
-        let arr = new Array(layerSizes.length - 1)
-        for(let i = 0; i < percents.length; i++) {
-            arr[i] = this.createEdgeArr(layerSizes[i], layerSizes[i+1], (percents[i] / 100.0));
+        let arr = new Array(layerSizes.length)
+        for(let j = 0; j < arr.length; j++) {
+            let subarr = new Array(layerSizes.length);
+            for(let i = 0; i < subarr.length; i++) {
+                if(!(i == j))
+                    subarr[i] = this.createEdgeArr(layerSizes[j], layerSizes[i], (percents[j] / 100.0));
+            }
+            arr[j] = subarr;
         }
 
+        console.log(arr)
         return arr;
     }
 
@@ -107,11 +131,12 @@ class Data {
      * @param {Integer} ind index of the array to return 
      * @returns an array of edges or "false"
      */
-    getEdgeSet(ind) {
-        if(ind < 0 || ind > this.edges.length - 1)
+    getEdgeSet(ind1) {
+        if(ind1 < 0 || ind1 > this.#edges.length - 1)
             return false;
-
-        return this.edges[ind];    
+        if(ind2 < 0 || ind2 > this.#edges.length - 1)
+            return false;
+        return this.#edges[ind1][ind2];    
     }
 
     /**
@@ -120,24 +145,28 @@ class Data {
      * @returns the number of nodes in the layer or "false"
      */
     getNumNodes(ind) {
-        if(ind < 0 || ind > this.layers.length - 1)
+        if(ind < 0 || ind > this.#layers.length - 1)
             return false;
 
-        return this.layers[ind];   
+        return this.#layers[ind];   
     }
 
     /**
      * Send data to the server to be processed by LCM program
      */
-    send() {
+    #send() {
         // turn data into string
         this.maxSets = [];
-        for(let l = 0; l < this.edges.length; l++) {
+        for(let l = 0; l < this.#layers.length - 1; l++) {
+            let ind1 = this.layerOrder[l];
+            let ind2 = this.layerOrder[l+1];
+            console.log(ind1, ind2)
+            console.log(this.#edges[ind1][ind2])
             let dataString = ""
-            for(let i = 0; i < this.edges[l].length; i++) {
+            for(let i = 0; i < this.#edges[ind1][ind2].length; i++) {
                 let substr = "";
-                for(let j = 0; j < this.edges[l][i].length; j++) {
-                    if(this.edges[l][i][j] != 0) {
+                for(let j = 0; j < this.#edges[ind1][ind2][i].length; j++) {
+                    if(this.#edges[ind1][ind2][i][j] != 0) {
                         if(substr.length > 0)
                             substr += ',';
                         substr += j;
@@ -151,7 +180,7 @@ class Data {
             $.ajax({
                 type: "GET",
                 url: "../PHP/process_data.php",
-                data: {data: dataString, param: this.lcm_params[l]},
+                data: {data: dataString, param: this.#lcm_params[l]},
                 async: false, // for simplicity we aren't using async for now
                 dataType: "html",
                 success: catchData
@@ -164,7 +193,7 @@ class Data {
      * Recieve one set of output from LCM and parse it
      * @param {String} data 
      */
-    storeData(data) {
+    storeData(data, checked) {
         let arr = Array();
         let lines = data.split(/\r?\n/);
         lines.splice(lines.length - 1, 1);
@@ -172,7 +201,8 @@ class Data {
         for(let l = 0; l < lines.length; l += 2) {
             let node_inds2 = strToNumArr(lines[l]);
             let node_inds1 = strToNumArr(lines[l+1]);
-            arr.push([node_inds1, node_inds2])
+            if(!checked || ((node_inds2.length > 1 && node_inds1.length > 1)))
+                arr.push([node_inds1, node_inds2])
         }
         this.maxSets.push(arr);
     }
@@ -185,7 +215,12 @@ class Data {
         this.interfaces = [];
         
         for(let i = 0; i < this.maxSets.length; i++)
-            this.interfaces.push(new LayerInterface(this.layers[i], this.layers[i+1], i, this.maxSets[i], this.edges[i]))
+            this.interfaces.push(new LayerInterface
+                            (this.#layers[this.layerOrder[i]], 
+                            this.#layers[this.layerOrder[i+1]], 
+                            this.layerOrder[this.layerOrder[i]], 
+                            this.maxSets[this.layerOrder[i]],
+                            this.#edges[this.layerOrder[i]][this.layerOrder[i+1]]))
 
         this.maxSets = [];
 
@@ -199,9 +234,9 @@ class Data {
         console.log("Data Log")
         console.log("~~~~~~~~~~~~~~");
         console.log("Layers: ")
-        console.log(this.layers)
+        console.log(this.#layers)
         console.log("Edges: ")
-        console.log(this.edges)
+        console.log(this.#edges)
         console.log("Interfaces:")
         console.log(this.interfaces)
     }

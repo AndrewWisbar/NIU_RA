@@ -12,14 +12,14 @@ function update_groups(value) {
 }
 
 
-function change_label(slider, val1, val2) {
+function change_label(slider, val1) {
     let label = slider.labels
-    label[0].innerHTML = `Connections Layer ${val1} to ${val2} (${slider.value}%)`
+    label[0].innerHTML = `Connections Layer ${val1} (${slider.value}%)`
 }
 
-function change_lcm_label(slider, val1, val2) {
+function change_lcm_label(slider, val1) {
     let label = slider.labels
-    label[0].innerHTML = `LCM Parameter${val1} to ${val2} (${slider.value})`
+    label[0].innerHTML = `LCM Parameter${val1} (${slider.value})`
 }
 
 

@@ -2,6 +2,8 @@
  * The Object through which user interaction with the app is handled
  */
 class Controller {
+    #data;
+    #view;
     constructor(numGroups) {
         this.slide_div = document.getElementById("group-controls");
 
@@ -11,15 +13,16 @@ class Controller {
 
         this.highlight_select = document.getElementById("type-sel");
         this.recursive_check = document.getElementById("recursive");
+        this.cliques_check = document.getElementById("goodCliques");
 
         this.updateGroups(numGroups)
-        this.data = new Data(numGroups, this.getGroupSizes(), this.getPercents(), this.getLCMParams());
-        this.view = new View()
+        this.#data = new Data(numGroups, this.getGroupSizes(), this.getPercents(), this.getLCMParams());
+        this.#view = new View()
 
     }
 
     toggleView() {
-        this.view.toggleView();
+        this.#view.toggleView();
     }
 
     /**
@@ -65,21 +68,21 @@ class Controller {
             this.node_sliders.push(slider);
         }
 
-        for (let i = 1; i < num; i++) {
+        for (let i = 0; i < num; i++) {
             let slider = document.createElement("input");
             let label = document.createElement("label")
-            label.setAttribute("for", "con_" + (i - 1) + "_" + i);
-            label.id = "label_" + (i - 1) + "_" + i;
+            label.setAttribute("for", "con_" + i);
+            label.id = "label_con_" + i;
             slider.setAttribute("type", "range");
             slider.min = 1;
             slider.max = 100;
-            slider.id = "con_" + (i - 1) + "_" + i;
-            slider.setAttribute("oninput", `change_label(this, ${i - 1}, ${i})`)
-            if(i-1 < oldPercVals.length)
-                slider.value = parseInt(oldPercVals[i - 1]);
+            slider.id = "con_" + i;
+            slider.setAttribute("oninput", `change_label(this, ${i})`)
+            if(i < oldPercVals.length)
+                slider.value = parseInt(oldPercVals[i]);
             else
                 slider.value = 100;
-            label.innerHTML = `Connections: Layer ${(i - 1)} to ${i} (${slider.value})`;
+            label.innerHTML = `Connections Layer ${i} (${slider.value}%)`;
             this.perc_sliders.push(slider)
             this.slide_div.appendChild(label)
             this.slide_div.appendChild(slider);
@@ -89,9 +92,9 @@ class Controller {
         for (let i = 0; i < num - 1; i++) {
             let slider = document.createElement("input");
             let label = document.createElement("label")
-            label.setAttribute("for", `lcm_${i - 1}_${i}`);
-            label.id = `lab_lcm_${i - 1}_${i}`;
-            slider.setAttribute("oninput", `change_lcm_label(this, ${i}, ${i + 1})`)
+            label.setAttribute("for", `lcm_${i}`);
+            label.id = `lab_lcm_${i}`;
+            slider.setAttribute("oninput", `change_lcm_label(this, ${i})`)
             slider.type = "range";
             slider.min = 1;
             slider.max = parseInt(this.node_sliders[i].value);
@@ -101,7 +104,7 @@ class Controller {
             slider.value = parseInt(oldLCMVals[i]);
             else
             slider.value = 2;
-            label.innerHTML = `LCM Parameter ${i} to ${i + 1} (${slider.value})`;
+            label.innerHTML = `LCM Parameter for Layer ${i} (${slider.value})`;
             this.lcm_sliders.push(slider)
             this.slide_div.appendChild(label)
             this.slide_div.appendChild(slider);
@@ -152,12 +155,13 @@ class Controller {
      * Create the data for, and render the graph, based on user controls
      */
     render() {
-        this.data.update(this.getGroupSizes(), this.getPercents(), this.getLCMParams());
+        this.#view.displayLoading();
+        
+        this.#data.generate(this.getGroupSizes(), this.getPercents(), this.getLCMParams())
         if(DEBUG)
-            this.data.log();
-        this.data.send();
-        this.data.fillInterfaces();
-        this.view.renderGraph(this.data.getLayers(), this.data.getInterfaces());
+            this.#data.log();
+        this.#data.fillInterfaces();
+        this.#view.renderGraph(this.#data.getLayers(), this.#data.getInterfaces());
     }
 
     /**
@@ -166,9 +170,9 @@ class Controller {
      */
     selectNode(id) {
         if(!this.recursive_check.checked)
-            this.view.selectNode(id, this.highlight_select.value);
+            this.#view.selectNode(id, this.highlight_select.value);
         else
-            this.view.recursiveSelect(id, this.highlight_select.value)
+            this.#view.recursiveSelect(id, this.highlight_select.value)
     }
 
     /**
@@ -177,9 +181,9 @@ class Controller {
      */
     deselectNode(id) {
         if(!this.recursive_check.checked)
-            this.view.deselectNode(id);
+            this.#view.deselectNode(id);
         else
-            this.view.recursiveDeselect(id, this.highlight_select.value)
+            this.#view.recursiveDeselect(id, this.highlight_select.value)
     }
 
     /**
@@ -187,7 +191,7 @@ class Controller {
      * @param {Object} data the data sent back by the AJAX request
      */
     storeData(data) {
-        this.data.storeData(data);
+        this.#data.storeData(data, this.cliques_check.checked);
     }
 
     /**
@@ -195,7 +199,7 @@ class Controller {
      * @param {String} id the ID of the SVG element representing the clique
      */
     selectClique(id) {
-        this.view.selectClique(id, this.highlight_select.value);
+        this.#view.selectClique(id, this.highlight_select.value);
     }
 
     /**
@@ -203,29 +207,29 @@ class Controller {
      * @param {String} id the ID of the SVG element representing the clique 
      */
     deselectClique(id) {
-        this.view.deselectClique(id, this.highlight_select.value);
+        this.#view.deselectClique(id, this.highlight_select.value);
     }
 
     startDragColumn(event) {
         console.log(event)
         document.addEventListener(onmousemove, dragColumn);
         document.addEventListener(onmouseup, endDragColumn);
-        this.view.startDragColumn();
+        this.#view.startDragColumn();
     }
 
     zoom(e) {
-        this.view.zoom(e.deltaY, e.path);
+        this.#view.zoom(e.deltaY, e.path);
     }
 
     startPan(e) {
-        this.view.startPan(e.clientX, e.clientY, e.target);
+        this.#view.startPan(e.clientX, e.clientY, e.target);
     }
 
     pan(e) {
-        this.view.pan(e.clientX, e.clientY, e.path);
+        this.#view.pan(e.clientX, e.clientY, e.path);
     }
 
     endPan(path) {
-        this.view.endPan(path);
+        this.#view.endPan(path);
     }
 }

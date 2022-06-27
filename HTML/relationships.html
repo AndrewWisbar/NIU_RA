@@ -28,10 +28,11 @@
                 <option value="gry">Greyscale Coloring</option>
                 <option value="sze">Size Based</option>
                 <option value="dsh">Dashed Edges</option>
-            </select> 
-            <input name="recursive" id="recursive" type="checkbox"><label for="recursive">Recursive?</label><br>
+            </select> <br>
             <button onclick="draw_graph()">Generate</button>
-            <button onclick="toggle_view()">Toggle Cliques</button>
+            <button onclick="toggle_view()">Toggle Cliques</button> <br>
+            <input name="recursive" id="recursive" type="checkbox"><label for="recursive">Recursive Selection</label><br>
+            <input name="goodCliques" id="goodCliques" type="checkbox"><label for="goodCliques">Only Show "Good" Cliques</label><br>
         </div>
         <div id="vis-cont">
             <div id="graph-cont">
