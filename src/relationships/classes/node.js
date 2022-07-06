@@ -32,6 +32,8 @@
         this.svg.setAttribute("stroke", 'rgb(0, 0, 0)');
         this.svg.setAttribute("onmouseover", "select_node(this)");
         this.svg.setAttribute("onmouseout", "deselect_node(this)");
+        this.svg.classList.add("node");
+        this.svg.classList.add("graph_el");
     }
 
     /**

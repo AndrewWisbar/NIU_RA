@@ -13,6 +13,8 @@ class Edge {
         this.x2 = node2.x;
         this.y2 = node2.y;
         this.weight = weight;
+
+        this.showing = true;
         this.draw(container);
     }
 
@@ -31,6 +33,8 @@ class Edge {
         this.svg.setAttribute("x2", this.x2);
         this.svg.setAttribute("y2", this.y2);
         this.svg.setAttribute("id", this.id);
+        this.svg.classList.add("edge");
+        this.svg.classList.add("graph_el");
         this.setColor("black")
     }
     
@@ -160,9 +164,11 @@ class Edge {
 
     show() {
         this.svg.setAttribute("opacity", "100")
+        this.showing = true;
     }
 
     hide() {
         this.svg.setAttribute("opacity", "0")
+        this.showing = false;
     }
 }

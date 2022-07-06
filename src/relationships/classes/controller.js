@@ -6,6 +6,8 @@ class Controller {
     #view;
     constructor(numGroups) {
         this.slide_div = document.getElementById("group-controls");
+        
+        this.swapLayer1 = null;
 
         this.node_sliders = [];
         this.perc_sliders = [];
@@ -18,11 +20,14 @@ class Controller {
         this.updateGroups(numGroups)
         this.#data = new Data(numGroups, this.getGroupSizes(), this.getPercents(), this.getLCMParams());
         this.#view = new View()
-
     }
 
     toggleView() {
         this.#view.toggleView();
+    }
+
+    toggleGood() {
+        this.#view.toggleGood();
     }
 
     /**
@@ -78,6 +83,7 @@ class Controller {
             slider.max = 100;
             slider.id = "con_" + i;
             slider.setAttribute("oninput", `change_label(this, ${i})`)
+            slider.style.backgroundColor = ColorMapper.getLayerColor(i);
             if(i < oldPercVals.length)
                 slider.value = parseInt(oldPercVals[i]);
             else
@@ -89,16 +95,17 @@ class Controller {
             this.slide_div.appendChild(document.createElement("br"))
         }
 
-        for (let i = 0; i < num - 1; i++) {
+        for (let i = 0; i < num; i++) {
             let slider = document.createElement("input");
             let label = document.createElement("label")
             label.setAttribute("for", `lcm_${i}`);
             label.id = `lab_lcm_${i}`;
             slider.setAttribute("oninput", `change_lcm_label(this, ${i})`)
+            slider.style.backgroundColor = ColorMapper.getLayerColor(i);
             slider.type = "range";
             slider.min = 1;
             slider.max = parseInt(this.node_sliders[i].value);
-            slider.id = "lcm_" + (i - 1) + "_" + i;
+            slider.id = "lcm_" + i;
             
             if(i < oldLCMVals.length)
             slider.value = parseInt(oldLCMVals[i]);
@@ -191,7 +198,11 @@ class Controller {
      * @param {Object} data the data sent back by the AJAX request
      */
     storeData(data) {
-        this.#data.storeData(data, this.cliques_check.checked);
+        this.#data.storeData(data);
+        /*if(this.#data.dataSentNum == this.#data.dataReturnedNum) {
+            this.#data.fillInterfaces();
+            this.#view.renderGraph(this.#data.getLayers(), this.#data.getInterfaces());
+        }*/
     }
 
     /**
@@ -211,7 +222,6 @@ class Controller {
     }
 
     startDragColumn(event) {
-        console.log(event)
         document.addEventListener(onmousemove, dragColumn);
         document.addEventListener(onmouseup, endDragColumn);
         this.#view.startDragColumn();
@@ -219,6 +229,19 @@ class Controller {
 
     zoom(e) {
         this.#view.zoom(e.deltaY, e.path);
+    }
+
+    swapColumns(e) {
+        let ind = parseInt(e.target.id.match(/\d+/)[0]);
+        if(this.swapLayer1 == null)
+            this.swapLayer1 = ind;
+        else {
+            if(ind != this.swapLayer1) {
+                this.#view.swapColumns(this.swapLayer1, ind);
+                this.#view.renderGraph(this.#data.getLayers(), this.#data.getInterfaces());
+                this.swapLayer1 = null;
+            }
+        }
     }
 
     startPan(e) {

@@ -11,7 +11,7 @@ if(strlen($_GET["data"]) > 0) {
         $out = "An error occured.";
         //echo($_GET["data"]);
     //echo(strlen($_GET["data"]));
-    echo($out);
+    echo( $_GET["from"] . " " . $_GET["to"] . "\n" . $out);
 }
 else {
     echo("Error: Recieved no input");

@@ -13,13 +13,13 @@ function update_groups(value) {
 
 
 function change_label(slider, val1) {
-    let label = slider.labels
-    label[0].innerHTML = `Connections Layer ${val1} (${slider.value}%)`
+    let label = slider.labels;
+    label[0].innerHTML = `Connections Layer ${val1} (${slider.value}%)`;
 }
 
 function change_lcm_label(slider, val1) {
-    let label = slider.labels
-    label[0].innerHTML = `LCM Parameter${val1} (${slider.value})`
+    let label = slider.labels;
+    label[0].innerHTML = `LCM Parameter for Layer ${val1} (${slider.value})`;
 }
 
 
@@ -57,6 +57,14 @@ function deselectClique(id) {
 
 function toggle_view() {
     controller.toggleView();
+}
+
+function toggle_good() {
+    controller.toggleGood();
+}
+
+function swapColumns(e) {
+    controller.swapColumns(e)
 }
 
 function startDragColumn(e) {

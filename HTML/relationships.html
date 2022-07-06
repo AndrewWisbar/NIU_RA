@@ -29,10 +29,11 @@
                 <option value="sze">Size Based</option>
                 <option value="dsh">Dashed Edges</option>
             </select> <br>
-            <button onclick="draw_graph()">Generate</button>
-            <button onclick="toggle_view()">Toggle Cliques</button> <br>
+            <button onclick="draw_graph()">Generate</button> <br>
+            <button id="clique_toggle" onclick="toggle_view()">Hide Cliques</button> 
+            <button id="good_toggle" onclick="toggle_good()">Show Only Good Cliques</button> <br>
             <input name="recursive" id="recursive" type="checkbox"><label for="recursive">Recursive Selection</label><br>
-            <input name="goodCliques" id="goodCliques" type="checkbox"><label for="goodCliques">Only Show "Good" Cliques</label><br>
+            <!-- <input name="goodCliques" id="goodCliques" type="checkbox"><label for="goodCliques">Only Show "Good" Cliques</label><br> -->
         </div>
         <div id="vis-cont">
             <div id="graph-cont">

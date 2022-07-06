@@ -1,5 +1,5 @@
 :root {
-    --main-dark: #7b9ead;
+    --main-dark: #00a6ff;
     --mid: #e8e8e8;
     --light: #ffffff;
     --dark-acc: #54724a;
@@ -11,10 +11,21 @@
     --shadow: #ababab;
 }
 
-path {
-    /* stroke: var(--light-acc); */
-    /* stroke-width: 2; */
-    fill: none;
+
+
+button {
+    padding: 10px;
+    margin: 4px;
+    background-color: var(--main-dark);
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: 0.1s;
+    color: var(--light-text);
+}
+
+button:hover {
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
 th {
@@ -34,12 +45,8 @@ td {
 
 body {
     background-color: #EDEDED;
-}
-
-.flex-container { 
-    width: 100%;
-    display: flex;
-    flex-direction: row;
+    margin: 0;
+    overflow: hidden;
 }
 
 #title-bar {
@@ -52,86 +59,71 @@ body {
     height: 90px;
 }
 
-.main-title {
-    padding-top: 1rem;
-    padding-left: 1rem;
-    padding-bottom: 1rem;
-    width: 90%;
-    font-size: 48px;
-    margin: 0;
-}
+    .main-title {
+        padding-top: 1rem;
+        padding-left: 1rem;
+        padding-bottom: 1rem;
+        width: 90%;
+        font-size: 48px;
+        margin: 0;
+    }
 
-.nav-btn {
-    /* width: 5%; */
-    padding-left: 1rem;
-    padding-right: 1rem;
-    background-color: var(--main-dark);
-    font-size: 16px;
-    border: none;
-    color: var(--light-text);
-    transition-duration: 0.25s;
-}
+    .nav-btn {
+        /* width: 5%; */
+        padding-left: 1rem;
+        padding-right: 1rem;
+        background-color: var(--main-dark);
+        font-size: 16px;
+        border: none;
+        color: var(--light-text);
+        transition-duration: 0.25s;
+    }
 
-.nav-btn:hover {
-    background-color: var(--mid);
-    font-size: 20px;
-    color: var(--dark-text);
-    transition-duration: 0.25s;
-}
-
+    .nav-btn:hover {
+        background-color: var(--mid);
+        font-size: 20px;
+        color: var(--dark-text);
+        transition-duration: 0.25s;
+    }
+    
+    .flex-container { 
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+    
 #main-container {
-    height: calc(100vh - 120px);
+    height: calc(100vh - 90px);
     padding-bottom: 10px;
-    left: 10px;
-    right: 10px;
     display:flex;
     background: #FFFFFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-#vis-cont {
-    width: 90%;
-}
-
-#top-cont {
-    height: 60%;
-    left: 33px;
-    right: 33px;
-    
-    background: #EAEAEA;
-    display: flex;
-}
-
-#table-cont {
-    height: 50%;
-    left: 33px;
-    right: 33px;
-    top: 60%;
-    background: #EAEAEA;
-    cursor:move;
-}
-
-#table-svg {
-    scroll-behavior: contain;
-    background: #FFFFFF;
-    border: 1px solid black;
-    width: calc(100% - 10px);
-    height: 100%;
-    margin-left: 5px;
-    margin-right: 5px;
-}
 
 #graph-controls {
     padding-left: 12px;
     width: 15%;
-    min-width: 270px;
+    min-width: 315px;
     height: 100%;
     left: 11px;
     top: 2.5%;
     
     background: #DCDCDC;
-    border: 1px solid #000000;
+    border-right: 1px solid #c8c8c8;
     box-sizing: border-box;
+}
+
+#group-controls {
+    padding-left: 25px;
+}
+
+.control {
+    margin-bottom: 5px;
+}
+
+#vis-cont {
+    width: 90%;
 }
 
 #graph-cont {
@@ -144,30 +136,76 @@ body {
 }
 
 #container {
-    width: calc(100% - 10px);
+    width: calc(100% - 2px);
     height: 100%;
     cursor:move;
-    margin-left: 5px;
-    margin-right: 5px;
-    border: 1px solid #000000;
 }
 
-#group-controls {
-    padding-left: 25px;
+#table-cont {
+    height: 50%;
+    top: 60%;
+    background: #EAEAEA;
+    cursor:move;
 }
 
-.control {
-    margin-bottom: 5px;
+#table-svg {
+    border-top: 1px solid #c8c8c8;
+    scroll-behavior: contain;
+    background: #FFFFFF;
+    width: calc(100% - 2px);
+    height: 100%;
 }
 
-.layer {
-    cursor: grab;
-}
 
-.graph_el {
-    cursor: auto;
-}
+
+
+
 
 .table_cell {
     cursor:auto;
+}
+
+line {
+    transition-duration: 0.1s;
+}
+
+path {
+    fill: none;
+    transition-duration: 0.1s;
+}
+
+select {
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+label {
+    font-weight: 400;
+}
+
+.graph_el {
+    position: relative;
+    transition-duration: 0.1s;
+    cursor: auto;
+}
+
+.layer {
+    z-index: 1;
+    cursor: grab;
+}
+
+.edge {
+    z-index: 2;
+}
+
+.clique_path {
+    z-index: 4;
+}
+
+.clique{
+    z-index: 5;
+}
+
+.node {
+    z-index: 5;
 }

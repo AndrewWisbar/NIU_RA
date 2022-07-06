@@ -5,7 +5,6 @@ class Clique {
     constructor(left, right, layer, num, edges) {
         this.layer = layer;
         this.num = num;
-        
         this.id = 'UNSET';
         
         this.showing = true;
@@ -39,7 +38,7 @@ class Clique {
 
 
         // Does this clique cause us to draw more or less edges?
-        this.good = (this.leftNodes.length + this.rightNodes.length < this.leftNodes.length * this.rightNodes.length)
+        this.good = (this.leftNodes.length + this.rightNodes.length <= this.leftNodes.length * this.rightNodes.length)
 
         if(DEBUG) {
             this.log();
@@ -85,6 +84,8 @@ class Clique {
         this.svg.setAttribute("id", this.id);
         this.svg.setAttribute("onmouseover", "selectClique(this.id)")
         this.svg.setAttribute("onmouseout", "deselectClique(this.id)")
+        this.svg.classList.add("clique")
+        this.svg.classList.add("graph_el");
         
         this.leftNodes.forEach(node => {
             
@@ -103,6 +104,8 @@ class Clique {
                                                  (this.rightNodes.length - 1) * 
                                                  0.07 + 2}px`)
             path.setAttribute("d", new_path);
+            path.classList.add("clique_path")
+            path.classList.add("graph_el");
             this.leftPaths[node.id] = path;
             cont.appendChild(path)
         })
@@ -124,6 +127,8 @@ class Clique {
                                                  (this.leftNodes.length - 1) * 
                                                  0.07 + 2}px`)
             this.rightPaths[node.id] = path;
+            path.classList.add("clique_path")
+            path.classList.add("graph_el");
             cont.appendChild(path)
         })
         cont.appendChild(this.svg);
@@ -138,7 +143,6 @@ class Clique {
         this.edges[node].forEach(edge => {
             let w = edge.weight;
             avWeight += w;
-
             if(nodeOnLeft)
                 this.highlightPath(this.rightPaths[edge.getOtherID(node)], type, w);
             else
@@ -213,6 +217,12 @@ class Clique {
         this.rightNodes.forEach(node => {
             this.rightPaths[node.id].setAttribute("opacity", "0")
         })
+
+        for(let key in this.edges)
+            this.edges[key].forEach(edge => {
+                if(!edge.showing)
+                    edge.show();
+            })
         this.showing = false;
     }
 
@@ -226,6 +236,12 @@ class Clique {
 
         this.rightNodes.forEach(node => {
             this.rightPaths[node.id].setAttribute("opacity", "1")
+        })
+
+        for(let key in this.edges)
+        this.edges[key].forEach(edge => {
+            if(edge.showing)
+                edge.hide();
         })
         this.showing = true;
     }
