@@ -9,7 +9,20 @@
 </head>
 
 <body>
-
+    <div id="popup_cont" class="hide">
+        <div id="blur_div"></div>
+        <div id="data_popup">
+            <label for="g-slider">Number of Layers: </label>
+            <input class="control" type="number" id="g-slider" min="2" max="5" value="2" onchange="update_groups(this.value)">
+            <h3 class="ctrl_title">Nodes Per Layer</h3>
+            <div id="layers_grid"></div>
+            <h3 class="ctrl_title">LCM Parameters</h3>
+            <div id="lcm_grid"></div>
+            <h3 class="ctrl_title">Layer Connections</h3>
+            <div id="slider_grid"></div>
+            <button id="generateBtn" class="ctrlButton" onclick="draw_graph()">Generate</button>
+        </div>
+    </div>
     <div id="title-bar" class="flex-container">
         <h1 class="main-title">Relationship Visualizer</h1>
         <button class="nav-btn" onclick="window.location.href='../index.html'">Home</button>
@@ -19,9 +32,7 @@
     <div id="main-container">
         <div id="graph-controls">
             <h3>Controls</h3>
-            <label for="g-slider">Layers</label>
-            <input class="control" type="number" id="g-slider" min="2" max="5" value="2" onchange="update_groups(this.value)"><br>
-            <div id="group-controls"></div>
+
             <label for="type-sel">Selection Highlighting Type</label> <br>
             <select class="control" onchange="color_table(this.value)" name="Edge Visualization Type" id="type-sel">
                 <option value="def">Default</option>
@@ -29,11 +40,11 @@
                 <option value="sze">Size Based</option>
                 <option value="dsh">Dashed Edges</option>
             </select> <br>
-            <button onclick="draw_graph()">Generate</button> <br>
-            <button id="clique_toggle" onclick="toggle_view()">Hide Cliques</button> 
-            <button id="good_toggle" onclick="toggle_good()">Show Only Good Cliques</button> <br>
+
+            <button class="ctrlButton" id="clique_toggle" onclick="toggle_view()">Hide Cliques</button> 
+            <button class="ctrlButton" id="good_toggle" onclick="toggle_good()">Show Only Good Cliques</button> <br>
             <input name="recursive" id="recursive" type="checkbox"><label for="recursive">Recursive Selection</label><br>
-            <!-- <input name="goodCliques" id="goodCliques" type="checkbox"><label for="goodCliques">Only Show "Good" Cliques</label><br> -->
+            <button class="ctrlButton" id="restart_btn" onclick="restart_graph()">Restart</button>
         </div>
         <div id="vis-cont">
             <div id="graph-cont">

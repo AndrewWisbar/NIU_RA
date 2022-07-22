@@ -40,7 +40,7 @@ class Clique {
         // Does this clique cause us to draw more or less edges?
         this.good = (this.leftNodes.length + this.rightNodes.length <= this.leftNodes.length * this.rightNodes.length)
 
-        if(DEBUG) {
+        if(true) {
             this.log();
         }
     }
@@ -207,15 +207,15 @@ class Clique {
     }
 
     hide() {
-        this.svg.setAttribute("opacity", "0");
+        this.svg.classList.add("hide")
         this.svg.removeAttribute("onmouseover")
         this.svg.removeAttribute("onmouseout")
         this.leftNodes.forEach(node => {
-            this.leftPaths[node.id].setAttribute("opacity", "0")
+            this.leftPaths[node.id].classList.add("hide")
         })
 
         this.rightNodes.forEach(node => {
-            this.rightPaths[node.id].setAttribute("opacity", "0")
+            this.rightPaths[node.id].classList.add("hide")
         })
 
         for(let key in this.edges)
@@ -227,15 +227,15 @@ class Clique {
     }
 
     show() {
-        this.svg.setAttribute("opacity", "1");
+        this.svg.classList.remove("hide")
         this.svg.setAttribute("onmouseover", "selectClique(this.id)")
         this.svg.setAttribute("onmouseout", "deselectClique(this.id)")
         this.leftNodes.forEach(node => {
-            this.leftPaths[node.id].setAttribute("opacity", "1")
+            this.leftPaths[node.id].classList.remove("hide")
         })
 
         this.rightNodes.forEach(node => {
-            this.rightPaths[node.id].setAttribute("opacity", "1")
+            this.rightPaths[node.id].classList.remove("hide")
         })
 
         for(let key in this.edges)

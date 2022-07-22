@@ -13,18 +13,20 @@
 
 
 
-button {
+.ctrlButton {
     padding: 10px;
-    margin: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
     background-color: var(--main-dark);
     border: none;
     border-radius: 5px;
     font-weight: 600;
     transition: 0.1s;
     color: var(--light-text);
+    width: 100%;
 }
 
-button:hover {
+.ctrlButton:hover {
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -103,6 +105,7 @@ body {
 
 #graph-controls {
     padding-left: 12px;
+    padding-right: 12px;
     width: 15%;
     min-width: 315px;
     height: 100%;
@@ -118,8 +121,49 @@ body {
     padding-left: 25px;
 }
 
+#slider_grid {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    margin: 0 auto;
+    /* width: calc(100px * 5);
+    height: calc(100px * 5); */
+    display: grid;
+    justify-content: center;
+    /* grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr); */
+}
+
+#lcm_grid {
+    margin-left: 25%;
+    width: 50%;
+    display: grid;
+    row-gap: 5px;
+    column-gap: 20px;
+    justify-content: center;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#layers_grid {
+    margin-left: 25%;
+    width: 50%;
+    row-gap: 5px;
+    column-gap: 20px;
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
 .control {
     margin-bottom: 5px;
+}
+
+.ctrl_title {
+    margin-bottom: 1ch;
+    margin-top: 1ch;
+    text-align: center;
+    border-bottom: 1px solid black;
 }
 
 #vis-cont {
@@ -156,8 +200,91 @@ body {
     height: 100%;
 }
 
+#data_popup {
+    position: absolute;
+    min-width: 820px;
+    top: 10vh;
+    left: 10vw;
+    width: 80vw;
+    height: 80vh;
+    padding: 2em;
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    z-index: 6;
+}
 
+#blur_div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000;
+    opacity: 66%;
+    z-index: 5;
+}
 
+#generateBtn {
+    width: inherit;
+    position: absolute;
+    bottom: 20px;
+}
+
+.grid-header {
+    margin: 0;
+    text-align: center;
+}
+
+.grid_ele {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    align-content: center;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.crossed {
+    background: url(crossed.svg);
+    background-size: 100%;
+}
+
+.connect_slider {
+    width: 90%;
+    left: 5%;
+    bottom: 10%;
+}
+
+.lcm_slider {
+    width: 90%;
+    margin: auto;
+}
+
+.connect_label {
+    display: block;
+    width: 90%;
+    height: 10%;
+    margin-top: 30%;
+    margin-bottom: 10%;
+    margin-left: 5%;
+    text-align: center;
+    font-style: bold;
+    font-family: sans-serif;
+}
+
+.connect_header {
+    display: block;
+    width: 90%;
+    height: 1em;
+    margin: 0 auto;
+    margin-top: calc(50% - 1em / 2);
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+
+}
 
 
 
@@ -185,7 +312,7 @@ label {
 
 .graph_el {
     position: relative;
-    transition-duration: 0.1s;
+
     cursor: auto;
 }
 
@@ -196,10 +323,12 @@ label {
 
 .edge {
     z-index: 2;
+    transition-duration: 0.1s;
 }
 
 .clique_path {
     z-index: 4;
+    transition-duration: 0.1s;
 }
 
 .clique{
@@ -208,4 +337,15 @@ label {
 
 .node {
     z-index: 5;
+}
+
+.hide {
+    display: none;
+}
+
+#restart_btn {
+    width: inherit;
+    position: absolute;
+    z-index: 0;
+    bottom: 20px;
 }

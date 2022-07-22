@@ -12,9 +12,9 @@ function update_groups(value) {
 }
 
 
-function change_label(slider, val1) {
+function change_label(slider) {
     let label = slider.labels;
-    label[0].innerHTML = `Connections Layer ${val1} (${slider.value}%)`;
+    label[0].innerHTML = `${slider.value}%`;
 }
 
 function change_lcm_label(slider, val1) {
@@ -77,6 +77,10 @@ function dragColumn(e) {
     console.log(e)
 }
 
+function restart_graph() {
+    controller.restart_graph();
+}
+
 function endDragColumn(e) {
     document.removeEventListener("mousemove", dragColumn);
     document.removeEventListener("mouseup", endDragColumn)
@@ -99,3 +103,4 @@ function pan(e) {
 function endPan(e) {
     controller.endPan(e.path);
 }
+

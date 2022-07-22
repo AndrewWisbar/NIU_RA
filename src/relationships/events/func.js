@@ -56,3 +56,43 @@ function clearElementChildren(ele) {
         ele.removeChild(ele.lastChild);
     }
 }
+
+function makeSlider(min, max, val, type, id) {
+    let slider = document.createElement("input");
+    slider.setAttribute("type", type);
+    slider.min = min;
+    slider.max = max;
+    slider.id = id;
+    slider.value = val;
+
+    return slider;
+}
+
+function invertArrayDimentions(inArr) {
+    let iDim = inArr.length;
+    let jDim = inArr[0].length;
+    let outArray = new Array(jDim);
+    
+    for(let i = 0; i < outArray.length; i++)
+        outArray[i] = new Array(iDim);
+
+    for(let i = 0; i < inArr.length; i++) {
+        for(let j = 0; j < inArr[i].length; j++) {
+            outArray[j][i] = inArr[i][j];
+        }
+    }
+
+    return outArray
+}
+
+function reverseCliques(inArr) {
+    let outArr = new Array(inArr.length);
+
+    for(let c = 0; c < inArr.length; c++) {
+        outArr[c] = new Array(2);
+        outArr[c][0] = inArr[c][1];
+        outArr[c][1] = inArr[c][0];
+    }
+
+    return outArr
+}

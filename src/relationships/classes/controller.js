@@ -5,12 +5,15 @@ class Controller {
     #data;
     #view;
     constructor(numGroups) {
-        this.slide_div = document.getElementById("group-controls");
+        this.lcm_grid = document.getElementById("lcm_grid");
+        this.slider_grid = document.getElementById("slider_grid");
+        this.layers_grid = document.getElementById("layers_grid")
+        this.popup = document.getElementById("popup_cont");
         
         this.swapLayer1 = null;
 
         this.node_sliders = [];
-        this.perc_sliders = [];
+        this.perc_sliders = {};
         this.lcm_sliders = [];
 
         this.highlight_select = document.getElementById("type-sel");
@@ -18,6 +21,7 @@ class Controller {
         this.cliques_check = document.getElementById("goodCliques");
 
         this.updateGroups(numGroups)
+        this.popupShow();
         this.#data = new Data(numGroups, this.getGroupSizes(), this.getPercents(), this.getLCMParams());
         this.#view = new View()
     }
@@ -30,92 +34,150 @@ class Controller {
         this.#view.toggleGood();
     }
 
+    popupShow() {
+        this.popup.classList.remove("hide");
+    }
+
+    popupHide() {
+        this.popup.classList.add("hide");
+    }
+
+    restart_graph() {
+        this.popupShow();
+    }
+
     /**
      * Handler for the user changing the number of layers in the graph
      * @param {Number} num the number of layers 
      */
     updateGroups(num) {
+        num = parseInt(num)
         let oldNodeVals = [];
-        let oldPercVals = [];
+        let oldPercVals = {};
         let oldLCMVals = [];
         this.node_sliders.forEach(slider => {
             oldNodeVals.push(slider.value);
         })
-        this.perc_sliders.forEach(slider => {
-            oldPercVals.push(slider.value);
-        })
+
+        for(let key in this.perc_sliders) {
+            oldPercVals[key] = this.perc_sliders[key].value;
+        }
+
         this.lcm_sliders.forEach(slider => {
             oldLCMVals.push(slider.value);
         })
-        this.node_sliders = [];
-        this.perc_sliders = [];
-        this.lcm_sliders = [];
-        this.slide_div.innerHTML = "";
-        for (let i = 0; i < num; i++) {
-            let slider = document.createElement("input");
-            let label = document.createElement("label");
-            label.setAttribute("for", "slider" + i);
-            label.innerHTML = i
-            slider.type = "number";
-            slider.min = GROUP_MIN;
-            slider.max = GROUP_MAX;
-            slider.id = "slider_" + i;
-            slider.setAttribute("onchange", `change_LCM(${i}, this.value)`)
-            if(i < oldNodeVals.length)
-                slider.value = oldNodeVals[i];
-            else
-                slider.value = 3;
-            
-            this.slide_div.appendChild(label)
-            this.slide_div.appendChild(slider);
-            this.slide_div.appendChild(document.createElement("br"))
 
+        this.node_sliders = [];
+        this.perc_sliders = {};
+        this.lcm_sliders = [];
+
+        this.layers_grid.innerHTML = "";
+        for (let i = 0; i < num; i++) {
+            let slider = makeSlider(GROUP_MIN, GROUP_MAX, 3, "number", "slider_" + i);
+            
+            let title = document.createElement("p")
+            title.innerHTML = i;
+            title.style.gridRow = 1;
+            title.classList.add("grid-header");
+            
+            slider.setAttribute("onchange", `change_LCM(${i}, this.value)`);
+            
+            slider.style.gridRow = 2;
+            slider.classList.add("lcm_slider")
+            this.layers_grid.appendChild(title);
+            this.layers_grid.appendChild(slider);
             this.node_sliders.push(slider);
         }
-
+        
+        this.slider_grid.innerHTML = "";
+        this.slider_grid.style.gridTemplateColumns = `repeat(${num + 1}, 1fr)`
+        this.slider_grid.style.gridTemplateRows = `repeat(${num + 1}, 1fr)`
+        this.slider_grid.style.width = `calc(${num} * 100px)`
+        this.slider_grid.style.height = `calc(${num} * 100px)`
         for (let i = 0; i < num; i++) {
-            let slider = document.createElement("input");
-            let label = document.createElement("label")
-            label.setAttribute("for", "con_" + i);
-            label.id = "label_con_" + i;
-            slider.setAttribute("type", "range");
-            slider.min = 1;
-            slider.max = 100;
-            slider.id = "con_" + i;
-            slider.setAttribute("oninput", `change_label(this, ${i})`)
-            slider.style.backgroundColor = ColorMapper.getLayerColor(i);
-            if(i < oldPercVals.length)
-                slider.value = parseInt(oldPercVals[i]);
-            else
-                slider.value = 100;
-            label.innerHTML = `Connections Layer ${i} (${slider.value}%)`;
-            this.perc_sliders.push(slider)
-            this.slide_div.appendChild(label)
-            this.slide_div.appendChild(slider);
-            this.slide_div.appendChild(document.createElement("br"))
+            for(let j = 0; j < num; j++) {
+                if(i == 0) {
+                    
+                    let div = document.createElement("div");
+                    let lab = document.createElement("p");
+                    lab.classList.add("connect_header");
+                    lab.innerHTML = `${j}`
+                    div.classList.add("grid_ele")
+                    div.style.gridColumn = `${j + 2} / span 1`;
+                    div.style.gridRow = `${1} / span 1`;
+                    div.appendChild(lab)
+                    this.slider_grid.appendChild(div);
+                }
+                
+                if (j == 0) {
+                    let div = document.createElement("div");
+                    let lab = document.createElement("p");
+                    lab.classList.add("connect_header");
+                    lab.innerHTML = `${i}`
+                    div.classList.add("grid_ele")
+                    div.style.gridColumn = `${1} / span 1`;
+                    div.style.gridRow = `${i + 2} / span 1`;
+                    div.appendChild(lab)
+                    this.slider_grid.appendChild(div);
+                }
+
+                if(j > i) {
+                    let value;
+                    if(`${i}-${j}` in oldPercVals)
+                        value = oldPercVals[`${i}-${j}`];
+                    else 
+                        value = 100;
+
+                    let slider = makeSlider(1, 100, value, "range", "con_" + i + "_" + j);
+                    slider.setAttribute("oninput", `change_label(this)`);
+                    slider.classList.add("connect_slider");
+
+                    let label = document.createElement("label");
+                    label.setAttribute("for", "con_" + i + "_" + j);
+                    label.innerHTML = `${value}%`
+                    label.classList.add("connect_label")
+                    
+                    let div = document.createElement("div");
+                    div.classList.add("grid_ele");
+                    div.style.gridColumn = `${j + 2} / span 1`;
+                    div.style.gridRow = `${i + 2} / span 1`;
+                    div.appendChild(label);
+                    div.appendChild(slider);
+                    
+                    this.perc_sliders[`${i}-${j}`] = slider;
+                    this.slider_grid.appendChild(div);
+                }
+                else {
+                    let div = document.createElement("div");
+                    div.classList.add("grid_ele")
+                    div.classList.add("crossed");
+                    div.style.gridColumn = `${j + 2} / span 1`;
+                    div.style.gridRow = `${i + 2} / span 1`;
+                    this.slider_grid.appendChild(div);
+                }
+            }
         }
+        let div = document.createElement("div");
+        div.classList.add("grid_ele")
+        div.style.gridColumn = `${1} / span 1`;
+        div.style.gridRow = `${1} / span 1`;
+        this.slider_grid.appendChild(div);
 
+
+        this.lcm_grid.innerHTML = "";
         for (let i = 0; i < num; i++) {
-            let slider = document.createElement("input");
-            let label = document.createElement("label")
-            label.setAttribute("for", `lcm_${i}`);
-            label.id = `lab_lcm_${i}`;
+            let slider = makeSlider(1, parseInt(this.node_sliders[i].value), 2, "range", "lcm_" + i)
+            let title = document.createElement("p")
+            title.innerHTML = i;
+            title.style.gridRow = 1;
+            title.classList.add("grid-header");
+
             slider.setAttribute("oninput", `change_lcm_label(this, ${i})`)
-            slider.style.backgroundColor = ColorMapper.getLayerColor(i);
-            slider.type = "range";
-            slider.min = 1;
-            slider.max = parseInt(this.node_sliders[i].value);
-            slider.id = "lcm_" + i;
+            slider.style.gridRow = 2;
             
-            if(i < oldLCMVals.length)
-            slider.value = parseInt(oldLCMVals[i]);
-            else
-            slider.value = 2;
-            label.innerHTML = `LCM Parameter for Layer ${i} (${slider.value})`;
+            this.lcm_grid.appendChild(title);
             this.lcm_sliders.push(slider)
-            this.slide_div.appendChild(label)
-            this.slide_div.appendChild(slider);
-            this.slide_div.appendChild(document.createElement("br"))
+            this.lcm_grid.appendChild(slider);
         }
     }
     
@@ -143,10 +205,10 @@ class Controller {
      *     of the graph
      */
     getPercents() {
-        let arr = [];
-        this.perc_sliders.forEach(slider => {
-            arr.push(slider.value);
-        })
+        let arr = {};
+        for(let key in this.perc_sliders) {
+            arr[key] = this.perc_sliders[key].value;
+        }
         return arr;
     }
 
@@ -162,12 +224,14 @@ class Controller {
      * Create the data for, and render the graph, based on user controls
      */
     render() {
+        this.popupHide();
         this.#view.displayLoading();
         
         this.#data.generate(this.getGroupSizes(), this.getPercents(), this.getLCMParams())
         if(DEBUG)
             this.#data.log();
         this.#data.fillInterfaces();
+        
         this.#view.renderGraph(this.#data.getLayers(), this.#data.getInterfaces());
     }
 

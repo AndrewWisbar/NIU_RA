@@ -88,9 +88,9 @@ class Data {
         let arr = new Array(layerSizes.length)
         for(let j = 0; j < arr.length; j++) {
             let subarr = new Array(layerSizes.length);
-            for(let i = 0; i < subarr.length; i++) {
+            for(let i = j+1; i < subarr.length; i++) {
                 if(!(i == j))
-                    subarr[i] = this.createEdgeArr(layerSizes[j], layerSizes[i], (percents[j] / 100.0));
+                    subarr[i] = this.createEdgeArr(layerSizes[j], layerSizes[i], (percents[`${j}-${i}`] / 100.0));
             }
             arr[j] = subarr;
         }
@@ -165,7 +165,7 @@ class Data {
 
             // For each combonation of layers
             for(let l = 0; l < this.#layers.length; l++) {
-                for(let k = 0; k < this.#layers.length; k++) {
+                for(let k = l+1; k < this.#layers.length; k++) {
                     if(l != k) {
                     // Parse the edges into a formated string for use by the LCM program
                     let dataString = "";
@@ -194,7 +194,7 @@ class Data {
                         success: catchData
                     })
 
-                    //this.dataSentNum++;
+                    this.dataSentNum++;
                 }
             }
         }
@@ -205,7 +205,6 @@ class Data {
      * @param {String} data 
      */
     storeData(data) {
-        // console.log("Recieved Data: ", data)
         let arr = Array();
         let lines = data.split(/\r?\n/);
 
@@ -214,14 +213,17 @@ class Data {
         for(let i = 0; i < inds.length; i++)
             inds[i] = parseInt(inds[i], 10);
 
-
+        console.log(this.#lcm_params)
         for(let l = 1; l < lines.length; l += 2) {
             let node_inds2 = strToNumArr(lines[l]);
             let node_inds1 = strToNumArr(lines[l+1]);
-            arr.push([node_inds1, node_inds2])
+            if(node_inds2.length >= this.#lcm_params[inds[1]])
+                arr.push([node_inds1, node_inds2])
         }
+
+
         this.maxSets[inds[0]][inds[1]] = arr;
-        //this.dataReturnedNum++;
+        this.dataReturnedNum++;
     }
 
     /**
@@ -229,8 +231,6 @@ class Data {
      *  graph
      */
     fillInterfaces() {
-        // console.log("Edges", this.#edges)
-        // console.log("Max Sets", this.maxSets)
         this.interfaces = new Array(this.layerOrder.length);
         for(let i = 0; i < this.interfaces.length; i++)
             this.interfaces[i] = new Array(this.layerOrder.length);
@@ -238,17 +238,27 @@ class Data {
         for(let i = 0; i < this.maxSets.length; i++)
             for(let j = 0; j < this.maxSets.length; j++)
                 if(i != j) {
-                    // console.log("index", i, j)
-                    // console.log("subset Edges: ", this.#edges[i][j])
-                    this.interfaces[i][j] = (new LayerInterface
-                                            (this.#layers[i], 
-                                            this.#layers[j], 
-                                            [i,j],  
-                                            this.maxSets[i][j],
-                                            this.#edges[i][j]))
+                    if(j > i) {
+                        this.interfaces[i][j] = (new LayerInterface
+                                                (this.#layers[i], 
+                                                this.#layers[j], 
+                                                [i,j],  
+                                                this.maxSets[i][j],
+                                                this.#edges[i][j]))
+                    }
+                    else {
+                        let revClique = reverseCliques(this.maxSets[j][i])
+                        console.log(revClique)
+                        let invEdges = invertArrayDimentions(this.#edges[j][i]);
+                        this.interfaces[i][j] = (new LayerInterface
+                            (this.#layers[j], 
+                            this.#layers[i], 
+                            [i,j],  
+                            revClique,
+                            invEdges))
+                    }
                 }
         this.maxSets = [];
-
     }
 
     /**
