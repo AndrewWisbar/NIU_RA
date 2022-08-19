@@ -40,7 +40,7 @@ class Clique {
         // Does this clique cause us to draw more or less edges?
         this.good = (this.leftNodes.length + this.rightNodes.length <= this.leftNodes.length * this.rightNodes.length)
 
-        if(true) {
+        if(DEBUG) {
             this.log();
         }
     }
@@ -235,7 +235,7 @@ class Clique {
         })
 
         this.rightNodes.forEach(node => {
-            this.rightPaths[node.id].classList.remove("hide")
+            this.rightPaths[node.id].classList.remove("hide")   
         })
 
         for(let key in this.edges)

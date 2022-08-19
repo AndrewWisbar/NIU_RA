@@ -233,6 +233,8 @@ class Controller {
         this.#data.fillInterfaces();
         
         this.#view.renderGraph(this.#data.getLayers(), this.#data.getInterfaces());
+
+        this.getIntersections();
     }
 
     /**
@@ -318,5 +320,71 @@ class Controller {
 
     endPan(path) {
         this.#view.endPan(path);
+    }
+
+    getIntersections() {
+        let count = 0;
+
+        let order = this.#view.getLayerOrder(); 
+        let nodes = this.#view.getLayers();
+        let intersections = new Map();
+        for(let l = 0; l < order.length - 1; l++) {
+            let layerCount = 0;
+            let layer = order[l];
+            let nextLayer = order[[l+1]]
+            let set = this.#data.getEdgeSet(layer, nextLayer);
+            console.log(set)
+            for(let i = 0; i < set.length; i++) {
+                let nodeCount = 0;
+                for(let j = 0; j < set[i].length; j++) {
+                    if(set[i][j] != 0) {
+                        let edgeCount = 0;
+                        for(let m = i + 1; m < set.length; m++) {
+                            for(let n = 0; n < set[i].length; n++) {
+                                let intersect = linearIntersect(nodes[layer][i], nodes[nextLayer][j], nodes[layer][m], nodes[nextLayer][n]);
+                                let key = `x${intersect.x}y${intersect.y}`;
+                                if((m > i && n < j) && ((set[i][j] != 0) && (set[m][n] != 0))) {
+                                    if(intersections.has(key)) {
+                                        intersections.set(key, intersections.get(key) + 1)
+                                    }
+                                    else {
+                                        intersections.set(key, 1);
+                                    }
+                                    edgeCount++;
+                                }
+                                else if (m < i && n > j && ((set[i][j] != 0) && (set[m][n] != 0))) {
+                                    if(intersections.has(key)) {
+                                        intersections.set(key, intersections.get(key) + 1)
+                                    }
+                                    else {
+                                        intersections.set(key, 1);
+                                    }
+                                    edgeCount++;
+                                }
+                            }
+                        }
+                        console.log(`       Edge ${i}-${j} count = ${edgeCount}`);
+                        nodeCount += edgeCount;
+                    }
+                }
+                console.log(`   Node ${i} count = ${nodeCount}`);
+                layerCount += nodeCount;
+            }
+            console.log(`--------------------\nLayer ${layer} count = ${layerCount}`);
+            count += layerCount;
+        }
+
+        console.log(`Total: ${count} intersections, at ${intersections.size} unique locations.`);
+        console.log(intersections)
+
+        intersections.forEach((value, key) => {
+            let vals = key.match(/[+-]?\d+(\.\d+)?/g);
+            let circ = document.createElementNS(svgns, "circle")
+            circ.setAttribute("cx", vals[0]);
+            circ.setAttribute("cy", vals[1]);
+            circ.setAttribute("r", 1);
+            circ.setAttribute("fill", "red")
+            this.#view.container.appendChild(circ)
+        })
     }
 }

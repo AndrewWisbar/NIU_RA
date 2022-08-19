@@ -736,4 +736,12 @@ class View {
     setViewBox(ele, vb) {
         ele.setAttribute("viewBox", `${vb.min_x} ${vb.min_y} ${vb.width} ${vb.height}`)
     }
+
+    getLayerOrder() {
+        return this.layerOrder;
+    }
+
+    getLayers() {
+        return this.layers;
+    }
 }

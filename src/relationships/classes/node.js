@@ -7,9 +7,9 @@
     constructor(x, y, r, layer, number) {
         this.x = x;
         this.y = y;
+        this.svg = document.createElementNS(svgns, "circle");
         this.r = r;
         this.edges = null;
-        this.svg = null;
 
         this.layer = layer;
         this.number = number;
@@ -21,7 +21,6 @@
      * @param {HTMLElement} cont the SVG container the node is to be drawn in
      */
     draw(cont) {
-        this.svg = document.createElementNS(svgns, "circle");
         cont.appendChild(this.svg);
         this.svg.setAttribute("cx", this.x);
         this.svg.classList.add("graph_el");

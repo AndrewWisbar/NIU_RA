@@ -134,7 +134,7 @@ class Data {
      * @param {Integer} ind index of the array to return 
      * @returns an array of edges or "false"
      */
-    getEdgeSet(ind1) {
+    getEdgeSet(ind1, ind2) {
         if(ind1 < 0 || ind1 > this.#edges.length - 1)
             return false;
         if(ind2 < 0 || ind2 > this.#edges.length - 1)

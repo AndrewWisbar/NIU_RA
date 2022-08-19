@@ -96,3 +96,24 @@ function reverseCliques(inArr) {
 
     return outArr
 }
+
+/**
+ * Get the point at which two lines connecting the nodes intersect
+ * 
+ * n1 is connected to n2, n3 is conntected to n4.
+ * @param {*} n1 
+ * @param {*} n2 
+ * @param {*} n3 
+ * @param {*} n4 
+ */
+function linearIntersect(n1, n2, n3, n4) {
+    let m1 = (n1.y - n2.y) / (n1.x - n2.x);
+    let m2 = (n3.y - n4.y) / (n3.x - n4.x);
+    let b1 = -n1.x * m1 + n1.y;
+    let b2 = -n3.x * m2 + n3.y;
+
+    let interX = (b2 - b1) / (m1 - m2);
+    let interY = m1 * interX + b1;
+
+    return {x: interX.toFixed(2), y: interY.toFixed(2)};
+}
