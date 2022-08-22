@@ -225,6 +225,7 @@ class Controller {
      */
     render() {
         this.popupHide();
+        console.clear();
         this.#view.displayLoading();
         
         this.#data.generate(this.getGroupSizes(), this.getPercents(), this.getLCMParams())
@@ -233,8 +234,9 @@ class Controller {
         this.#data.fillInterfaces();
         
         this.#view.renderGraph(this.#data.getLayers(), this.#data.getInterfaces());
-
-        this.getIntersections();
+        if(DEBUG) {
+            this.getIntersections();
+        }
     }
 
     /**
@@ -334,14 +336,14 @@ class Controller {
             let nextLayer = order[[l+1]]
             let set = this.#data.getEdgeSet(layer, nextLayer);
             console.log(set)
-            for(let i = 0; i < set.length; i++) {
+            for(let i = 0; i < nodes[layer].getNumNodes(); i++) {
                 let nodeCount = 0;
-                for(let j = 0; j < set[i].length; j++) {
+                for(let j = 0; j < nodes[nextLayer].getNumNodes(); j++) {
                     if(set[i][j] != 0) {
                         let edgeCount = 0;
-                        for(let m = i + 1; m < set.length; m++) {
-                            for(let n = 0; n < set[i].length; n++) {
-                                let intersect = linearIntersect(nodes[layer][i], nodes[nextLayer][j], nodes[layer][m], nodes[nextLayer][n]);
+                        for(let m = i + 1; m < nodes[layer].getNumNodes(); m++) {
+                            for(let n = 0; n < nodes[nextLayer].getNumNodes(); n++) {
+                                let intersect = linearIntersect(nodes[layer].getNode(i), nodes[nextLayer].getNode(j), nodes[layer].getNode(m), nodes[nextLayer].getNode(n));
                                 let key = `x${intersect.x}y${intersect.y}`;
                                 if((m > i && n < j) && ((set[i][j] != 0) && (set[m][n] != 0))) {
                                     if(intersections.has(key)) {
@@ -384,7 +386,7 @@ class Controller {
             circ.setAttribute("cy", vals[1]);
             circ.setAttribute("r", 1);
             circ.setAttribute("fill", "red")
-            this.#view.container.appendChild(circ)
+            this.#view.graphView.getSVG().appendChild(circ)
         })
     }
 }

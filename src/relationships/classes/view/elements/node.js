@@ -57,8 +57,10 @@
     select() {
         this.svg.setAttribute("fill", ColorMapper.getLayerColor(this.layer));
         let tab = document.getElementById(this.id + "_tab");
-        tab.setAttribute("fill", ColorMapper.getLayerColor(this.layer));
-        tab.setAttribute("stroke", "black");
+        if(tab) {
+            tab.setAttribute("fill", ColorMapper.getLayerColor(this.layer));
+            tab.setAttribute("stroke", "black");
+        }
     }
 
     /**
@@ -67,10 +69,15 @@
     deselect() {
         this.svg.setAttribute("fill", ColorMapper.nodeColor)
         let tab = document.getElementById(this.id + "_tab");
-        tab.setAttribute("fill", ColorMapper.getLayerColor(this.layer, 127));
-        tab.setAttribute("stroke", ColorMapper.getLayerColor(this.layer));
+        if(tab) {
+            tab.setAttribute("fill", ColorMapper.getLayerColor(this.layer, 127));
+            tab.setAttribute("stroke", ColorMapper.getLayerColor(this.layer));
+        }
     }
 
+    getSVG() {
+        return this.svg;
+    }
 
 }
 

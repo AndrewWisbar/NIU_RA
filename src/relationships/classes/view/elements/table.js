@@ -25,13 +25,14 @@ class Table {
     create() {
         let rows, cols;
 
-        rows = this.ele[1].length + this.headerFlags[0];
-        cols = this.ele[0].length + this.headerFlags[1];
+        rows = this.ele[1] + this.headerFlags[0];
+        cols = this.ele[0] + this.headerFlags[1];
         for(let j = 0; j < rows; j++) {
             for(let i = 0; i < cols; i++) {
                 if(!((this.headerFlags[0] && this.headerFlags[1]) && (i == 0 && j == 0))) {
                     let index = {i: (this.headerFlags[1]) ? i-1 : i, j: (this.headerFlags[0]) ? j-1 : j};
                     let entry = document.createElementNS(svgns, "rect");
+                    
                     this.cont.appendChild(entry);
                     entry.setAttribute("x", this.org.x + (i * CELL_W));
                     entry.setAttribute("y", this.org.y + (j * CELL_H));

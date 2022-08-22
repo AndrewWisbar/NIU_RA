@@ -136,10 +136,17 @@ class Data {
      */
     getEdgeSet(ind1, ind2) {
         if(ind1 < 0 || ind1 > this.#edges.length - 1)
-            return false;
+            return null;
         if(ind2 < 0 || ind2 > this.#edges.length - 1)
-            return false;
-        return this.#edges[ind1][ind2];    
+            return null;
+        if(ind1 == ind2)
+            return null;
+
+        if(ind1 < ind2)
+            return this.#edges[ind1][ind2];    
+
+        if(ind2 < ind1)
+            return this.#edges[ind2][ind1];    
     }
 
     /**
@@ -213,7 +220,6 @@ class Data {
         for(let i = 0; i < inds.length; i++)
             inds[i] = parseInt(inds[i], 10);
 
-        console.log(this.#lcm_params)
         for(let l = 1; l < lines.length; l += 2) {
             let node_inds2 = strToNumArr(lines[l]);
             let node_inds1 = strToNumArr(lines[l+1]);
@@ -248,7 +254,6 @@ class Data {
                     }
                     else {
                         let revClique = reverseCliques(this.maxSets[j][i])
-                        console.log(revClique)
                         let invEdges = invertArrayDimentions(this.#edges[j][i]);
                         this.interfaces[i][j] = (new LayerInterface
                             (this.#layers[j], 
