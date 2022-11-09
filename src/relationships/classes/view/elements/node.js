@@ -14,6 +14,8 @@
         this.layer = layer;
         this.number = number;
         this.id = "l" + layer + "n" + number;
+        this.selectDelegate = new Delegate();
+        this.deselectDelegate = new Delegate();
     }
 
     /**
@@ -29,8 +31,10 @@
         this.svg.setAttribute('id', this.id);
         this.svg.setAttribute("fill", NODE_COL);
         this.svg.setAttribute("stroke", 'rgb(0, 0, 0)');
-        this.svg.setAttribute("onmouseover", "select_node(this)");
-        this.svg.setAttribute("onmouseout", "deselect_node(this)");
+
+        let self = this;
+        this.svg.onmouseover = function() {self.select()};
+        this.svg.onmouseout = function() {self.deselect()};
         this.svg.classList.add("node");
         this.svg.classList.add("graph_el");
     }
@@ -55,6 +59,22 @@
      * Highlight this node visually
      */
     select() {
+        this.selectDelegate.invoke(this);
+        this.highlight();
+    }
+
+    /**
+     * Reset the node after being highlighted
+     */
+    deselect() {
+        this.deselectDelegate.invoke();
+        this.reset();
+    }
+
+    /**
+     * Visually highlight this node
+     */
+    highlight() {
         this.svg.setAttribute("fill", ColorMapper.getLayerColor(this.layer));
         let tab = document.getElementById(this.id + "_tab");
         if(tab) {
@@ -64,9 +84,9 @@
     }
 
     /**
-     * Reset the node after being highlighted
+     * Visually reset this node to default state
      */
-    deselect() {
+    reset() {
         this.svg.setAttribute("fill", ColorMapper.nodeColor)
         let tab = document.getElementById(this.id + "_tab");
         if(tab) {
@@ -75,6 +95,9 @@
         }
     }
 
+    /**
+     * Get the svg circle element for this node
+     */
     getSVG() {
         return this.svg;
     }

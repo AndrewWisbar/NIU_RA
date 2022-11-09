@@ -113,7 +113,7 @@ label {
     height: calc(100vh - 90px);
     width: 100vw;
     display:grid;
-    grid-template-columns: 20% 80%;
+    grid-template-columns: 15% 85%;
     grid-template-rows: 50% 50%;
     background: #FFFFFF;
 }
@@ -143,14 +143,22 @@ label {
     grid-row-start: 1;
     grid-row-end: 2;
     height: 100%;
-    
+    display: flex;
     background: #FFFFFF;
+}
+
+#view-grid {
+    width:10%;
+    display: grid;
+    grid-template-columns: 20% 80%;
+    grid-template-rows: repeat(5, 1fr);
+    place-items: center;
+    background-color: #DCDCDC;
 }
 
 #container {
     width: calc(100% - 2px);
     height: 100%;
-    cursor:move;
 }
 
 #table-cont {
@@ -161,7 +169,6 @@ label {
     height: 100%;
     width: 100%;
     background: #EAEAEA;
-    cursor:move;
 }
 
 #table-svg {
@@ -216,6 +223,17 @@ label {
     transition: 0.1s;
     color: var(--light-text);
     width: 100%;
+}
+
+.layer-check {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: url(eye-off.svg);
+}
+
+.layer-check:checked {
+    background: url(eye.svg);
 }
 
 .ctrlButton:hover {
@@ -352,6 +370,12 @@ label {
     transition-duration: 0.1s;
 }
 
+.anti_edge {
+    z-index: 2;
+    transition-duration: 0.1s;
+    stroke-dasharray: 5 5;
+}
+
 .clique_path {
     z-index: 4;
     transition-duration: 0.1s;
@@ -365,9 +389,21 @@ label {
     z-index: 5;
 }
 
+.no-cursor {
+    cursor: none;
+}
+
+.panable {
+    cursor: move;
+}
+
 #restart_btn {
     width: calc(100% - 24px);
     position: absolute;
     z-index: 0;
     bottom: 20px;
 }
+
+/**********************/
+/*       Content      */
+/**********************/

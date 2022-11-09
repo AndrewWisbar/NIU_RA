@@ -12,7 +12,7 @@ class TablePane extends SVGPane {
      * @param {Array} layerNums An array of integers representing the number of nodes in each layer of the graph 
      * @param {*} interfaces An array of objects representing the connections between two layers of the graph
      */
-     createTable(layerNums, order, interfaces, layerObjs) {
+     createTable(layerNums, order, interfaces, layerObjs, nodes) {
         // DrawnFlags will be used to determine which layers headers still need to be drawn
         let drawnFlags = new Array(layerNums.length);
         for(let l = 0; l < layerNums.length; l++) {
@@ -34,7 +34,7 @@ class TablePane extends SVGPane {
         for(let l = 0; l < layerNums.length - 1; l++) {
             let i = order[l];
             let j = order[l+1];
-            this.drawTable(l, interfaces[i][j].e, org, drawnFlags, layerObjs, order);
+            this.drawTable(l, interfaces[i][j].e, org, drawnFlags, layerObjs, order, nodes);
             
             // Determine the next origin point
             let offset = {x:0, y:0};
@@ -82,7 +82,7 @@ class TablePane extends SVGPane {
      * @param {Array} edges an array of objects representing edges in the table
      * @param {Object} org the origin point of this individual matrix
      */
-    drawTable(layer_ind, edges, org, drawnFlags, layers, order) {
+    drawTable(layer_ind, edges, org, drawnFlags, layers, order, nodes) {
         let l1ind, l2ind, color1, color2;
 
         // for every other layer, the layer on the top vs. on the side needs to be swapped
@@ -108,6 +108,6 @@ class TablePane extends SVGPane {
         let flags = [drawnFlags[l1ind], drawnFlags[l2ind]];
 
         // Create and color the indivudual boxes
-        this.tables.push(new Table(l, edges, org, flags, c, layer_ind, l1ind, l2ind, id_ord, this.tableG))
+        this.tables.push(new Table(l, edges, org, flags, c, layer_ind, l1ind, l2ind, id_ord, this.tableG, [nodes[l1ind], nodes[l2ind]]))
     }
 }

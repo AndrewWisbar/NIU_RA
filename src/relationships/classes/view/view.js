@@ -7,6 +7,13 @@ class View {
         this.tableView = new TablePane(document.getElementById("table-svg"));
 
         this.layerOrder = [];
+
+        var self = this;
+
+        // Layer Visibility Methods 
+        document.getElementById("edges-check").onclick = function() {self.graphView.toggleEdges(this)}
+        document.getElementById("cliques-check").onclick = function() {self.graphView.toggleCliques(this)}
+        document.getElementById("missingedges-check").onclick = function() {self.graphView.toggleMissingEdges(this)}
     }
 
     /**
@@ -42,7 +49,8 @@ class View {
         this.cliques = [];
 
         this.graphView.render(layers, this.layerOrder, inter);
-        this.tableView.createTable(layers, this.layerOrder, inter, this.graphView.getLayers());
+        console.log(this.graphView.getLayers())
+        this.tableView.createTable(layers, this.layerOrder, inter, this.graphView.getLayers(), this.graphView.getLayers());
     }
 
     /**
@@ -99,14 +107,6 @@ class View {
         this.graphView.deselectClique(id);
     }
 
-    toggleView() {
-        this.graphView.toggleView();
-    }
-
-    toggleGood() {    
-        this.graphView.toggleGood();
-    }
-
     swapColumns(layer1, layer2) {
         let ind1 = this.layerOrder.indexOf(layer1);
         let ind2 = this.layerOrder.indexOf(layer2);
@@ -160,5 +160,25 @@ class View {
 
     getLayers() {
         return this.graphView.getLayers();
+    }
+
+    getClique(id) {
+        return this.graphView.getClique(id);
+    }
+    
+    getGraphView() {
+        return this.graphView();
+    }
+
+    dragCliqueStart(id, pos) {
+        this.graphView.dragCliqueStart(id, pos);
+    }
+
+    dragClique(id, pos) {
+        this.graphView.dragClique(id, pos);
+    }
+
+    dragCliqueEnd(id) {
+        this.graphView.dragCliqueEnd(id);
     }
 }

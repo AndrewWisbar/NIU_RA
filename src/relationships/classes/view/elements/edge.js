@@ -2,7 +2,7 @@
  * A connection between two nodes in the graph
  */
 class Edge {
-    constructor(node1, node2, weight, cliques, container) {
+    constructor(node1, node2, weight, cliques) {
         this.leftNode = node1;
         this.rightNode = node2;
         this.id = this.leftNode.id + this.rightNode.id;
@@ -14,18 +14,23 @@ class Edge {
         this.y2 = node2.y;
         this.weight = weight;
 
-        this.showing = true;
-        this.draw(container);
+        this.showing = false;
+
+        this.leftNode.selectDelegate.subscribe({fn: this.highlight, scope: this})
+        this.rightNode.selectDelegate.subscribe({fn: this.highlight, scope: this})
+
+        this.leftNode.deselectDelegate.subscribe({fn: this.reset, scope: this})
+        this.rightNode.deselectDelegate.subscribe({fn: this.reset, scope: this})
     }
 
     /**
-     * Display the edge to the user
+     * Create the svg element for this element
      * @param {HTMLElement} cont the SVG element the edge will be a child of 
      */
     draw(cont) {
         this.svg = document.createElementNS(svgns, "line");
-        if(this.cliques.length)
-            this.svg.setAttribute("opacity", 0);
+
+        this.svg.classList.add("hide");
 
         cont.appendChild(this.svg);
         this.svg.setAttribute("x1", this.x1);
@@ -38,34 +43,17 @@ class Edge {
         this.setColor("black")
     }
     
-    highlight(type) {
-        switch(type) {
-            default:
-            case "def":
-                this.setColMap();
-                break;
-
-            case "gry":
-                this.setGreyScale();
-                break;
-
-            case "sze":
-                this.setSize();
-                break;
-
-            case "dsh":
-                this.setDash();
-                break;
-        }
+    /**
+     * Highlight this edge
+     */
+    highlight() {
+        this.leftNode.highlight();
+        this.rightNode.highlight();
+        ColorMapper.highlight(this.svg, this.weight);
+        this.highlightTable(ColorMapper.getHighlightColor(this.weight));
         this.isHighlighted = true;
     }
-    /**
-     * Set the color of the SVG element to a specific color
-     * @param {String} col a string representing a color incoding 
-     */
-    setColor(col) {
-        this.svg.setAttribute("stroke", col);
-    }
+
 
     /**
      * Get the weight of this edge
@@ -87,6 +75,18 @@ class Edge {
         return (id == this.leftNode.id) ? this.rightNode.id : this.leftNode.id;
     }
 
+        /**
+     * Given the ID of one of the nodes this edge connects, return the other
+     * @param {String} id id of one of the nodes connected by this edge 
+     * @returns the other node or false
+     */
+    getOtherNode(id) {
+        if(id != this.leftNode.id && id != this.rightNode.id)
+            return false;
+        
+        return (id == this.leftNode.id) ? this.rightNode : this.leftNode;
+    }
+
     /**
      * Get the color encoding for Greyscale highlighting
      * @returns a string representing a color encoding
@@ -103,56 +103,18 @@ class Edge {
         return ColorMapper.getColor(this.weight);
     }
 
-    /**
-     * Set the color of this edge in greyscale
-     */
-    setGreyScale() {
-        let col = ColorMapper.getGreyScale(this.weight);
-        this.svg.setAttribute("stroke-width", 5)
-        this.setColor(col);
+    highlightTable(col) {
         let tab = document.getElementById(this.id + "_tab");
         if(tab)
             tab.setAttribute("fill", col);
-    }
-
-    /**
-     * Set the color of this edge for default highlighting
-     */
-    setColMap() {
-        let col =  ColorMapper.getColor(this.weight);
-
-        this.svg.setAttribute("stroke-width", 5);
-        this.setColor(col);
-        let tab = document.getElementById(this.id + "_tab");
-        if(tab)
-            tab.setAttribute("fill", col);
-    }
-
-    /**
-     * Set the size of this edge based on the weight
-     */
-    setSize() {
-        this.svg.setAttribute("stroke-width", ColorMapper.getSize(this.weight))
-        let tab = document.getElementById(this.id + "_tab");
-        if(tab)
-            tab.setAttribute("fill", this.getColMap());
-    }
-
-    /**
-     * Set the dash array of this edge based on the weight
-     */
-    setDash() {
-        this.svg.setAttribute("stroke-dasharray", ColorMapper.getDashArray(this.weight));
-        this.svg.setAttribute("stroke-width", 5);
-        let tab = document.getElementById(this.id + "_tab");
-        if(tab)
-            tab.setAttribute("fill", this.getColMap());
     }
 
     /**
      * Reset this edge after being highlighted
      */
     reset() {
+        this.leftNode.reset();
+        this.rightNode.reset();
         this.setColor("rgba(0,0,0,1)")
         this.svg.setAttribute("stroke-width", 1);
         this.svg.removeAttribute("stroke-dasharray")
@@ -162,13 +124,27 @@ class Edge {
             tab.setAttribute("fill", NODE_COL);
     }
 
+    /**
+     * Display the svg for this edge
+     */
     show() {
-        this.svg.setAttribute("opacity", "100")
+        this.svg.classList.remove("hide")
         this.showing = true;
     }
 
+    /**
+     * Hide the svg for this edge
+     */
     hide() {
-        this.svg.setAttribute("opacity", "0")
+        this.svg.classList.add("hide")
         this.showing = false;
+    }
+
+    /**
+     * The the color of this edge
+     * @param {String} color color string to set the edge to
+     */
+    setColor(color) {
+        this.svg.setAttribute("stroke", color)
     }
 }

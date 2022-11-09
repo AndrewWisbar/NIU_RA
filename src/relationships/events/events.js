@@ -27,40 +27,8 @@ function change_LCM(num, val) {
     controller.updateLCM(num, val)
 }
 
-function select_node(node) {
-    controller.selectNode(node.id);
-}
-
-function deselect_node(node) {
-    controller.deselectNode(node.id);
-}
-
 function catchData(data) {
     controller.storeData(data)
-}
-
-function selectTableNode(tab) {
-    controller.selectNode(tab.id.replace("_tab", ""));
-}
-
-function deselectTableNode(tab) {
-    controller.deselectNode(tab.id.replace("_tab", ""));
-}
-
-function selectClique(id) {
-    controller.selectClique(id);
-}
-
-function deselectClique(id) {
-    controller.deselectClique(id);
-}
-
-function toggle_view() {
-    controller.toggleView();
-}
-
-function toggle_good() {
-    controller.toggleGood();
 }
 
 function swapColumns(e) {
@@ -103,4 +71,19 @@ function pan(e) {
 function endPan(e) {
     controller.endPan(e.path);
 }
+
+function dragCliqueStart(id, e) {
+    pos = {x: e.offsetX, y:e.offsetY};
+    controller.dragCliqueStart(id, pos);
+}
+
+function dragClique(id, e) {
+    pos = {x: e.offsetX, y:e.offsetY};
+    controller.dragClique(id, pos);
+}
+
+function dragCliqueEnd(id) {
+    controller.dragCliqueEnd(id);
+}
+
 

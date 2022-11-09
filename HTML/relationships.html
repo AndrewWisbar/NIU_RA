@@ -33,7 +33,7 @@
         <div id="control-container">
             <h3>Controls</h3>
 
-            <label for="type-sel">Selection Highlighting Type</label> <br>
+            <label for="type-sel">Highlighting Type</label> <br>
             <select class="control" onchange="color_table(this.value)" name="Edge Visualization Type" id="type-sel">
                 <option value="def">Default</option>
                 <option value="gry">Greyscale Coloring</option>
@@ -41,16 +41,23 @@
                 <option value="dsh">Dashed Edges</option>
             </select> <br>
 
-            <button class="ctrlButton" id="clique_toggle" onclick="toggle_view()">Hide Cliques</button> 
-            <button class="ctrlButton" id="good_toggle" onclick="toggle_good()">Show Only Good Cliques</button> <br>
             <input name="recursive" id="recursive" type="checkbox"><label for="recursive">Recursive Selection</label><br>
             <button class="ctrlButton" id="restart_btn" onclick="restart_graph()">Restart</button>
         </div>
         <div id="graph-cont">
-            <svg id="container"></svg>
+            <svg id="container" class="panable">
+            </svg>
+            <div id="view-grid">
+                <input type="checkbox" id="edges-check" class="layer-check" checked>
+                <label for="edges-check">Edges</label>
+                <input type="checkbox" id="cliques-check" class="layer-check" onclick=toggleCliques() checked >
+                <label for="cliques-check">Cliques</label>
+                <input type="checkbox" id="missingedges-check" class="layer-check" onclick=toggleMissingEdges()>
+                <label for="missingedges-check">Missing Edges</label>
+            </div>
         </div>
         <div id="table-cont">
-            <svg id="table-svg"> 
+            <svg id="table-svg" class="panable"> 
 
             </svg>
         </div>
@@ -58,15 +65,19 @@
 
     <script src="../lib/d3.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="../src/delegate.js"></script>
     <script src="../src/relationships/events/func.js"></script>
     <script src="../settings.js"></script>
-    <script src="../src/relationships/classes/view//elements/layer.js"></script>
+    <script src="../src/relationships/classes/view/elements/layer.js"></script>
     <script src="../src/relationships/classes/view/colormap.js"></script>
     <script src="../src/relationships/classes/controller.js"></script>
     <script src="../src/relationships/classes/view/elements/clique.js"></script>
-    <script src="../src/relationships/classes/view//elements/table.js"></script>
+    <script src="../src/relationships/classes/view/elements/cliquegroup.js"></script>
+    <script src="../src/relationships/classes/view/elements/tableheader.js"></script>
+    <script src="../src/relationships/classes/view/elements/table.js"></script>
     <script src="../src/relationships/classes/layerinterface.js"></script>
     <script src="../src/relationships/classes/view/elements/edge.js"></script>
+    <script src="../src/relationships/classes/view/elements/missingedge.js"></script>
     <script src="../src/relationships/classes/view/elements/node.js"></script>
     <script src="../src/relationships/classes/view/svgpane.js"></script>
     <script src="../src/relationships/classes/view/graphpane.js"></script>

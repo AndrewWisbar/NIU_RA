@@ -10,14 +10,20 @@ class GraphPane extends SVGPane {
 
         this.layers = []; // Hold Layer objects that make up the graph
         this.layerOrder = []; // given a positional index returns layer in that position
+        this.missingEdges = {};
         this.edges = {}; // given a node id(lXnY) get an array of connected edges
         this.cliques = []; // hold all the cliques in the graph
 
         this.cliqueView = true;
+        this.edgeView = true;
+        this.missingEdgeView = false;
+
         this.showAllCliques = true;
     }
 
-
+    /**
+     * Display a loading message
+     */
     displayLoading() {
         let text = document.createElementNS(svgns, "text");
         text.innerHTML = "Loading ...";
@@ -28,6 +34,12 @@ class GraphPane extends SVGPane {
         this.svg.appendChild(text);
     }
 
+    /**
+     * Render the graph display
+     * @param {Array} layers the number of nodes in each layer
+     * @param {Array} order the order of the layers 
+     * @param {Array} inter array of edge interface objects
+     */
     render(layers, order, inter) {
         this.xSpace = this.contWidth / 5;
         this.ySpace = this.contHeight / GROUP_MAX;
@@ -42,6 +54,7 @@ class GraphPane extends SVGPane {
         this.createNodes(layers, order);
         this.drawEdges(inter, order);
         this.drawCliques(inter, layers, order);
+        //this.findNodeCenters();
         this.drawNodes(layers);
     }
 
@@ -55,7 +68,7 @@ class GraphPane extends SVGPane {
         this.layers = new Array(layers.length);
         for(let l = 0; l < layers.length; l++) {
             let i = order[l];
-            this.layers[l] = new Layer(this.xSpace * i + (this.xSpace * (NODE_SIZE + NODE_SIZE/2)), this.xSpace * NODE_SIZE, l, layers[l], this.ySpace, this.svg);
+            this.layers[i] = new Layer(this.xSpace * l + (this.xSpace * (NODE_SIZE + NODE_SIZE/2)), this.xSpace * NODE_SIZE, i, layers[i], this.ySpace, this.svg);
         }
     }
 
@@ -98,21 +111,26 @@ class GraphPane extends SVGPane {
             let ind1 = order[l]; // get the index of the first layer
             let ind2 = order[l+1]; // get the index of the second layer
             let edges = interfaces[ind1][ind2].e; // get the set of edges that connect them
-
-
             for(let i = 0; i < edges.length; i++) {
                 for(let j = 0; j < edges[i].length; j++) {
+                    let node1 = this.layers[ind1].getNode(i);
+                    let node2 = this.layers[ind2].getNode(j);
+
                     if(edges[i][j].w > 0) { // if the edge exists
 
                         // create the new edge object
-                        let node1 = this.layers[ind1].getNode(i);
-                        let node2 = this.layers[ind2].getNode(j);
-                        let e = new Edge(node1, node2, edges[i][j].w, edges[i][j].inClique, this.svg);
+                        let e = new Edge(node1, node2, edges[i][j].w, edges[i][j].inClique);
                         
-                        // Call show to ensure that the svg for edge is created.
-                        e.show();
+                        // Create edge svg
+                        e.draw(this.svg);
+                        
+                        // decide whether to show the edge
+                        if(this.edgeView && (!this.cliqueView || e.cliques.length == 0)) {
+                            e.show();
+                        }
+                        
 
-
+                        // append the edge to the edges array
                         if(!(("l" + ind1 + "n" + i) in this.edges)) {
                             this.edges["l" + ind1 + "n" + i] = [];
                             this.edges["l" + ind1 + "n" + i].push(e);
@@ -126,9 +144,28 @@ class GraphPane extends SVGPane {
                         }
                         else 
                             this.edges["l" + ind2 + "n" + j].push(e)
+                    }
+                    else {
+                        let e = new MissingEdge(node1, node2);
+                        
+                        e.draw(this.svg);
+                        if(this.missingEdgeView)
+                            e.show();
 
 
-                
+                        if(!(("l" + ind1 + "n" + i) in this.missingEdges)) {
+                            this.missingEdges["l" + ind1 + "n" + i] = [];
+                            this.missingEdges["l" + ind1 + "n" + i].push(e);
+                        }
+                        else
+                            this.missingEdges["l" + ind1 + "n" + i].push(e)
+
+                        if(!(("l" + ind2 + "n" + j) in this.missingEdges)) {
+                            this.missingEdges["l" + ind2 + "n" + j] = [];
+                            this.missingEdges["l" + ind2 + "n" + j].push(e)
+                        }
+                        else 
+                            this.missingEdges["l" + ind2 + "n" + j].push(e)
                     }
                 }
             }
@@ -145,6 +182,7 @@ class GraphPane extends SVGPane {
         for(let l = 0; l < this.layers.length - 1; l++) {
             let i = order[l];
             let j = order[l+1];
+            
             let arr = new Array(interfaces[i][j].num_cliques);
 
             // For each clique between these two layers
@@ -202,6 +240,7 @@ class GraphPane extends SVGPane {
         }
     }
 
+
     getNode(id) {
         let nums = idToIndex(id);
         return this.layers[nums.l].getNode(nums.n);
@@ -209,10 +248,8 @@ class GraphPane extends SVGPane {
 
     selectNode(id, type, clique, order) {
         let node = this.getNode(id);
-        console.log(node);
         node.select();
         let edges = this.edges[id];
-        console.log(edges);
         if(!edges)
             return;
 
@@ -230,25 +267,29 @@ class GraphPane extends SVGPane {
                     c.highlightNode(node.id, type);
                 }
             })
-
-        edges.forEach(edge => {
-            if(clique == null || edge.cliques.includes(clique)) {
-                edge.highlight(type)
-                this.getNode(edge.getOtherID(id)).select();
-            }
-            
-        });
+        if(edges) {
+            edges.forEach(edge => {
+                console.log(edge.showing)
+                if((clique == null || edge.cliques.includes(clique)) && edge.showing) {
+                    edge.highlight(type)
+                    this.getNode(edge.getOtherID(id)).select();
+                }  
+            });
+        }
     }
 
     deselectNode(id, order) {
         let node = this.getNode(id);
         node.deselect();
         let edges = this.edges[id];
-        if(edges)
-            edges.forEach(edge => {
-                edge.reset();
-                this.getNode(edge.getOtherID(id)).deselect();
-            });
+
+        if(!edges)
+            return;
+
+        edges.forEach(edge => {
+            edge.reset();
+            this.getNode(edge.getOtherID(id)).deselect();
+        });
         
         let cliqueList = this.cliques[node.layer]    
         if(cliqueList)
@@ -418,55 +459,141 @@ class GraphPane extends SVGPane {
         return this.layers;
     }
 
-    toggleView() {
-        let toggle = document.getElementById("clique_toggle")
-        if(this.cliqueView) {
-            this.cliques.forEach(cliqueSet => {
-                cliqueSet.forEach(clique => {
-                    clique.hide();
-                })
-            })
-
-            this.cliqueView = false;
-            toggle.innerHTML = "Show Cliques";
+    toggleEdges() {
+        if(this.edgeView) {
+            for(let node in this.edges) {
+                this.edges[node].forEach(edge => {
+                    edge.hide();
+                });
+            }
         }
         else {
-            this.cliques.forEach(cliqueSet => {
-                cliqueSet.forEach(clique => {
-                    if(this.showAllCliques || clique.good)
-                        clique.show();
-                })
-            })
-
-            this.cliqueView = true;
-            toggle.innerHTML = "Hide Cliques";
+            if(this.cliqueView) {
+                for(let node in this.edges) {
+                    this.edges[node].forEach(edge => {
+                        if(edge.cliques.length == 0)
+                        edge.show();
+                    });
+                }
+            }
+            else {
+                for(let node in this.edges) {
+                    this.edges[node].forEach(edge => {
+                        edge.show();
+                    });
+                }
+            }
         }
+
+        this.edgeView = !this.edgeView;
     }
 
-    toggleGood() {    
-        let toggle = document.getElementById("good_toggle");
-
-        if(this.showAllCliques) {
-            this.cliques.forEach(cliqueSet => {
-                cliqueSet.forEach(clique => {
-                    if(!clique.good && this.cliqueView)
+    toggleCliques() {
+        if(this.cliqueView) {
+            if(this.edgeView) {
+                this.cliques.forEach(cliqueSet => {
+                    cliqueSet.forEach(clique => {
                         clique.hide();
+                        let edges = clique.getEdges();
+                        for(let key in edges) {
+                            edges[key].forEach(e => {
+                                e.show();
+                            })
+                        }
+                    })
                 })
-            })
-
-            this.showAllCliques = false;
-            toggle.innerHTML = "Show All Cliques";
+            }
+            else {
+                this.cliques.forEach(cliqueSet => {
+                    cliqueSet.forEach(clique => {
+                        clique.hide();
+                    })
+                })
+            }
         }
         else {
             this.cliques.forEach(cliqueSet => {
                 cliqueSet.forEach(clique => {
-                    if(!clique.good && this.cliqueView)
-                        clique.show();
+                    clique.show();
+                    let edges = clique.getEdges();
+                    for(let key in edges) {
+                        edges[key].forEach(e => {
+                            e.hide();
+                        })
+                    }
                 })
             })
-
-            this.showAllCliques = true;
-            toggle.innerHTML = "Show Only Good Cliques";
         }
+
+        this.cliqueView = !this.cliqueView;
+    }
+
+    toggleMissingEdges() {
+        if(this.missingEdgeView) {
+            for(let node in this.missingEdges) {
+                this.missingEdges[node].forEach(edge => {
+                    edge.hide();
+                });
+            }
+        }
+        else {
+            if(this.cliqueView) {
+                for(let node in this.missingEdges) {
+                    this.missingEdges[node].forEach(edge => {
+                        if(edge.cliques.length == 0)
+                        edge.show();
+                    });
+                }
+            }
+            else {
+                for(let node in this.missingEdges) {
+                    this.missingEdges[node].forEach(edge => {
+                        edge.show();
+                    });
+                }
+            }
+        }
+
+        this.missingEdgeView = !this.missingEdgeView;
+    }
+
+    findNodeCenters() {
+        this.layers.forEach(layer => {
+            let nodes = layer.getNodes();
+            nodes.forEach(node => {
+                let idealCenter = 0;
+                let totalWeight = 0;
+                this.edges[node.id].forEach(edge => {
+                    totalWeight += edge.weight;
+                })
+
+                this.edges[node.id].forEach(edge => {
+                    let otherNode = this.getNode(edge.getOtherID(node.id));
+                    idealCenter += (otherNode.y * edge.weight / totalWeight)
+                    node.y = idealCenter;
+                })
+            })
+        })
+    }
+    
+
+    getClique(id) {
+        let ind = idToIndex(id);
+        return this.cliques[parseInt(ind.l)][parseInt(ind.n)];
+    }
+
+    dragCliqueStart(id, pos) {
+        let clique = this.getClique(id);
+        clique.startDrag(this.svg, pos);
+    }
+
+    dragClique(id, pos) {
+        let clique = this.getClique(id);
+        clique.drag(pos);
+    }
+
+    dragCliqueEnd(id) {
+        let clique = this.getClique(id);
+        clique.dragEnd(this.svg);
     }
 };

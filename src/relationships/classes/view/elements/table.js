@@ -1,9 +1,11 @@
+/**
+ * A tabular view of the connection between two layers in the graph
+ */
 class Table {
-    constructor(elements, entries, origin, drawHeaders, colors, pos_ind, layer1, layer2, id_ord, container) {
+    constructor(elements, entries, origin, drawHeaders, colors, pos_ind, layer1, layer2, id_ord, container, nodes) {
         this.ele = elements;
         this.entryData = entries;
         this.org = {x: origin.x, y: origin.y};
-
         this.entryEle = [];
         this.headers = [];
 
@@ -12,6 +14,8 @@ class Table {
         this.layer2 = layer2;
         this.id_ord = id_ord;
         this.colors = colors;
+
+        this.nodes = nodes;
 
         // list of two bools: Should we draw headers for each list of elements?
         this.headerFlags = drawHeaders;
@@ -24,7 +28,7 @@ class Table {
 
     create() {
         let rows, cols;
-
+        console.log(this.nodes)
         rows = this.ele[1] + this.headerFlags[0];
         cols = this.ele[0] + this.headerFlags[1];
         for(let j = 0; j < rows; j++) {
@@ -40,7 +44,6 @@ class Table {
                     entry.setAttribute("height", CELL_H);
                     entry.setAttribute("stroke", "black")
                     entry.classList.add("table_cell")
-
                     if(i == 0 && this.headerFlags[1]) {
                         entry.setAttribute("fill", ColorMapper.getLayerColor(this.layer2, 127))
                         entry.setAttribute("stroke", ColorMapper.getLayerColor(this.layer2))
@@ -49,6 +52,7 @@ class Table {
                             entry.setAttribute("onmouseover", "selectTableNode(this)");
                             entry.setAttribute("onmouseout", "deselectTableNode(this)");
                         }
+                        this.headers.push(new TableHeader(entry, this.nodes[1].getNode(index.j)))
                     }
                     else if(j == 0 && this.headerFlags[0]) {
                         entry.setAttribute("fill", ColorMapper.getLayerColor(this.layer1, 127))
@@ -58,6 +62,7 @@ class Table {
                             entry.setAttribute("onmouseover", "selectTableNode(this)");
                             entry.setAttribute("onmouseout", "deselectTableNode(this)");
                         }
+                        this.headers.push(new TableHeader(entry, this.nodes[0].getNode(index.i)))
                     }
                     else {
                         if(this.pos_ind%2 == 0) {

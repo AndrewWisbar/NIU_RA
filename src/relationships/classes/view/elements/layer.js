@@ -1,9 +1,10 @@
+/**
+ * A collection of nodes within the graph
+ */
 class Layer {
     constructor(x, width, key, numNodes, nodeSpacing) {
         this.g = document.createElementNS(svgns, "g");
         this.rect = document.createElementNS(svgns, "rect");
-        //rect.onmousedown = startDragColumn;
-
 
         this.nodes = [];
         this.x = x;
@@ -33,10 +34,19 @@ class Layer {
         }) 
     }
 
+    /**
+     * Set the nodes included in this layer
+     * @param {Array} nodes array of nodes to add 
+     */
     setNodes(nodes) {
         this.nodes = nodes;
     }
 
+    /**
+     * Get a specfic node from this layer
+     * @param {Integer} index index for the node array
+     * @returns the requested node or null
+     */
     getNode(index) {
         if(index >= 0 && index < this.nodes.length) {
             return this.nodes[index];
@@ -45,7 +55,17 @@ class Layer {
         return null;
     }
 
+    /**
+     * Get the number of nodes in this layer
+     */
     getNumNodes() {
         return this.numNodes;
+    }
+
+    /**
+     * Get all the nodes in this layer
+     */
+    getNodes() {
+        return this.nodes;
     }
 }

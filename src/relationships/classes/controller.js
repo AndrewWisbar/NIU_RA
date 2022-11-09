@@ -26,14 +26,6 @@ class Controller {
         this.#view = new View()
     }
 
-    toggleView() {
-        this.#view.toggleView();
-    }
-
-    toggleGood() {
-        this.#view.toggleGood();
-    }
-
     popupShow() {
         this.popup.classList.remove("hide");
     }
@@ -388,5 +380,17 @@ class Controller {
             circ.setAttribute("fill", "red")
             this.#view.graphView.getSVG().appendChild(circ)
         })
+    }
+
+    dragCliqueStart(id, pos) {
+        this.#view.dragCliqueStart(id, pos);
+    }
+
+    dragClique(id, pos) {
+        this.#view.dragClique(id, pos);
+    }
+
+    dragCliqueEnd(id) {
+        this.#view.dragCliqueEnd(id);
     }
 }

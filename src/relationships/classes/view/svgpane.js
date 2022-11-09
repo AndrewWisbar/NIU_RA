@@ -1,3 +1,8 @@
+/**
+ * An SVG pane for user interaction
+ * 
+ * Contains tools for panning and zooming the display with mouse controls
+ */
 class SVGPane {
     constructor(svg) {
         this.svg = svg;
